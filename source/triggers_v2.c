@@ -109,6 +109,8 @@ typedef struct {
 
 static State st;
 
+float *trig2_obj_scale;
+
 static Trig *trigs;
 static int ntrigs, trigs_cap;
 static int *trig_of;            // object -> trigs[] or -1
@@ -137,7 +139,9 @@ static void ensure_arrays(void) {
     trig_of = malloc(sizeof(int) * nobjs);
     og_start = calloc(nobjs, sizeof(int));
     og_count = calloc(nobjs, sizeof(u8));
+    trig2_obj_scale = malloc(sizeof(float) * nobjs);
     for (int i = 0; trig_of && i < nobjs; i++) trig_of[i] = -1;
+    for (int i = 0; trig2_obj_scale && i < nobjs; i++) trig2_obj_scale[i] = 1.f;
 }
 
 static bool is_v2_trigger(int id) {
@@ -207,6 +211,15 @@ void trig2_parse_object(int obj, char **tokens, int count) {
             continue;
         }
         if (key == 62) spawn_only = atoi(v) != 0;
+        if (key == 32 && trig2_obj_scale) {
+            // its size: drawn and collides that big
+            float sc = atof(v);
+            if (sc > 0 && sc != 1.f) {
+                trig2_obj_scale[obj] = sc;
+                objects.width[obj] *= sc;
+                objects.height[obj] *= sc;
+            }
+        }
     }
 
     // any trigger can be spawn-only (color ones too): keep that
@@ -293,6 +306,7 @@ void trig2_free(void) {
     free(gm_data); gm_data = NULL;
     free(orig_x); orig_x = NULL;
     free(orig_y); orig_y = NULL;
+    free(trig2_obj_scale); trig2_obj_scale = NULL;
     memset(gm_start, 0, sizeof(gm_start));
     nobjs = 0;
     st.max_group = 0;
@@ -570,18 +584,7 @@ static float pulse_strength(const Pulse *p) {
 }
 
 static Color apply_hsv(Color c, const Pulse *p) {
-    float h, s, v;
-    convertRGBtoHSV(c.r, c.g, c.b, &h, &s, &v);
-    h += p->h / 60.f; // the hue in sixths of the circle
-    while (h < 0) h += 6;
-    while (h >= 6) h -= 6;
-    s = p->s_add ? s + p->s : s * p->s;
-    v = p->v_add ? v + p->v : v * p->v;
-    s = s < 0 ? 0 : s > 1 ? 1 : s;
-    v = v < 0 ? 0 : v > 1 ? 1 : v;
-    Color out;
-    convertHSVtoRGB(h, s, v, &out.r, &out.g, &out.b);
-    return out;
+    return col_apply_hsv(c, p->h, p->s, p->v, p->s_add, p->v_add);
 }
 
 static Color lerp_color(Color a, Color b, float k) {

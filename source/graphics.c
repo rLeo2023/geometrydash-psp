@@ -1263,7 +1263,11 @@ void create_objects() {
                     objects.rotation[obj],
                     objects.flippedH[obj] ^ (state.mirror_mult < 0),
                     objects.flippedV[obj],
+#ifdef __PSP__
+                    fade_scale * OBJ_SCALE(obj)
+#else
                     fade_scale
+#endif
                 );
 
                 spawn_object_particles(obj);
