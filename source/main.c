@@ -1346,7 +1346,14 @@ void game_assets_init() {
     
     glowSheet = C2D_SpriteSheetLoad("romfs:/gfx/glow.t3x");
     if (!glowSheet) svcBreak(USERBREAK_PANIC);
-    
+
+#ifdef __PSP__
+    // GD 2.0's objects, made from the player's own copy of GD: without it
+    // those objects just don't show
+    extern C2D_SpriteSheet spriteSheetV2;
+    spriteSheetV2 = C2D_SpriteSheetLoad("romfs:/gfx/sprites_v2.t3x");
+#endif
+
     iconSheet = C2D_SpriteSheetLoad("romfs:/gfx/icons.t3x");
     if (!iconSheet) svcBreak(USERBREAK_PANIC);
 

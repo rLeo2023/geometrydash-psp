@@ -468,6 +468,34 @@ void clear_bg_flash() {
     state.flash_data.use_lbg = false;
 }
 
+#ifdef __PSP__
+// GD's official songs after the main levels' (2.0 and later): the mp3s come
+// from the player's own GD (Makefile.psp copies them when it has its files)
+static const char *extra_official_songs[] = {
+    "romfs:/songs/GeometricalDominator.mp3", // 18
+    "romfs:/songs/Deadlocked.mp3",           // 19
+    "romfs:/songs/Fingerdash.mp3",           // 20
+    "romfs:/songs/Dash.mp3",                 // 21
+};
+
+const char *official_song_name(int id) {
+    static const char *names[] = { "Geometrical Dominator", "Deadlocked", "Fingerdash", "Dash" };
+    if (id >= 0 && id < MAIN_LEVELS_NUM) return main_levels[id].level_name;
+    id -= MAIN_LEVELS_NUM;
+    if (id >= 0 && id < (int)ARRAY_LEN(names)) return names[id];
+    return NULL;
+}
+
+// a level's official song by its number; out of range read past the main
+// levels' table (a crash), now Stereo Madness's
+static char *official_song_path(int id) {
+    if (id >= 0 && id < MAIN_LEVELS_NUM) return main_levels[id].song_path;
+    id -= MAIN_LEVELS_NUM;
+    if (id >= 0 && id < (int)ARRAY_LEN(extra_official_songs)) return (char *)extra_official_songs[id];
+    return main_levels[0].song_path;
+}
+#endif
+
 void play_level_song(float seek) {
     if (level_info.custom_song_id > 0) {
         size_t sz = 0;
@@ -479,7 +507,11 @@ void play_level_song(float seek) {
         }
     } else {
         if (state.custom_level) {
+#ifdef __PSP__
+            song_loaded = play_mp3(official_song_path(level_info.song_id), false, seek);
+#else
             song_loaded = play_mp3(main_levels[level_info.song_id].song_path, false, seek);
+#endif
         } else {
             song_loaded = play_mp3(main_levels[curr_level_id].song_path, false, seek);
         }

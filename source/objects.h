@@ -61,6 +61,13 @@ typedef struct {
 } GameObject;
 
 #define TEXTURE_COUNT 883
+#ifdef __PSP__
+// and the objects GD 2.0 added (psp/tools/gen2objects.py), their sprites in
+// a sheet of their own from texture V2_TEXTURE_START
+#include "objects_v2.h"
+#define GAME_OBJECT_COUNT GAME_OBJECT_COUNT_V2
+#else
 #define GAME_OBJECT_COUNT 746
+#endif
 
 extern const GameObject game_objects[GAME_OBJECT_COUNT];

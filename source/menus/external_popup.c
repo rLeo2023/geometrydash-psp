@@ -261,9 +261,14 @@ static void set_song_id(char *gmd) {
         }
     } else {
         char *song_name = "Unknown";
+#ifdef __PSP__
+        extern const char *official_song_name(int id);
+        if (official_song_name(song_id)) song_name = (char *)official_song_name(song_id);
+#else
         if (song_id < MAIN_LEVELS_NUM) {
             song_name = main_levels[song_id].level_name;
         }
+#endif
         snprintf(tmp, sizeof(tmp), "Using song: %s", song_name);
     }
 

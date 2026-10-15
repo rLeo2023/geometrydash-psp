@@ -79,8 +79,23 @@ package: EBOOT.PBP
 			python3 psp/tools/mkatlas.py $$f $(OUT)/romfs/gfx/$$n.psheet || exit 1; \
 		fi; \
 	done
+	@if [ -d "$(STEAM_RES)" ] && { [ ! -f $(OUT)/romfs/gfx/sprites_v2.psheet ] \
+			|| [ psp/gfx2/sprites_v2.list -nt $(OUT)/romfs/gfx/sprites_v2.psheet ] \
+			|| [ psp/tools/mkv2sheet.py -nt $(OUT)/romfs/gfx/sprites_v2.psheet ]; }; then \
+		python3 psp/tools/mkv2sheet.py "$(STEAM_RES)" psp/build/gfx2 $(OUT)/romfs/gfx/sprites_v2.psheet || exit 1; \
+	fi
 	cp -r romfs/main_levels romfs/menus romfs/sfx romfs/songs $(OUT)/romfs/
 	cp psp/menus/*_psp.txt $(OUT)/romfs/menus/
+	@# the official songs after the main levels' (2.0 levels' custom copies use them)
+	@if [ -d "$(STEAM_RES)" ]; then for s in $(V2_SONGS); do \
+		[ -f "$(STEAM_RES)/$$s" ] && cp -u "$(STEAM_RES)/$$s" $(OUT)/romfs/songs/; done; true; fi
+
+V2_SONGS = GeometricalDominator.mp3 Deadlocked.mp3 Fingerdash.mp3 Dash.mp3
+
+# GD 2.0's objects draw from a sheet made out of the player's own copy of GD
+# (its Resources folder: GJ_GameSheet*.png/.plist); without it they don't show.
+# Their table (source/objects_v2_*.inc) is made by psp/tools/gen2objects.py
+STEAM_RES ?= steam-resources/Resources
 
 # ---- the folder PPSSPP runs -----------------------------------------------
 
@@ -97,8 +112,8 @@ deploy: package
 	@test -d "$(DEPLOY)" || { echo "no such folder: $(DEPLOY)"; exit 1; }
 	cp EBOOT.PBP "$(DEPLOY)/"
 	mkdir -p "$(DEPLOY)/romfs"
-	cp -r romfs/main_levels romfs/menus romfs/sfx romfs/songs "$(DEPLOY)/romfs/"
-	cp psp/menus/*_psp.txt "$(DEPLOY)/romfs/menus/"
+	cp -r $(OUT)/romfs/main_levels $(OUT)/romfs/menus $(OUT)/romfs/sfx $(OUT)/romfs/songs "$(DEPLOY)/romfs/"
+	mkdir -p "$(DEPLOY)/romfs/gfx"
 	cp -r $(OUT)/romfs/gfx/*.psheet "$(DEPLOY)/romfs/gfx/"
 	@echo "deployed to $(DEPLOY)"
 
