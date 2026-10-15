@@ -2514,7 +2514,11 @@ const GameObject game_objects[GAME_OBJECT_COUNT] = {
     { 14, 5, 0.00, 0.00, 5, 1, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_742 },
     { -1, -1, 0.0f, 0.0f, 0, 0, 0, 0, 0, 1.f, 0, NULL, NULL },
     { -1, -1, 0.00, 0.00, 5, 2, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL },
+#ifdef __PSP__
+    V2_ROW_745, // robot portal, with its sprite
+#else
     { -1, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_745 },
+#endif
 #ifdef __PSP__
 #include "objects_v2_rows.inc"
 #endif
