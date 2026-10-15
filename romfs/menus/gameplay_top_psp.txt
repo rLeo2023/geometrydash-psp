@@ -1,0 +1,16 @@
+# PSP: the pause menu on one screen, the top screen's half: the window, the
+# level name and both progress bars up top. The coins aren't in the phone
+# game's pause menu, so they stay hidden (the code still fills them)
+progressbar x=200 y=16 max_value=100 style=1 scale=0.75 tag="progressalert"
+label x=200 y=16 text="0%" scale=0.45 align=CENTER tag="percent"
+window x=200 y=120 w=388 h=228 style=2 tag="pause_menu,bgwindow"
+label x=200 y=24 text="Levle" scale=0.8 align=CENTER tag="pause_menu,level_title"
+label x=200 y=44 text="Normal mode" scale=0.45 align=CENTER tag="pause_menu"
+progressbar x=200 y=59 max_value=100 style=0 scale=0.72 tag="pause_menu,normalprogress"
+label x=200 y=60 text="0%" scale=0.45 align=CENTER tag="pause_menu,normalprogressvalue"
+label x=200 y=82 text="Practice mode" scale=0.45 align=CENTER tag="pause_menu"
+progressbar x=200 y=97 max_value=100 style=0 scale=0.72 tag="pause_menu,practiceprogress"
+label x=200 y=98 text="0%" scale=0.45 align=CENTER tag="pause_menu,practiceprogressvalue"
+image x=145 y=190 id=419 scale=0.5 tag="coin_1" psphide=1
+image x=200 y=190 id=419 scale=0.5 tag="coin_2" psphide=1
+image x=255 y=190 id=419 scale=0.5 tag="coin_3" psphide=1

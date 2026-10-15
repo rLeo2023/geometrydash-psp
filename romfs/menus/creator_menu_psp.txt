@@ -1,0 +1,17 @@
+# PSP: creator menu on one screen (the phone game's layout): its buttons in a
+# row of squares under the title, back in the corner. Touch screen's half,
+# centered over the top screen (40 + x, y); the top screen's gradient and
+# corners are the background
+@merge 40 0 1
+
+bggradient tag="gradient" psphide=1
+
+image x=36 y=35 id=178 sy=-1.0 psphide=1
+image x=36 y=205 id=178 psphide=1
+
+button x=-16 y=26 id=8 action="exit" keyBinds="B"
+
+button x=202 y=128 id=5 sheet=1 scale=0.72 action="external"
+button x=117 y=128 id=24 sheet=1 scale=0.72 action="saved"
+button x=287 y=128 id=25 sheet=1 scale=0.72 action="search"
+button x=32 y=128 id=8 sheet=1 scale=0.72 action="create" tag="create_button"

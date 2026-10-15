@@ -1,0 +1,41 @@
+# PSP: icon kit on one screen (the phone game's layout): the icon up top
+# (icon_kit.c), the gamemode row under it, the icon grid below, the arrows on
+# the edges, back and the palette down the left side. Touch screen's half,
+# centered over the top screen (40 + x, y)
+@merge 40 0 1
+
+bggradient tag="gradient" psphide=1
+button x=-16 y=26 id=8 action="exit" keyBinds="B"
+button x=-12 y=78 id=130 action="palette"
+button x=67 y=100 id=341 tag="icon_buttons,cube" action="action_cube"
+button x=104 y=100 id=351 tag="icon_buttons,ship" action="action_ship"
+button x=141 y=100 id=325 tag="icon_buttons,ball" action="action_ball"
+button x=178 y=100 id=327 tag="icon_buttons,ufo" action="action_ufo"
+button x=215 y=100 id=329 tag="icon_buttons,dart" action="action_dart"
+button x=252 y=100 id=355 tag="icon_buttons,trail" action="action_trail"
+button x=0 y=170 id=6 action="icons_left" keyBinds="LEFT"
+button x=320 y=170 id=6 sx=-1 action="icons_right" keyBinds="RIGHT"
+window x=160 y=170 w=230 h=100 style=2 tag="bg_window"
+icon x=79  y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=106 y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=133 y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=160 y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=187 y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=214 y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=241 y=143 scale=0.7 action="icon_selected" tag="icon"
+icon x=79  y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=106 y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=133 y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=160 y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=187 y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=214 y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=241 y=170 scale=0.7 action="icon_selected" tag="icon"
+icon x=79  y=197 scale=0.7 action="icon_selected" tag="icon"
+icon x=106 y=197 scale=0.7 action="icon_selected" tag="icon"
+icon x=133 y=197 scale=0.7 action="icon_selected" tag="icon"
+icon x=160 y=197 scale=0.7 action="icon_selected" tag="icon"
+icon x=187 y=197 scale=0.7 action="icon_selected" tag="icon"
+icon x=214 y=197 scale=0.7 action="icon_selected" tag="icon"
+icon x=241 y=197 scale=0.7 action="icon_selected" tag="icon"
+image x=36 y=205 id=178 psphide=1
+image x=284 y=205 id=178 sx=-1.0 psphide=1

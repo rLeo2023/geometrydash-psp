@@ -1,0 +1,12 @@
+# PSP: icon kit on one screen, the top screen's half: the gradient, the line
+# under the icon (drawn by icon_kit.c up top), the counters on the right and
+# the corners
+bggradient tag="gradient"
+image x=200 y=78 id=0 sheet=6 sx=0.4 sy=0.6
+image x=380 y=26 id=184 scale=0.6
+label x=366 y=27 text="0" align=RIGHT scale=0.45 tag="star_text"
+image x=380 y=46 id=33 scale=0.6
+label x=366 y=47 text="0" align=RIGHT scale=0.45 tag="secretcoins_text"
+image x=36 y=35 id=178 sy=-1.0
+image x=36 y=205 id=178
+image x=364 y=205 id=178 sx=-1.0

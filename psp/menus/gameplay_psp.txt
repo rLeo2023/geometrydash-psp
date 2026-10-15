@@ -1,0 +1,28 @@
+# PSP: the pause menu on one screen (the phone game's layout): the buttons in
+# a row under the progress, the sliders at the bottom, settings in the
+# corner. Touch screen's half, centered over the top screen (40 + x, y); its
+# window is the top screen's (gameplay_top_psp.txt)
+@merge 40 0 1
+
+# Also over the level while playing: the pause button in the corner and the
+# practice buttons at the bottom (the coins aren't shown, like the phone game)
+button x=344 y=20 id=17 sheet=1 action="pause" tag="not_paused,pause_btn" scale=0.45 opacity=0.4 keyBinds="START"
+useeffect tag="coin_circle"
+image x=20 y=20 id=16 sheet=1 tag="coin_1" scale=0.65 psphide=1
+image x=55 y=20 id=16 sheet=1 tag="coin_2" scale=0.65 psphide=1
+image x=90 y=20 id=16 sheet=1 tag="coin_3" scale=0.65 psphide=1
+image x=20 y=20 id=15 sheet=1 tag="coin_1_full" scale=0.65 psphide=1
+image x=55 y=20 id=15 sheet=1 tag="coin_2_full" scale=0.65 psphide=1
+image x=90 y=20 id=15 sheet=1 tag="coin_3_full" scale=0.65 psphide=1
+button x=130 y=200 id=29 tag="practice_buttons,add_checkpoint,not_paused" action="add_check" keyBinds="LEFT,X"
+button x=200 y=200 id=154 tag="practice_buttons,remove_checkpoint,not_paused" action="remove_check" keyBinds="RIGHT,B"
+window x=160 y=120 w=300 h=220 style=2 tag="paused,bgwindow" psphide=1
+button x=333 y=26 id=127 scale=0.5 tag="paused" action="settings" keyBinds="SELECT"
+button x=73 y=148 id=146 scale=0.7 tag="paused,practice_mode" action="practice" keyBinds="Y"
+button x=132 y=148 id=139 scale=0.75 tag="paused" action="unpause" keyBinds="A,START"
+button x=198 y=148 id=111 scale=0.7 tag="paused" action="exit" keyBinds="B"
+button x=250 y=148 id=155 scale=0.7 tag="paused" action="restart" keyBinds="X"
+label x=92 y=185 text="Music" scale=0.5 tag="paused" align=CENTER
+slider x=92 y=200 max_value=1 scale=0.6 tag="paused,music_slider"
+label x=228 y=185 text="SFX" scale=0.5 tag="paused" align=CENTER
+slider x=228 y=200 max_value=1 scale=0.6 tag="paused,sound_slider"

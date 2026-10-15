@@ -1,0 +1,8 @@
+darken opacity=0.5 darkenTime=0.15
+window x=160 y=120 w=290 h=130 style=1
+
+label x=160 y=78 text="Quit Game" font=2 scale=0.85 align=CENTER
+label x=160 y=110 font=1 text="Are you sure you want to quit?" scale=0.75 align=CENTER
+
+windowbutton x=103 y=152 style=5 text="Cancel" scale=0.8 action="cancel" font=2 w=110px h=34px keyBinds="B"
+windowbutton x=217 y=152 style=5 text="Yes" scale=0.8 action="quit" font=2 w=110px h=34px
