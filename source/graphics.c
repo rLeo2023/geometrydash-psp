@@ -273,7 +273,11 @@ inline int get_color_channel(int col_type, int obj, const GameObject *game_obj) 
             }
         }
     }
+#ifdef __PSP__
+    return v2_channel(col_channel);
+#else
     return col_channel;
+#endif
 }
 
 // Baby's first reverse engineered function
@@ -1322,10 +1326,23 @@ void create_objects() {
                     col.color.b = CLAMP(b, 0, 255);
                     col.blending = true;
                 }
+#ifdef __PSP__
+            } else if (col_channel == CHANNEL_V2_LIGHTER) {
+                // 2.0's "lighter": the object's main color, halfway to white
+                int obj_id = objects.id[obj->obj];
+                int base = get_color_channel(COLOR_TYPE_BASE, obj->obj, &game_objects[obj_id]);
+                Color c = { 255, 255, 255 };
+                if (base == 0) c = (Color){ 0, 0, 0 };
+                else if (base > 0 && base != CHANNEL_V2_LIGHTER) c = channels[get_col_channel_index(base)].color;
+                col.color.r = (c.r + 255) / 2;
+                col.color.g = (c.g + 255) / 2;
+                col.color.b = (c.b + 255) / 2;
+                col.blending = false;
+#endif
             } else {
                 col = channels[get_col_channel_index(col_channel)];
             }
-            
+
             int game_object = obj->obj;
             float x = ((objects.x[game_object] - state.camera_x));
 

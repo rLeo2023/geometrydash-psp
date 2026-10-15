@@ -151,8 +151,23 @@ void cube_gamemode(Player *player) {
         player->cube_target_rotation = player->rotation;
     }
 
+#ifdef __PSP__
+    // Robot: rises at a constant speed while the jump is held, up to 0.25 s
+    if (player->robot) {
+        if (player->robot_boost > 0 && state.input.holdJump && player->vel_y > 0 && !player->on_ground) {
+            player->gravity = 0;
+            player->robot_boost -= STEPS_DT;
+        } else {
+            player->robot_boost = 0;
+        }
+    }
+
+    // Do cube rotation (the robot doesn't spin)
+    if (player->slope_data.slope_id < 0 && !player->on_ground && !player->robot) {
+#else
     // Do cube rotation
     if (player->slope_data.slope_id < 0 && !player->on_ground) {
+#endif
         if (player->inverse_rotation) {
             player->cube_target_rotation -= (cube_rotation_speed[player->mini] / 2) * STEPS_DT * mult;
         } else {
@@ -208,6 +223,12 @@ void cube_gamemode(Player *player) {
             // Normal jump
             set_p_velocity(player, cube_jump_heights[state.speed], state.old_input.holdJump);
         }
+#ifdef __PSP__
+        if (player->robot) {
+            player->vel_y *= 0.5f;
+            player->robot_boost = 0.25f;
+        }
+#endif
         player->inverse_rotation = false;
         player->buffering_state = BUFFER_END;
     

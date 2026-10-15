@@ -1319,6 +1319,15 @@ void load_level_info(char *data, char *level_string) {
     }
     
     char *gamemode_data = get_metadata_value(level_string, "kA2");
+#ifdef __PSP__
+    level_info.initial_robot = false;
+    if (gamemode_data && atoi(gamemode_data) >= GAMEMODE_COUNT) {
+        // 5 robot, 6 spider (as a robot for now)
+        level_info.initial_gamemode = GAMEMODE_PLAYER;
+        level_info.initial_robot = true;
+        free(gamemode_data);
+    } else
+#endif
     if (gamemode_data) {
         level_info.initial_gamemode = CLAMP(atoi(gamemode_data), 0, GAMEMODE_COUNT - 1);
         free(gamemode_data);

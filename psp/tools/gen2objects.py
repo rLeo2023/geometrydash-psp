@@ -35,7 +35,7 @@ import gdobjects as g
 FIRST_ID = 746
 V2_TEXTURE_START = 2000
 
-SHEETS = ['GJ_GameSheet', 'GJ_GameSheet02', 'GJ_GameSheet03', 'GJ_GameSheet04', 'GJ_GameSheetGlow']
+SHEETS = ['GJ_GameSheet', 'GJ_GameSheet02', 'GJ_GameSheet03', 'GJ_GameSheet04', 'GJ_GameSheetGlow', 'FireSheet_01']
 
 COLOR_TYPES = {'base': ('COLOR_TYPE_BASE', 0), 'detail': ('COLOR_TYPE_DETAIL', 1),
                'black': ('COLOR_TYPE_BLACK', 0), None: ('COLOR_TYPE_WHITE', 0)}
@@ -46,6 +46,16 @@ LIKE = {
     747: 10,    # teleport portal (in): a portal
     749: 10,    # teleport portal (out)
     1022: 84,   # green orb: the blue orb
+}
+
+# decorations OpenGD has no data for (monsters, sludge, the key): drawn
+# still, with the editor's sprite. id -> (z layer, z order, main channel)
+DECO = {
+    918: (3, 0, 1011),      # monster 1 (animated in GD)
+    919: (3, 0, 1010),      # black sludge
+    1327: (3, 0, 1011),     # monster 2
+    1328: (3, 0, 1011),     # monster 3
+    1275: (3, 0, 1011),     # key
 }
 
 
@@ -141,6 +151,11 @@ def main():
         j = data.get(str(oid))
         like = objs.get(LIKE.get(oid))
         name = j['texture_name'] if j else tb.get(oid)
+
+        if not j and not like and oid in DECO:
+            z, zo, chan = DECO[oid]
+            j = {'default_z_layer': z, 'default_z_order': zo, 'default_primary_channel': chan,
+                        'color_channel': 'base', 'object_type': 7, 'texture_name': name}
 
         if not name or (not j and not like) or name not in frames:
             what = 'trigger/none' if not j or j.get('object_type') == 25 else name

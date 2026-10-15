@@ -149,6 +149,14 @@ void init_col_channels() {
     channels[invis_glow].color.g = 255;
     channels[invis_glow].color.b = 255;
     channels[invis_glow].blending = true;
+
+#ifdef __PSP__
+    // white is already white, lighter is worked out per object (graphics.c)
+    int v2_black = get_col_channel_index(CHANNEL_V2_BLACK);
+    channels[v2_black].color.r = 0;
+    channels[v2_black].color.g = 0;
+    channels[v2_black].color.b = 0;
+#endif
 }
 
 void handle_col_channel(int chan) {

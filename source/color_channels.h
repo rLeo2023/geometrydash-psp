@@ -33,6 +33,13 @@ enum ColorChannelIDs {
     CHANNEL_PINK_GLOW,
     CHANNEL_WHITE,
     CHANNEL_INVISIBLE_GLOW,
+#ifdef __PSP__
+    // GD 2.0's 1010 black, 1011 white and 1012 lighter (1009-1012 are taken
+    // here by glows: v2_channel() moves them)
+    CHANNEL_V2_BLACK,
+    CHANNEL_V2_WHITE,
+    CHANNEL_V2_LIGHTER,
+#endif
     COL_CHANNEL_LAST,
     COL_CHANNEL_NUM = (COL_CHANNEL_LAST - CHANNEL_BG) + CHANNEL_NORMAL_END,
 };
@@ -88,6 +95,15 @@ extern Color glow_color;
 #define GET_R(color) (color & 0xff)
 #define GET_G(color) ((color >> 8) & 0xff)
 #define GET_B(color) ((color >> 16) & 0xff)
+
+#ifdef __PSP__
+// a channel id as GD 2.0 numbers them -> this game's
+#define v2_channel(c) ( \
+    (c) == 1009 ? CHANNEL_GROUND :  /* ground 2: there's one ground here */ \
+    (c) == 1010 ? CHANNEL_V2_BLACK : \
+    (c) == 1011 ? CHANNEL_V2_WHITE : \
+    (c) == 1012 ? CHANNEL_V2_LIGHTER : (c))
+#endif
 
 void calculate_lbg();
 int get_col_channel_index(int channel);

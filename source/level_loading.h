@@ -93,6 +93,9 @@ typedef struct {
     int background_id;
     int ground_id;
     int initial_gamemode;
+#ifdef __PSP__
+    bool initial_robot;
+#endif
     bool initial_mini;
     unsigned char initial_speed;
     bool initial_dual;

@@ -106,7 +106,13 @@ typedef struct {
     InternalHitbox internal_hitbox;
 
     int gamemode;
-    
+
+#ifdef __PSP__
+    // 2.0 robot: a cube (GAMEMODE_PLAYER) that jumps differently
+    bool robot;
+    float robot_boost; // seconds of held jump left
+#endif
+
     int rotation_direction;
 
     bool on_ground;
