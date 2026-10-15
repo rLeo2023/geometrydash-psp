@@ -1,0 +1,4 @@
+# PSP: main menu on one screen, the top screen's half: the title up top, the
+# buttons (main_menu_psp.txt) under it. The logo moved to the other half, so
+# it lands over the ground
+image x=200 y=38 id=0 sheet=1 sx=0.68 sy=0.68 tag="title"

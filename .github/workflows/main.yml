@@ -1,0 +1,65 @@
+name: Build nightly
+
+permissions:
+  contents: write
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm
+    name: Compile ROM
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Make application
+        run: |
+          chmod -R 755 buildtools/
+          make 3dsx cia
+      - name: Prepare for build publishing
+        run: |
+          mkdir -p out/3dsx/rom
+          mkdir -p out/cia/rom
+          mkdir -p out/elf
+          cp output/GeometryDash3DS.3dsx out/3dsx/rom
+          cp output/GeometryDash3DS.cia out/cia/rom
+          cp output/GeometryDash3DS.elf out/elf
+      - name: Publish 3dsx to GH Actions
+        uses: actions/upload-artifact@main
+        with:
+          name: gd3ds-3dsx
+          path: out/3dsx/rom
+          archive: false
+      - name: Publish cia to GH Actions
+        uses: actions/upload-artifact@main
+        with:
+          name: gd3ds-cia
+          path: out/cia/rom
+          archive: false
+      - name: Publish debug info to GH Actions
+        uses: actions/upload-artifact@main
+        with:
+          name: gd3ds-elf
+          path: out/elf
+          archive: false
+      - name: Create or update nightly release
+        if: github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: nightly
+          name: Nightly Build
+          body: |
+            Latest nightly build from commit ${{ github.sha }}
+          prerelease: true
+          make_latest: true
+          files: |
+            out/3dsx/rom/*
+            out/cia/rom/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            

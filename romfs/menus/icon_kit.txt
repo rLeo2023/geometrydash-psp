@@ -1,0 +1,42 @@
+bggradient tag="gradient"
+
+button x=24 y=28 id=8 action="exit" keyBinds="B"
+button x=23 y=70 id=130 action="palette"
+
+button x=67 y=65 id=341 tag="icon_buttons,cube" action="action_cube"
+button x=104 y=65 id=351 tag="icon_buttons,ship" action="action_ship"
+button x=141 y=65 id=325 tag="icon_buttons,ball" action="action_ball"
+button x=178 y=65 id=327 tag="icon_buttons,ufo" action="action_ufo"
+button x=215 y=65 id=329 tag="icon_buttons,dart" action="action_dart"
+button x=252 y=65 id=355 tag="icon_buttons,trail" action="action_trail"
+
+button x=30 y=145 id=6 action="icons_left" keyBinds="LEFT"
+button x=290 y=145 id=6 sx=-1 action="icons_right" keyBinds="RIGHT"
+window x=160 y=145 w=220 h=100 style=2 tag="bg_window"
+
+icon x=79  y=118 scale=0.7 action="icon_selected" tag="icon"
+icon x=106 y=118 scale=0.7 action="icon_selected" tag="icon"
+icon x=133 y=118 scale=0.7 action="icon_selected" tag="icon"
+icon x=160 y=118 scale=0.7 action="icon_selected" tag="icon"
+icon x=187 y=118 scale=0.7 action="icon_selected" tag="icon"
+icon x=214 y=118 scale=0.7 action="icon_selected" tag="icon"
+icon x=241 y=118 scale=0.7 action="icon_selected" tag="icon"
+
+icon x=79  y=145 scale=0.7 action="icon_selected" tag="icon"
+icon x=106 y=145 scale=0.7 action="icon_selected" tag="icon"
+icon x=133 y=145 scale=0.7 action="icon_selected" tag="icon"
+icon x=160 y=145 scale=0.7 action="icon_selected" tag="icon"
+icon x=187 y=145 scale=0.7 action="icon_selected" tag="icon"
+icon x=214 y=145 scale=0.7 action="icon_selected" tag="icon"
+icon x=241 y=145 scale=0.7 action="icon_selected" tag="icon"
+
+icon x=79  y=172 scale=0.7 action="icon_selected" tag="icon"
+icon x=106 y=172 scale=0.7 action="icon_selected" tag="icon"
+icon x=133 y=172 scale=0.7 action="icon_selected" tag="icon"
+icon x=160 y=172 scale=0.7 action="icon_selected" tag="icon"
+icon x=187 y=172 scale=0.7 action="icon_selected" tag="icon"
+icon x=214 y=172 scale=0.7 action="icon_selected" tag="icon"
+icon x=241 y=172 scale=0.7 action="icon_selected" tag="icon"
+
+image x=36 y=205 id=178
+image x=284 y=205 id=178 sx=-1.0

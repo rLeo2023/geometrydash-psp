@@ -1,0 +1,28 @@
+button x=300 y=20 id=17 sheet=1 action="pause" tag="not_paused,pause_btn" scale=0.65 opacity=0.4 keyBinds="START"
+
+useeffect tag="coin_circle"
+
+image x=20 y=20 id=16 sheet=1 tag="coin_1" scale=0.65
+image x=55 y=20 id=16 sheet=1 tag="coin_2" scale=0.65
+image x=90 y=20 id=16 sheet=1 tag="coin_3" scale=0.65
+
+image x=20 y=20 id=15 sheet=1 tag="coin_1_full" scale=0.65
+image x=55 y=20 id=15 sheet=1 tag="coin_2_full" scale=0.65
+image x=90 y=20 id=15 sheet=1 tag="coin_3_full" scale=0.65
+
+button x=130 y=200 id=29 tag="practice_buttons,add_checkpoint,not_paused" action="add_check" keyBinds="LEFT,X"
+button x=200 y=200 id=154 tag="practice_buttons,remove_checkpoint,not_paused" action="remove_check" keyBinds="RIGHT,B"
+
+window x=160 y=120 w=300 h=220 style=2 tag="paused,bgwindow"
+
+button x=280 y=40 id=127 scale=0.8 tag="paused" action="settings" keyBinds="SELECT"
+
+button x=48 y=172 id=146 scale=0.90 tag="paused,practice_mode" action="practice" keyBinds="Y"
+button x=208 y=172 id=155 scale=0.90 tag="paused" action="restart" keyBinds="X"
+button x=272 y=172 id=111 scale=0.90 tag="paused" action="exit" keyBinds="B"
+button x=128 y=172 id=139 scale=1.15 tag="paused" action="unpause" keyBinds="A,START"
+
+label x=120 y=32 text="Music" scale=0.5 tag="paused" align=CENTER
+slider x=120 y=48 max_value=1 scale=0.9 tag="paused,music_slider"
+label x=120 y=80 text="SFX" scale=0.5 tag="paused" align=CENTER
+slider x=120 y=96 max_value=1 scale=0.9 tag="paused,sound_slider"

@@ -1,0 +1,6 @@
+label x=160 y=80 text="This game must not be sold" font=2 scale=0.6 align=CENTER tag="disclaimer"
+label x=160 y=92 text="in any way, shape or form." font=2 scale=0.6 align=CENTER tag="disclaimer"
+label x=160 y=110 text="If you paid for this, ask for a" font=2 scale=0.6 align=CENTER tag="disclaimer"
+label x=160 y=122 text="refund immediately!" font=2 scale=0.6 align=CENTER tag="disclaimer"
+label x=160 y=140 text="Geometry Dash and its respective" font=2 scale=0.6 align=CENTER tag="disclaimer"
+label x=160 y=152 text="resources are by RobTop Games." font=2 scale=0.6 align=CENTER tag="disclaimer"

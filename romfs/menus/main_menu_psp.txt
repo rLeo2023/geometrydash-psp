@@ -1,0 +1,13 @@
+# PSP: main menu on one screen (the phone game's layout). This is the touch
+# screen's half, laid centered over the top screen (40 + x, y)
+@merge 40 0 1
+
+button x=160 y=118 id=1 sheet=1 scale=0.85 action="level_select" keyBinds="A,START"
+button x=68 y=126 id=79 scale=0.85 action="icon_kit" keyBinds="X"
+button x=252 y=126 id=2 sheet=1 scale=0.85 action="creator_menu" keyBinds="Y"
+
+button x=188 y=206 id=12 sheet=1 scale=0.85 text="" action="statistics"
+button x=132 y=206 id=11 sheet=1 scale=0.85 text="" action="settings"
+
+# the logo on the ground, bottom left (drawn after the ground, unlike the top screen)
+image x=12 y=214 id=4 sheet=1 sx=0.55 sy=0.55

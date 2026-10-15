@@ -1,0 +1,96 @@
+# Makefile.psp - the PSP build (the 3DS one stays in Makefile)
+#
+#   make -f Makefile.psp            EBOOT.PBP
+#   make -f Makefile.psp package    psp/out/gdpsp/: EBOOT.PBP + romfs/ (sheets, songs, ...)
+#
+# Copy psp/out/gdpsp/ to ms0:/PSP/GAME/ (or open its EBOOT.PBP in PPSSPP).
+
+TARGET = gdpsp
+
+GAME_SRC := $(shell find source -name '*.c' ! -name network.c | sort)
+PORT_SRC := $(wildcard psp/src/*.c) libraries/color.c
+OBJ_DIR  := psp/build
+OBJS     := $(addprefix $(OBJ_DIR)/,$(GAME_SRC:.c=.o) $(PORT_SRC:.c=.o))
+
+INCDIR   = psp/include source libraries
+CFLAGS   = -O2 -G0 -Wall -std=gnu11 -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function $(CFLAGS_EXTRA)
+CXXFLAGS = $(CFLAGS)
+ASFLAGS  = $(CFLAGS)
+
+# the game names its files romfs:/ and sdmc:/; psp/src/ctru_psp.c maps them
+WRAPPED  = fopen open stat opendir access remove unlink rename mkdir \
+           malloc calloc realloc memalign strcmp
+LDFLAGS  = $(addprefix -Wl$(comma)--wrap=,$(WRAPPED))
+comma    := ,
+
+LIBS     = -lmpg123 -lcjson -lz -lpspgu -lpspaudio -lpspaudiocodec -lpsputility -lpsppower -lpsprtc -lm
+
+BUILD_PRX        = 1
+PSP_LARGE_MEMORY = 1
+PSP_FW_VERSION   = 500
+EXTRA_TARGETS    = EBOOT.PBP
+PSP_EBOOT_TITLE  = Geometry Dash PSP
+
+PSPSDK = $(shell psp-config --pspsdk-path)
+include $(PSPSDK)/lib/build.mak
+
+# -MMD: each object also lists the headers it read (.d next to it), so a
+# changed header rebuilds everything that uses it. Without it, adding a field
+# to a struct left older objects with the old size: a menu's static
+# UIScreen got written past its end, over the next file's data
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -MMD -MP $(addprefix -I,$(INCDIR)) -c $< -o $@
+
+-include $(OBJS:.o=.d)
+
+# ---- the files next to the EBOOT -------------------------------------------
+
+OUT    := psp/out/gdpsp
+SHEETS := $(shell find gfx -name '*.t3s')
+
+# The PSP layouts sit next to the 3DS ones in psp/menus/, but the EBOOT.PBP at the
+# repo root runs off romfs/ directly, so they are copied in for every build (the
+# 3DS code never looks at a *_psp.txt, so it ignores them).
+PSP_LAYOUTS := $(wildcard psp/menus/*_psp.txt)
+
+romfs/menus/%_psp.txt: psp/menus/%_psp.txt
+	@cp $< $@
+
+all: EBOOT.PBP $(PSP_LAYOUTS:psp/menus/%.txt=romfs/menus/%.txt)
+
+package: EBOOT.PBP
+	@mkdir -p $(OUT)/romfs/gfx $(OUT)/mstick/psp/gdpsp
+	cp EBOOT.PBP $(OUT)/
+	@for f in $(SHEETS); do \
+		n=$$(basename $$f .t3s); \
+		if [ ! -f $(OUT)/romfs/gfx/$$n.psheet ] || [ $$f -nt $(OUT)/romfs/gfx/$$n.psheet ] \
+			|| [ psp/tools/mkatlas.py -nt $(OUT)/romfs/gfx/$$n.psheet ] \
+			|| [ -n "$$(find psp/gfx -newer $(OUT)/romfs/gfx/$$n.psheet -name '*.png' 2>/dev/null)" ]; then \
+			python3 psp/tools/mkatlas.py $$f $(OUT)/romfs/gfx/$$n.psheet || exit 1; \
+		fi; \
+	done
+	cp -r romfs/main_levels romfs/menus romfs/sfx romfs/songs $(OUT)/romfs/
+	cp psp/menus/*_psp.txt $(OUT)/romfs/menus/
+
+# ---- the folder PPSSPP runs -----------------------------------------------
+
+# The game opens "romfs/menus/x.txt" relative to its working directory, which for
+# PPSSPP is the folder holding the EBOOT.PBP. A stale layout there is invisible
+# in a build (it lives outside the repo), so deploy everything at once:
+#
+#   make -f Makefile.psp deploy                    # to the default folder
+#   make -f Makefile.psp deploy DEPLOY=/path/to/gdtestpsp
+
+DEPLOY ?= /mnt/e/Juegos PS2/gdtestpsp
+
+deploy: package
+	@test -d "$(DEPLOY)" || { echo "no such folder: $(DEPLOY)"; exit 1; }
+	cp EBOOT.PBP "$(DEPLOY)/"
+	mkdir -p "$(DEPLOY)/romfs"
+	cp -r romfs/main_levels romfs/menus romfs/sfx romfs/songs "$(DEPLOY)/romfs/"
+	cp psp/menus/*_psp.txt "$(DEPLOY)/romfs/menus/"
+	cp -r $(OUT)/romfs/gfx/*.psheet "$(DEPLOY)/romfs/gfx/"
+	@echo "deployed to $(DEPLOY)"
+
+.PHONY: package deploy

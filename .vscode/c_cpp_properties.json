@@ -1,0 +1,42 @@
+{
+    "configurations": [
+        {
+            "name": "3DS",
+            "includePath": [
+                "${workspaceFolder}/source",
+                "/opt/devkitpro/libctru/include",
+                "/opt/devkitpro/devkitARM/arm-none-eabi/include",
+                "/opt/devkitpro/devkitARM/lib/gcc/arm-none-eabi/*/include",
+                "/opt/devkitpro/portlibs/3ds/include",
+                "${workspaceFolder}/libraries",
+                "C:/devkitpro/libctru/include",
+                "C:/devkitpro/devkitARM/arm-none-eabi/include",
+                "C:/devkitpro/devkitARM/bin/gcc/arm-none-eabi/*/include",
+                "C:/devkitpro/portlibs/3ds/include"
+            ],
+            "defines": [
+                "__3DS__"
+            ],
+            "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11",
+            "intelliSenseMode": "linux-gcc-arm",
+            "compilerArgs": [
+                "-Werror=incompatible-pointer-types",
+                "-march=armv6k",
+                "-mtune=mpcore",
+                "-mfloat-abi=hard",
+                "-g",
+                "-Wall",
+                "-Wno-strict-aliasing",
+                "-O2",
+                "-mword-relocations",
+                "-fomit-frame-pointer",
+                "-ffunction-sections",
+                "-fdata-sections",
+                "-ffast-math"
+            ]
+        }
+    ],
+    "version": 4
+}

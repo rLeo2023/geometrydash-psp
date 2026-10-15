@@ -1,0 +1,108 @@
+build/
+output/
+release/
+badsectors/build
+*.elf
+*.smdh
+*.3dsx
+*.cia
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# IntelliJ Clion IDEA files
+# User-specific stuff:
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
+
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# CMake
+cmake-build-debug/
+
+# Mongo Explorer plugin:
+.idea/**/mongoSettings.xml
+
+## File-based project format:
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Debug files
+*.dSYM/
+
+.clangd
+compile_commands.json
+
+# ---- PSP port ----
+# build output (make -f Makefile.psp package)
+psp/build/
+psp/out/
+EBOOT.PBP
+PARAM.SFO
+*.prx
+*.d
+gdtestpsp.lnk
+# the original 3DS sources this started from, and the GD 2.113 decompilation
+# used as a reference: their own projects, not part of this one
+gd3ds/
+gd211-decomp/
+# the songs belong to their artists: put them in romfs/songs/ to build
+romfs/songs/
