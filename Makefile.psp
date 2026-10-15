@@ -30,6 +30,8 @@ PSP_LARGE_MEMORY = 1
 PSP_FW_VERSION   = 500
 EXTRA_TARGETS    = EBOOT.PBP
 PSP_EBOOT_TITLE  = Geometry Dash PSP
+PSP_EBOOT_ICON   = psp/eboot/ICON0.PNG
+PSP_EBOOT_PIC1   = psp/eboot/PIC1.PNG
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
