@@ -17,9 +17,6 @@ make -f Makefile.psp package        # psp/out/gdpsp/: EBOOT.PBP + romfs/
 make -f Makefile.psp deploy DEPLOY=/path/to/folder
 ```
 
-The songs aren't in this repository (they belong to their artists): put the
-`.mp3`s in `romfs/songs/` before building.
-
 Copy `psp/out/gdpsp/` to `ms0:/PSP/GAME/`, or open its `EBOOT.PBP` in PPSSPP.
 Saves, custom levels (`external_levels/`) and custom songs (`custom_songs/`)
 go in `mstick/psp/gdpsp/` next to the EBOOT.
@@ -36,4 +33,5 @@ go in `mstick/psp/gdpsp/` next to the EBOOT.
 | `psp/menus/*_psp.txt` | the PSP's one-screen layout of each menu |
 | `psp/gfx/` | PSP art that replaces the 3DS one (the title logo, ...) |
 | `psp/tools/mkatlas.py` | `.t3s` sprite lists to PSP sheets (8 bit, one palette per page) |
+| `psp/eboot/` | the XMB icon (`ICON0.PNG`, 144x80) and background (`PIC1.PNG`, 480x272) |
 | `Makefile.psp` | the PSP build |

@@ -104,5 +104,3 @@ gdtestpsp.lnk
 # used as a reference: their own projects, not part of this one
 gd3ds/
 gd211-decomp/
-# the songs belong to their artists: put them in romfs/songs/ to build
-romfs/songs/
