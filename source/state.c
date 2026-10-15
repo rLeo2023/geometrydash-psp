@@ -146,6 +146,9 @@ void set_intended_ceiling() {
 
 void set_gamemode(Player *player, int gamemode) {
     player->gamemode = gamemode;
+#ifdef __PSP__
+    player->robot = false; // the robot portal sets it again after this
+#endif
     set_hitbox_size(player, gamemode);
 }
 
@@ -176,6 +179,9 @@ void init_player(Player *player) {
     memset(player, 0, sizeof(Player));
     
     set_gamemode(player, level_info.initial_gamemode);
+#ifdef __PSP__
+    player->robot = level_info.initial_robot;
+#endif
     set_mini(player, level_info.initial_mini);
 
     player->player_icons.cube = selected_cube;

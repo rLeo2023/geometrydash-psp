@@ -681,10 +681,23 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                 }
             }
             break;
-        case CUBE_PORTAL: 
+        case CUBE_PORTAL:
+#ifdef __PSP__
+        case ROBOT_PORTAL:
+#endif
             if (!GET_ACTIVATED(obj)) {
                 state.ground_y = 0;
                 state.ceiling_y = 999999;
+#ifdef __PSP__
+                bool to_robot = objects.id[obj] == ROBOT_PORTAL;
+                if (player->gamemode == GAMEMODE_PLAYER && player->robot != to_robot) {
+                    player->robot = to_robot;
+                    player->robot_boost = 0;
+                    player->snap_rotation = true;
+                    set_checkpoint_timer(0);
+                }
+                if (player->gamemode != GAMEMODE_PLAYER) player->robot_boost = 0;
+#endif
                 if (player->gamemode != GAMEMODE_PLAYER) {
                     if (player->gamemode != GAMEMODE_PLAYER_BALL) {
                         player->vel_y /= 2;
@@ -695,6 +708,9 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                     player->ceiling_inv_time = CEILING_INVUL_TIME;
                     player->snap_rotation = true;
                     set_gamemode(player, GAMEMODE_PLAYER);
+#ifdef __PSP__
+                    player->robot = to_robot;
+#endif
                     set_checkpoint_timer(0);
                     flip_other_player(state.current_player ^ 1);
                     update_rotation_direction(player);

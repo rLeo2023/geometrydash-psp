@@ -171,33 +171,33 @@
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 915 edit_eTintLBtn_001.png */
     { 2162, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 916 block006_color_05_001.png */
     { 339, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 917 d_whiteBlock_02_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 918 GJBeast01_01_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 919 dA_blackSludge_01_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 920 Fire_03_looped_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 921 Fire_04_looped_004.png */
+    { 2163, 2164, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 918 GJBeast01_01_001.png */
+    { 2165, -1, 0.00, 0.00, 3, 0, 1010, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 919 dA_blackSludge_01_001.png */
+    { 2167, -1, 0.00, 0.00, 5, 2, 1011, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_920, NULL }, /* 920 Fire_03_looped_001.png */
+    { 2169, -1, 0.00, 0.00, 5, 2, 1011, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_921, NULL }, /* 921 Fire_04_looped_004.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 922 - */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 923 Fire_01_looped_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 924 Fire_02_looped_001.png */
-    { 2163, -1, 0.00, 0.00, 1, 2, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_925, NULL }, /* 925 d_rainbow_01_001.png */
-    { 2164, -1, 0.00, 0.00, 1, 2, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_926, NULL }, /* 926 d_rainbow_02_001.png */
-    { 2165, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 927 block010_01_001.png */
-    { 2167, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_928, NULL }, /* 928 block010_02_001.png */
-    { 2168, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 929 block010_03_001.png */
-    { 2169, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 930 block010_04_001.png */
-    { 2172, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_931, NULL }, /* 931 block010_piece_01_001.png */
-    { 2173, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_932, NULL }, /* 932 block010_06_001.png */
-    { 2174, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 933 block010_07_001.png */
-    { 2175, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 934 block010_08_001.png */
-    { 2172, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_935, NULL }, /* 935 block010_piece_01_001.png */
-    { 2177, -1, 0.00, 0.00, 3, -5, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 936 d_artCloud_01_001.png */
-    { 2178, -1, 0.00, 0.00, 3, -5, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 937 d_artCloud_02_001.png */
-    { 2179, -1, 0.00, 0.00, 3, -5, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 938 d_artCloud_03_001.png */
+    { 2171, -1, 0.00, 0.00, 5, 2, 1011, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_923, NULL }, /* 923 Fire_01_looped_001.png */
+    { 2173, -1, 0.00, 0.00, 5, 2, 1011, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_924, NULL }, /* 924 Fire_02_looped_001.png */
+    { 2174, -1, 0.00, 0.00, 1, 2, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_925, NULL }, /* 925 d_rainbow_01_001.png */
+    { 2175, -1, 0.00, 0.00, 1, 2, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_926, NULL }, /* 926 d_rainbow_02_001.png */
+    { 2176, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 927 block010_01_001.png */
+    { 2178, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_928, NULL }, /* 928 block010_02_001.png */
+    { 2179, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 929 block010_03_001.png */
+    { 2180, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 930 block010_04_001.png */
+    { 2183, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_931, NULL }, /* 931 block010_piece_01_001.png */
+    { 2184, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_932, NULL }, /* 932 block010_06_001.png */
+    { 2185, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 933 block010_07_001.png */
+    { 2186, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 934 block010_08_001.png */
+    { 2183, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_935, NULL }, /* 935 block010_piece_01_001.png */
+    { 2188, -1, 0.00, 0.00, 3, -5, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 936 d_artCloud_01_001.png */
+    { 2189, -1, 0.00, 0.00, 3, -5, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 937 d_artCloud_02_001.png */
+    { 2190, -1, 0.00, 0.00, 3, -5, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 938 d_artCloud_03_001.png */
     { 195, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_939, NULL }, /* 939 d_flower01_01_001.png */
     { 218, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 940 d_grassDetail_01_001.png */
     { 219, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 941 d_grassDetail_02_001.png */
     { 220, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 942 d_grassDetail_03_001.png */
     { 577, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_943, NULL }, /* 943 persp_outline_01_001.png */
-    { 2182, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_944, NULL }, /* 944 block008_topcolor_15_001.png */
+    { 2193, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_944, NULL }, /* 944 block008_topcolor_15_001.png */
     { 579, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_945, NULL }, /* 945 persp_outline_03_001.png */
     { 580, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_946, NULL }, /* 946 persp_outline_04_001.png */
     { 581, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_947, NULL }, /* 947 persp_outline_05_001.png */
@@ -205,36 +205,36 @@
     { 583, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_949, NULL }, /* 949 persp_outline_07_001.png */
     { 584, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_950, NULL }, /* 950 persp_outline_08_001.png */
     { 585, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_951, NULL }, /* 951 persp_outline_09_001.png */
-    { 2186, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_952, NULL }, /* 952 block005b_02_001.png */
-    { 2187, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_953, NULL }, /* 953 block005b_03_001.png */
-    { 2188, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_954, NULL }, /* 954 block005b_04_001.png */
+    { 2197, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_952, NULL }, /* 952 block005b_02_001.png */
+    { 2198, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_953, NULL }, /* 953 block005b_03_001.png */
+    { 2199, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_954, NULL }, /* 954 block005b_04_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 955 block005b_05_001.png */
-    { 2189, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_956, NULL }, /* 956 block005b_06_001.png */
-    { 2190, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_957, NULL }, /* 957 block005b_07_001.png */
-    { 2191, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_958, NULL }, /* 958 block005b_08_001.png */
-    { 2192, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_959, NULL }, /* 959 block005b_09_001.png */
-    { 2193, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_960, NULL }, /* 960 block005b_slope_01_001.png */
-    { 2194, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_961, NULL }, /* 961 block005b_slope_02_001.png */
+    { 2200, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_956, NULL }, /* 956 block005b_06_001.png */
+    { 2201, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_957, NULL }, /* 957 block005b_07_001.png */
+    { 2202, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_958, NULL }, /* 958 block005b_08_001.png */
+    { 2203, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_959, NULL }, /* 959 block005b_09_001.png */
+    { 2204, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_960, NULL }, /* 960 block005b_slope_01_001.png */
+    { 2205, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_961, NULL }, /* 961 block005b_slope_02_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 962 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 963 - */
-    { 2195, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_964, NULL }, /* 964 block005b_slope_square_01_001.png */
-    { 2196, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_965, NULL }, /* 965 block005b_slope_square_02_001.png */
-    { 2197, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 966 block005b_slope_square_03_001.png */
-    { 2198, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_967, NULL }, /* 967 plank005b_01_001.png */
-    { 2199, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_968, NULL }, /* 968 plank005b_02_001.png */
-    { 2200, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_969, NULL }, /* 969 plank005b_slope_01_001.png */
-    { 2201, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_970, NULL }, /* 970 plank005b_slope_02_001.png */
-    { 2202, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_971, NULL }, /* 971 plank005b_slope_square_01_001.png */
-    { 2203, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_972, NULL }, /* 972 plank005b_slope_square_02_001.png */
-    { 2204, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 973 plank005b_slope_square_03_001.png */
-    { 2205, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_974, NULL }, /* 974 block005b_10_001.png */
-    { 2206, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_975, NULL }, /* 975 block005b_11_001.png */
-    { 2207, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 976 block005b_12_001.png */
-    { 2208, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 977 block005b_13_001.png */
+    { 2206, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_964, NULL }, /* 964 block005b_slope_square_01_001.png */
+    { 2207, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_965, NULL }, /* 965 block005b_slope_square_02_001.png */
+    { 2208, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 966 block005b_slope_square_03_001.png */
+    { 2209, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_967, NULL }, /* 967 plank005b_01_001.png */
+    { 2210, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_968, NULL }, /* 968 plank005b_02_001.png */
+    { 2211, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_969, NULL }, /* 969 plank005b_slope_01_001.png */
+    { 2212, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_970, NULL }, /* 970 plank005b_slope_02_001.png */
+    { 2213, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_971, NULL }, /* 971 plank005b_slope_square_01_001.png */
+    { 2214, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_972, NULL }, /* 972 plank005b_slope_square_02_001.png */
+    { 2215, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 973 plank005b_slope_square_03_001.png */
+    { 2216, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_974, NULL }, /* 974 block005b_10_001.png */
+    { 2217, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_975, NULL }, /* 975 block005b_11_001.png */
+    { 2218, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 976 block005b_12_001.png */
+    { 2219, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 977 block005b_13_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 978 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 979 - */
     { 577, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 5, children_v2_980, NULL }, /* 980 persp_outline_01_001.png */
-    { 2182, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 5, children_v2_981, NULL }, /* 981 block008_topcolor_15_001.png */
+    { 2193, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 5, children_v2_981, NULL }, /* 981 block008_topcolor_15_001.png */
     { 579, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_982, NULL }, /* 982 persp_outline_03_001.png */
     { 580, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 5, children_v2_983, NULL }, /* 983 persp_outline_04_001.png */
     { 581, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 5, children_v2_984, NULL }, /* 984 persp_outline_05_001.png */
@@ -250,10 +250,10 @@
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 994 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 995 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 996 - */
-    { 2219, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_997, NULL }, /* 997 d_ringSeg_01_001.png */
-    { 2220, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_998, NULL }, /* 998 d_ringSeg_02_001.png */
-    { 2221, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_999, NULL }, /* 999 d_ringSeg_03_001.png */
-    { 2222, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1000, NULL }, /* 1000 d_ringSeg_04_001.png */
+    { 2230, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_997, NULL }, /* 997 d_ringSeg_01_001.png */
+    { 2231, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_998, NULL }, /* 998 d_ringSeg_02_001.png */
+    { 2232, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_999, NULL }, /* 999 d_ringSeg_03_001.png */
+    { 2233, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1000, NULL }, /* 1000 d_ringSeg_04_001.png */
     { 254, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1001, NULL }, /* 1001 d_link_d_01_001.png */
     { 256, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1002, NULL }, /* 1002 d_link_d_02_001.png */
     { 258, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1003, NULL }, /* 1003 d_link_d_03_001.png */
@@ -267,18 +267,18 @@
     { 212, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1011 d_gradient_c_01_001.png */
     { 213, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1012 d_gradient_c_02_001.png */
     { 214, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1013 d_gradient_c_03_001.png */
-    { 2223, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1014 block010_slope_01_001.png */
-    { 2224, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1015 block010_slope_02_001.png */
-    { 2225, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1016 block010_slope_square_01_001.png */
-    { 2226, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1017 block010_slope_square_02_001.png */
-    { 2227, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1018 block010_slope_square_03_001.png */
-    { 2228, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 7, children_v2_1019, NULL }, /* 1019 d_flashRing_01_001.png */
-    { 2229, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 7, children_v2_1020, NULL }, /* 1020 d_flashRing_02_001.png */
-    { 2230, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 7, children_v2_1021, NULL }, /* 1021 d_flashRing_03_001.png */
-    { 2231, 2232, 0.00, 0.00, 3, 12, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_v2_1022 }, /* 1022 gravJumpRing_01_001.png */
+    { 2234, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1014 block010_slope_01_001.png */
+    { 2235, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1015 block010_slope_02_001.png */
+    { 2236, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1016 block010_slope_square_01_001.png */
+    { 2237, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1017 block010_slope_square_02_001.png */
+    { 2238, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1018 block010_slope_square_03_001.png */
+    { 2239, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 7, children_v2_1019, NULL }, /* 1019 d_flashRing_01_001.png */
+    { 2240, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 7, children_v2_1020, NULL }, /* 1020 d_flashRing_02_001.png */
+    { 2241, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 7, children_v2_1021, NULL }, /* 1021 d_flashRing_03_001.png */
+    { 2242, 2243, 0.00, 0.00, 3, 12, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_v2_1022 }, /* 1022 gravJumpRing_01_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1023 - */
     { 577, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1024, NULL }, /* 1024 persp_outline_01_001.png */
-    { 2182, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1025, NULL }, /* 1025 block008_topcolor_15_001.png */
+    { 2193, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1025, NULL }, /* 1025 block008_topcolor_15_001.png */
     { 579, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1026, NULL }, /* 1026 persp_outline_03_001.png */
     { 580, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1027, NULL }, /* 1027 persp_outline_04_001.png */
     { 581, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1028, NULL }, /* 1028 persp_outline_05_001.png */
@@ -286,38 +286,38 @@
     { 583, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1030, NULL }, /* 1030 persp_outline_07_001.png */
     { 584, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1031, NULL }, /* 1031 persp_outline_08_001.png */
     { 585, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1032, NULL }, /* 1032 persp_outline_09_001.png */
-    { 2238, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1033, NULL }, /* 1033 block005_slope_03_001.png */
-    { 2239, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1034, NULL }, /* 1034 block005_slope_04_001.png */
-    { 2240, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1035, NULL }, /* 1035 block005_slope_square_04_001.png */
-    { 2241, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1036, NULL }, /* 1036 block005_slope_square_05_001.png */
-    { 2242, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1037, NULL }, /* 1037 block005b_slope_03_001.png */
-    { 2243, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1038, NULL }, /* 1038 block005b_slope_04_001.png */
-    { 2244, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1039, NULL }, /* 1039 block005b_slope_square_04_001.png */
-    { 2245, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1040, NULL }, /* 1040 block005b_slope_square_05_001.png */
-    { 2246, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1041 block005_slope_05_001.png */
-    { 2247, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1042 block005_slope_06_001.png */
-    { 2248, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1043 block005b_slope_05_001.png */
-    { 2249, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1044 block005b_slope_06_001.png */
-    { 2250, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1045 block005_16_001.png */
-    { 2251, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1046 block005_17_001.png */
-    { 2252, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1047 block005b_16_001.png */
-    { 2253, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1048 block005b_17_001.png */
+    { 2249, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1033, NULL }, /* 1033 block005_slope_03_001.png */
+    { 2250, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1034, NULL }, /* 1034 block005_slope_04_001.png */
+    { 2251, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1035, NULL }, /* 1035 block005_slope_square_04_001.png */
+    { 2252, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1036, NULL }, /* 1036 block005_slope_square_05_001.png */
+    { 2253, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1037, NULL }, /* 1037 block005b_slope_03_001.png */
+    { 2254, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1038, NULL }, /* 1038 block005b_slope_04_001.png */
+    { 2255, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1039, NULL }, /* 1039 block005b_slope_square_04_001.png */
+    { 2256, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1040, NULL }, /* 1040 block005b_slope_square_05_001.png */
+    { 2257, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1041 block005_slope_05_001.png */
+    { 2258, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1042 block005_slope_06_001.png */
+    { 2259, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1043 block005b_slope_05_001.png */
+    { 2260, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1044 block005b_slope_06_001.png */
+    { 2261, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1045 block005_16_001.png */
+    { 2262, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1046 block005_17_001.png */
+    { 2263, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1047 block005b_16_001.png */
+    { 2264, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1048 block005b_17_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1049 edit_eToggleBtn_001.png */
-    { 2254, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1050, NULL }, /* 1050 d_animWave_01_base_001.png */
-    { 2255, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1051, NULL }, /* 1051 d_animWave_02_base_001.png */
-    { 2256, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1052, NULL }, /* 1052 d_animWave_03_base_001.png */
-    { 2258, -1, 0.00, 0.00, 3, 9, 1, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1053, NULL }, /* 1053 d_animLoading_01_001.png */
-    { 2260, -1, 0.00, 0.00, 3, 9, 1, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1054, NULL }, /* 1054 d_animLoading_02_001.png */
-    { 2262, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1055, NULL }, /* 1055 d_pickupCircle_01_001.png */
-    { 2262, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1056, NULL }, /* 1056 d_pickupCircle_01_001.png */
-    { 2262, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1057, NULL }, /* 1057 d_pickupCircle_01_001.png */
+    { 2265, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1050, NULL }, /* 1050 d_animWave_01_base_001.png */
+    { 2266, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1051, NULL }, /* 1051 d_animWave_02_base_001.png */
+    { 2267, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1052, NULL }, /* 1052 d_animWave_03_base_001.png */
+    { 2269, -1, 0.00, 0.00, 3, 9, 1, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1053, NULL }, /* 1053 d_animLoading_01_001.png */
+    { 2271, -1, 0.00, 0.00, 3, 9, 1, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1054, NULL }, /* 1054 d_animLoading_02_001.png */
+    { 2273, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1055, NULL }, /* 1055 d_pickupCircle_01_001.png */
+    { 2273, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1056, NULL }, /* 1056 d_pickupCircle_01_001.png */
+    { 2273, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1057, NULL }, /* 1057 d_pickupCircle_01_001.png */
     { 310, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1058 d_spiral_01_001.png */
     { 311, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1059 d_spiral_02_001.png */
     { 312, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1060 d_spiral_03_001.png */
     { 313, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1061 d_spiral_04_001.png */
-    { 2264, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1062, NULL }, /* 1062 block009b_07_001.png */
+    { 2275, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1062, NULL }, /* 1062 block009b_07_001.png */
     { 577, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1063, NULL }, /* 1063 persp_outline_01_001.png */
-    { 2182, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1064, NULL }, /* 1064 block008_topcolor_15_001.png */
+    { 2193, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1064, NULL }, /* 1064 block008_topcolor_15_001.png */
     { 579, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1065, NULL }, /* 1065 persp_outline_03_001.png */
     { 580, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1066, NULL }, /* 1066 persp_outline_04_001.png */
     { 581, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1067, NULL }, /* 1067 persp_outline_05_001.png */
@@ -331,10 +331,10 @@
     { 61, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1075, NULL }, /* 1075 block003_part03_001.png */
     { 59, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1076, NULL }, /* 1076 block003_part01_001.png */
     { 59, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1077, NULL }, /* 1077 block003_part01_001.png */
-    { 2275, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 5, children_v2_1078, NULL }, /* 1078 block007_01_small_001.png */
-    { 2278, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 3, children_v2_1079, NULL }, /* 1079 plank007_01_001.png */
-    { 2279, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 4, children_v2_1080, NULL }, /* 1080 plank007_02_001.png */
-    { 2280, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 5, children_v2_1081, NULL }, /* 1081 plank007_03_001.png */
+    { 2286, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 5, children_v2_1078, NULL }, /* 1078 block007_01_small_001.png */
+    { 2289, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 3, children_v2_1079, NULL }, /* 1079 plank007_01_001.png */
+    { 2290, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 4, children_v2_1080, NULL }, /* 1080 plank007_02_001.png */
+    { 2291, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BLACK, 0, 1.00, 5, children_v2_1081, NULL }, /* 1081 plank007_03_001.png */
     { 2038, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1082, NULL }, /* 1082 block007_01_001.png */
     { 2041, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1083, NULL }, /* 1083 block007_02_001.png */
     { 2044, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1084, NULL }, /* 1084 block007_03_001.png */
@@ -348,10 +348,10 @@
     { 2066, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1092, NULL }, /* 1092 block007_slope_02_001.png */
     { 2068, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1093, NULL }, /* 1093 block007_slope_square_01_001.png */
     { 2070, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1094, NULL }, /* 1094 block007_slope_square_02_001.png */
-    { 2275, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1095, NULL }, /* 1095 block007_01_small_001.png */
-    { 2278, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1096, NULL }, /* 1096 plank007_01_001.png */
-    { 2279, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1097, NULL }, /* 1097 plank007_02_001.png */
-    { 2280, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1098, NULL }, /* 1098 plank007_03_001.png */
+    { 2286, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1095, NULL }, /* 1095 block007_01_small_001.png */
+    { 2289, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1096, NULL }, /* 1096 plank007_01_001.png */
+    { 2290, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1097, NULL }, /* 1097 plank007_02_001.png */
+    { 2291, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1098, NULL }, /* 1098 plank007_03_001.png */
     { 2051, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1099 block007_bgcolor_001_001.png */
     { 2037, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1100 block007_bgcolor_002_001.png */
     { 2040, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1101 block007_bgcolor_003_001.png */
@@ -363,36 +363,36 @@
     { 2061, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1107 block007_bgcolor_009_001.png */
     { 2066, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 2, children_v2_1108, NULL }, /* 1108 block007_slope_02_001.png */
     { 2051, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1109 block007_bgcolor_001_001.png */
-    { 2274, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1110 block007_bgcolor_012_001.png */
-    { 2277, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1111 block007_bgcolor_013_001.png */
-    { 2281, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1112 block007b_bgcolor_01_001.png */
-    { 2282, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1113 block007b_bgcolor_02_001.png */
-    { 2283, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1114 block007b_bgcolor_03_001.png */
-    { 2284, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1115 block007b_bgcolor_05_001.png */
-    { 2285, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1116 block007b_bgcolor_06_001.png */
-    { 2286, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1117 block007b_bgcolor_07_001.png */
-    { 2287, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1118 block007b_bgcolor_08_001.png */
+    { 2285, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1110 block007_bgcolor_012_001.png */
+    { 2288, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1111 block007_bgcolor_013_001.png */
+    { 2292, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1112 block007b_bgcolor_01_001.png */
+    { 2293, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1113 block007b_bgcolor_02_001.png */
+    { 2294, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1114 block007b_bgcolor_03_001.png */
+    { 2295, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1115 block007b_bgcolor_05_001.png */
+    { 2296, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1116 block007b_bgcolor_06_001.png */
+    { 2297, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1117 block007b_bgcolor_07_001.png */
+    { 2298, -1, 0.00, 0.00, 1, -8, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1118 block007b_bgcolor_08_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1119 - */
-    { 2288, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1120 block008_topcolor_01_001.png */
+    { 2299, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1120 block008_topcolor_01_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1121 - */
-    { 2289, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1122 block008_topcolor_29_001.png */
-    { 2182, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1123, NULL }, /* 1123 block008_topcolor_15_001.png */
-    { 2290, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1124 block008_topcolor_16_001.png */
-    { 2291, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1125 block008_topcolor_18_001.png */
-    { 2292, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 2, children_v2_1126, NULL }, /* 1126 block008_topcolor_24b_001.png */
-    { 2292, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1127, NULL }, /* 1127 block008_topcolor_24b_001.png */
+    { 2300, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1122 block008_topcolor_29_001.png */
+    { 2193, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1123, NULL }, /* 1123 block008_topcolor_15_001.png */
+    { 2301, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1124 block008_topcolor_16_001.png */
+    { 2302, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1125 block008_topcolor_18_001.png */
+    { 2303, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 2, children_v2_1126, NULL }, /* 1126 block008_topcolor_24b_001.png */
+    { 2303, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1127, NULL }, /* 1127 block008_topcolor_24b_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1128 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1129 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1130 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1131 - */
-    { 2293, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1132, NULL }, /* 1132 block008_topcolor_22_001.png */
-    { 2294, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1133, NULL }, /* 1133 block008_topcolor_23_001.png */
-    { 2295, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1134, NULL }, /* 1134 block008_topcolor_25_001.png */
-    { 2296, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1135, NULL }, /* 1135 block008_topcolor_26_001.png */
-    { 2297, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1136, NULL }, /* 1136 block008_topcolor_27_001.png */
-    { 2298, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1137, NULL }, /* 1137 block008_topcolor_28_001.png */
-    { 2299, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1138 block008_topcolor_12_001.png */
-    { 2300, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1139 block008_topcolor_13_001.png */
+    { 2304, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1132, NULL }, /* 1132 block008_topcolor_22_001.png */
+    { 2305, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1133, NULL }, /* 1133 block008_topcolor_23_001.png */
+    { 2306, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1134, NULL }, /* 1134 block008_topcolor_25_001.png */
+    { 2307, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1135, NULL }, /* 1135 block008_topcolor_26_001.png */
+    { 2308, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1136, NULL }, /* 1136 block008_topcolor_27_001.png */
+    { 2309, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1137, NULL }, /* 1137 block008_topcolor_28_001.png */
+    { 2310, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1138 block008_topcolor_12_001.png */
+    { 2311, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1139 block008_topcolor_13_001.png */
     { 677, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1140 square_g_03_001.png */
     { 678, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1141 square_g_04_001.png */
     { 679, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1142 square_g_05_001.png */
@@ -412,58 +412,58 @@
     { 643, 113, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1156 }, /* 1156 smallOutline_03_001.png */
     { 644, 114, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1157, hitbox_v2_1157 }, /* 1157 smallOutline_04_001.png */
     { 645, 115, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1158 smallOutline_05_001.png */
-    { 2302, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1159, NULL }, /* 1159 block009b_08_001.png */
-    { 2304, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1160, NULL }, /* 1160 block009b_09_001.png */
-    { 2306, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1161, NULL }, /* 1161 block009b_10_001.png */
-    { 2308, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1162, NULL }, /* 1162 block006_01_001.png */
-    { 2310, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1163, NULL }, /* 1163 block006_02_001.png */
-    { 2312, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1164, NULL }, /* 1164 block006_03_001.png */
-    { 2313, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1165, NULL }, /* 1165 block006_04_001.png */
-    { 2314, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1166, NULL }, /* 1166 block006_05_001.png */
-    { 2315, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1167, NULL }, /* 1167 block006_06_001.png */
-    { 2317, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1168, NULL }, /* 1168 block006_07_001.png */
-    { 2318, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1169, NULL }, /* 1169 block006_08_001.png */
-    { 2320, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1170, NULL }, /* 1170 block006_09_001.png */
-    { 2321, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1171, NULL }, /* 1171 block006_10_001.png */
-    { 2322, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1172, NULL }, /* 1172 block006_11_001.png */
-    { 2323, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1173, NULL }, /* 1173 block006_12_001.png */
-    { 2324, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1174, NULL }, /* 1174 block006_13_001.png */
-    { 2325, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1175, NULL }, /* 1175 block006_14_001.png */
-    { 2326, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1176, NULL }, /* 1176 block006_15_001.png */
-    { 2327, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1177, NULL }, /* 1177 block006_16_001.png */
-    { 2328, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1178, NULL }, /* 1178 block006_17_001.png */
-    { 2329, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1179, NULL }, /* 1179 block006_18_001.png */
-    { 2330, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1180, NULL }, /* 1180 block006_19_001.png */
-    { 2331, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1181, NULL }, /* 1181 block006_20_001.png */
-    { 2332, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1182, NULL }, /* 1182 block006_21_001.png */
-    { 2333, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1183, NULL }, /* 1183 block006_22_001.png */
-    { 2334, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1184, NULL }, /* 1184 block006_23_001.png */
-    { 2335, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1185, NULL }, /* 1185 block006_24_001.png */
-    { 2336, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1186 block006_25_001.png */
-    { 2338, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1187, NULL }, /* 1187 block006_slope_01_001.png */
-    { 2340, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1188, NULL }, /* 1188 block006_slope_02_001.png */
-    { 2342, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1189, NULL }, /* 1189 block006_slope_square_01_001.png */
-    { 2344, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1190, NULL }, /* 1190 block006_slope_square_02_001.png */
-    { 2307, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1191 block006_color_01_001.png */
-    { 2309, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1192 block006_color_02_001.png */
-    { 2311, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1193 block006_color_03_001.png */
-    { 2316, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1194 block006_color_04_001.png */
+    { 2313, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1159, NULL }, /* 1159 block009b_08_001.png */
+    { 2315, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1160, NULL }, /* 1160 block009b_09_001.png */
+    { 2317, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1161, NULL }, /* 1161 block009b_10_001.png */
+    { 2319, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1162, NULL }, /* 1162 block006_01_001.png */
+    { 2321, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1163, NULL }, /* 1163 block006_02_001.png */
+    { 2323, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1164, NULL }, /* 1164 block006_03_001.png */
+    { 2324, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1165, NULL }, /* 1165 block006_04_001.png */
+    { 2325, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1166, NULL }, /* 1166 block006_05_001.png */
+    { 2326, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1167, NULL }, /* 1167 block006_06_001.png */
+    { 2328, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1168, NULL }, /* 1168 block006_07_001.png */
+    { 2329, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1169, NULL }, /* 1169 block006_08_001.png */
+    { 2331, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1170, NULL }, /* 1170 block006_09_001.png */
+    { 2332, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1171, NULL }, /* 1171 block006_10_001.png */
+    { 2333, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1172, NULL }, /* 1172 block006_11_001.png */
+    { 2334, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1173, NULL }, /* 1173 block006_12_001.png */
+    { 2335, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1174, NULL }, /* 1174 block006_13_001.png */
+    { 2336, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1175, NULL }, /* 1175 block006_14_001.png */
+    { 2337, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1176, NULL }, /* 1176 block006_15_001.png */
+    { 2338, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1177, NULL }, /* 1177 block006_16_001.png */
+    { 2339, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1178, NULL }, /* 1178 block006_17_001.png */
+    { 2340, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1179, NULL }, /* 1179 block006_18_001.png */
+    { 2341, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1180, NULL }, /* 1180 block006_19_001.png */
+    { 2342, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1181, NULL }, /* 1181 block006_20_001.png */
+    { 2343, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1182, NULL }, /* 1182 block006_21_001.png */
+    { 2344, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1183, NULL }, /* 1183 block006_22_001.png */
+    { 2345, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1184, NULL }, /* 1184 block006_23_001.png */
+    { 2346, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1185, NULL }, /* 1185 block006_24_001.png */
+    { 2347, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1186 block006_25_001.png */
+    { 2349, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1187, NULL }, /* 1187 block006_slope_01_001.png */
+    { 2351, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1188, NULL }, /* 1188 block006_slope_02_001.png */
+    { 2353, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1189, NULL }, /* 1189 block006_slope_square_01_001.png */
+    { 2355, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1190, NULL }, /* 1190 block006_slope_square_02_001.png */
+    { 2318, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1191 block006_color_01_001.png */
+    { 2320, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1192 block006_color_02_001.png */
+    { 2322, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1193 block006_color_03_001.png */
+    { 2327, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1194 block006_color_04_001.png */
     { 2162, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1195 block006_color_05_001.png */
-    { 2319, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1196 block006_color_06_001.png */
-    { 2307, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1197, NULL }, /* 1197 block006_color_01_001.png */
-    { 2337, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1198 block006_slope_01_color_001.png */
-    { 2339, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1199 block006_slope_02_color_001.png */
-    { 2341, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1200 block006_slope_square_01_color_001.png */
-    { 2343, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1201 block006_slope_square_02_color_001.png */
-    { 81, 2345, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1202 }, /* 1202 blockOutlineThick_01_001.png */
-    { 82, 2346, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1203, hitbox_v2_1203 }, /* 1203 blockOutlineThick_02_001.png */
-    { 83, 2347, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1204, hitbox_v2_1204 }, /* 1204 blockOutlineThick_03_001.png */
-    { 84, 2348, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1205 blockOutlineThick_04_001.png */
-    { 85, 2349, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1206 blockOutlineThick_05_001.png */
-    { 86, 2350, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1207 blockOutlineThick_06_001.png */
-    { 87, 2351, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1208, hitbox_v2_1208 }, /* 1208 blockOutlineThick_07_001.png */
-    { 88, 2352, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1209, hitbox_v2_1209 }, /* 1209 blockOutlineThick_08_001.png */
-    { 83, 2347, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1210, hitbox_v2_1210 }, /* 1210 blockOutlineThick_03_001.png */
+    { 2330, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1196 block006_color_06_001.png */
+    { 2318, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1197, NULL }, /* 1197 block006_color_01_001.png */
+    { 2348, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1198 block006_slope_01_color_001.png */
+    { 2350, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1199 block006_slope_02_color_001.png */
+    { 2352, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1200 block006_slope_square_01_color_001.png */
+    { 2354, -1, 0.00, 0.00, 5, 10, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1201 block006_slope_square_02_color_001.png */
+    { 81, 2356, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1202 }, /* 1202 blockOutlineThick_01_001.png */
+    { 82, 2357, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1203, hitbox_v2_1203 }, /* 1203 blockOutlineThick_02_001.png */
+    { 83, 2358, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1204, hitbox_v2_1204 }, /* 1204 blockOutlineThick_03_001.png */
+    { 84, 2359, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1205 blockOutlineThick_04_001.png */
+    { 85, 2360, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1206 blockOutlineThick_05_001.png */
+    { 86, 2361, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1207 blockOutlineThick_06_001.png */
+    { 87, 2362, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1208, hitbox_v2_1208 }, /* 1208 blockOutlineThick_07_001.png */
+    { 88, 2363, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1209, hitbox_v2_1209 }, /* 1209 blockOutlineThick_08_001.png */
+    { 83, 2358, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1210, hitbox_v2_1210 }, /* 1210 blockOutlineThick_03_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1211 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1212 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1213 - */
@@ -473,54 +473,54 @@
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1217 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1218 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1219 - */
-    { 89, 2353, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1220 }, /* 1220 blockOutlineThickb_01_001.png */
-    { 90, 2354, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1221, hitbox_v2_1221 }, /* 1221 blockOutlineThickb_02_001.png */
-    { 91, 2355, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1222, hitbox_v2_1222 }, /* 1222 blockOutlineThickb_03_001.png */
-    { 92, 2356, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1223 blockOutlineThickb_04_001.png */
-    { 93, 2357, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1224 blockOutlineThickb_05_001.png */
-    { 94, 2358, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1225 blockOutlineThickb_06_001.png */
-    { 95, 2359, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1226, hitbox_v2_1226 }, /* 1226 blockOutlineThickb_08_001.png */
-    { 91, 2355, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1227, hitbox_v2_1227 }, /* 1227 blockOutlineThickb_03_001.png */
+    { 89, 2364, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1220 }, /* 1220 blockOutlineThickb_01_001.png */
+    { 90, 2365, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1221, hitbox_v2_1221 }, /* 1221 blockOutlineThickb_02_001.png */
+    { 91, 2366, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1222, hitbox_v2_1222 }, /* 1222 blockOutlineThickb_03_001.png */
+    { 92, 2367, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1223 blockOutlineThickb_04_001.png */
+    { 93, 2368, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1224 blockOutlineThickb_05_001.png */
+    { 94, 2369, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1225 blockOutlineThickb_06_001.png */
+    { 95, 2370, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1226, hitbox_v2_1226 }, /* 1226 blockOutlineThickb_08_001.png */
+    { 91, 2366, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1227, hitbox_v2_1227 }, /* 1227 blockOutlineThickb_03_001.png */
     { 331, -1, 0.00, 0.00, 3, 9, 1007, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1228 d_waveBG_001.png */
-    { 2172, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1229, NULL }, /* 1229 block010_piece_01_001.png */
-    { 2172, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1230, NULL }, /* 1230 block010_piece_01_001.png */
-    { 2172, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1231, NULL }, /* 1231 block010_piece_01_001.png */
-    { 2360, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1232, NULL }, /* 1232 block010_piece_02_001.png */
-    { 2360, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1233, NULL }, /* 1233 block010_piece_02_001.png */
-    { 2360, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1234, NULL }, /* 1234 block010_piece_02_001.png */
-    { 2360, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1235, NULL }, /* 1235 block010_piece_02_001.png */
-    { 2360, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1236, NULL }, /* 1236 block010_piece_02_001.png */
-    { 2360, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1237, NULL }, /* 1237 block010_piece_02_001.png */
-    { 2172, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1238, NULL }, /* 1238 block010_piece_01_001.png */
-    { 2167, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1239, NULL }, /* 1239 block010_02_001.png */
-    { 2173, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1240, NULL }, /* 1240 block010_06_001.png */
-    { 2361, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1241 block008_topcolor_02_001.png */
-    { 2362, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1242 block008_topcolor_06_001.png */
-    { 2363, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1243 block008_topcolor_07_001.png */
-    { 2364, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1244 block008_topcolor_08_001.png */
-    { 2365, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1245 block008_topcolor_10_001.png */
-    { 2366, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1246, NULL }, /* 1246 block008_topcolor_11_001.png */
+    { 2183, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1229, NULL }, /* 1229 block010_piece_01_001.png */
+    { 2183, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1230, NULL }, /* 1230 block010_piece_01_001.png */
+    { 2183, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1231, NULL }, /* 1231 block010_piece_01_001.png */
+    { 2371, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1232, NULL }, /* 1232 block010_piece_02_001.png */
+    { 2371, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1233, NULL }, /* 1233 block010_piece_02_001.png */
+    { 2371, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1234, NULL }, /* 1234 block010_piece_02_001.png */
+    { 2371, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1235, NULL }, /* 1235 block010_piece_02_001.png */
+    { 2371, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1236, NULL }, /* 1236 block010_piece_02_001.png */
+    { 2371, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 4, children_v2_1237, NULL }, /* 1237 block010_piece_02_001.png */
+    { 2183, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1238, NULL }, /* 1238 block010_piece_01_001.png */
+    { 2178, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1239, NULL }, /* 1239 block010_02_001.png */
+    { 2184, -1, 0.00, 0.00, 1, -7, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 1, children_v2_1240, NULL }, /* 1240 block010_06_001.png */
+    { 2372, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1241 block008_topcolor_02_001.png */
+    { 2373, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1242 block008_topcolor_06_001.png */
+    { 2374, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1243 block008_topcolor_07_001.png */
+    { 2375, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1244 block008_topcolor_08_001.png */
+    { 2376, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1245 block008_topcolor_10_001.png */
+    { 2377, -1, 0.00, 0.00, 5, 4, 1011, COLOR_TYPE_DETAIL, 1, 1.00, 3, children_v2_1246, NULL }, /* 1246 block008_topcolor_11_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1247, NULL }, /* 1247 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 6, children_v2_1248, NULL }, /* 1248 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 6, children_v2_1249, NULL }, /* 1249 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 6, children_v2_1250, NULL }, /* 1250 block005b_05_001.png */
-    { 2374, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1251, NULL }, /* 1251 block009c_10_001.png */
-    { 2375, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1252, NULL }, /* 1252 block009c_11_001.png */
+    { 2385, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1251, NULL }, /* 1251 block009c_10_001.png */
+    { 2386, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1252, NULL }, /* 1252 block009c_11_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 7, children_v2_1253, NULL }, /* 1253 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 7, children_v2_1254, NULL }, /* 1254 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 10, children_v2_1255, NULL }, /* 1255 block005b_05_001.png */
-    { 2378, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1256, NULL }, /* 1256 block009c_slope_03_001.png */
-    { 2381, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1257, NULL }, /* 1257 block009c_slope_04_001.png */
-    { 2378, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1258, NULL }, /* 1258 block009c_slope_03_001.png */
-    { 2381, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1259, NULL }, /* 1259 block009c_slope_04_001.png */
+    { 2389, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1256, NULL }, /* 1256 block009c_slope_03_001.png */
+    { 2392, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 3, children_v2_1257, NULL }, /* 1257 block009c_slope_04_001.png */
+    { 2389, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1258, NULL }, /* 1258 block009c_slope_03_001.png */
+    { 2392, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1259, NULL }, /* 1259 block009c_slope_04_001.png */
     { 97, 13, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1260 }, /* 1260 blockOutline_02_001.png */
     { 78, 9, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1261 blockOutlineOuter1_01_001.png */
-    { 81, 2345, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1262 }, /* 1262 blockOutlineThick_01_001.png */
+    { 81, 2356, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1262 }, /* 1262 blockOutlineThick_01_001.png */
     { 79, 10, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1263 blockOutlineOuter2_01_001.png */
-    { 89, 2353, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1264 }, /* 1264 blockOutlineThickb_01_001.png */
+    { 89, 2364, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_v2_1264 }, /* 1264 blockOutlineThickb_01_001.png */
     { 80, 11, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1265 blockOutlineOuter3_01_001.png */
-    { 2382, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1266, NULL }, /* 1266 block009_07_001.png */
-    { 2383, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1267, NULL }, /* 1267 block009_08_001.png */
+    { 2393, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1266, NULL }, /* 1266 block009_07_001.png */
+    { 2394, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1267, NULL }, /* 1267 block009_08_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1268 edit_eSpawnBtn_001.png */
     { 215, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1269 d_gradient_c_04_001.png */
     { 216, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1270 d_gradient_c_05_001.png */
@@ -528,8 +528,8 @@
     { 210, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1272 d_gradient_b_05_001.png */
     { 204, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1273 d_gradient_04_001.png */
     { 205, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1274 d_gradient_05_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1275 d_key01_001.png */
-    { 2384, -1, 0.00, 0.00, 5, 9, 1, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1276 d_keyHole01_001.png */
+    { 2395, -1, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1275 d_key01_001.png */
+    { 2396, -1, 0.00, 0.00, 5, 9, 1, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1276 d_keyHole01_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1277, NULL }, /* 1277 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_1278, NULL }, /* 1278 block005b_05_001.png */
     { 77, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1279, NULL }, /* 1279 block005b_05_001.png */
@@ -547,39 +547,39 @@
     { 206, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1291 d_gradient_06_001.png */
     { 211, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1292 d_gradient_b_06_001.png */
     { 217, -1, 0.00, 0.00, 1, 9, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 1293 d_gradient_c_06_001.png */
-    { 2385, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1294, NULL }, /* 1294 block005_02b_001.png */
-    { 2386, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1295, NULL }, /* 1295 block005_04b_001.png */
-    { 2387, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1296, NULL }, /* 1296 block005b_02b_001.png */
-    { 2388, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1297, NULL }, /* 1297 block005b_04b_001.png */
+    { 2397, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1294, NULL }, /* 1294 block005_02b_001.png */
+    { 2398, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1295, NULL }, /* 1295 block005_04b_001.png */
+    { 2399, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1296, NULL }, /* 1296 block005b_02b_001.png */
+    { 2400, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1297, NULL }, /* 1297 block005b_04b_001.png */
     { 59, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 4, children_v2_1298, NULL }, /* 1298 block003_part01_001.png */
-    { 2389, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1299, NULL }, /* 1299 block005c_02_001.png */
-    { 2390, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1300, NULL }, /* 1300 block005c_03_001.png */
-    { 2391, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1301, NULL }, /* 1301 block005c_04_001.png */
-    { 2392, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1302, NULL }, /* 1302 block005c_10_001.png */
-    { 2393, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1303, NULL }, /* 1303 block005c_11_001.png */
-    { 2394, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1304, NULL }, /* 1304 block005c_06_001.png */
-    { 2395, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1305, NULL }, /* 1305 block005c_slope_01_001.png */
-    { 2396, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1306, NULL }, /* 1306 block005c_slope_02_001.png */
-    { 2397, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1307, NULL }, /* 1307 block005c_slope_square_01_001.png */
-    { 2398, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1308, NULL }, /* 1308 block005c_slope_square_02_001.png */
-    { 2399, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1309 block005c_slope_square_03_001.png */
-    { 2389, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1310 block005c_02_001.png */
-    { 2390, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1311 block005c_03_001.png */
-    { 2391, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1312 block005c_04_001.png */
-    { 2392, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1313 block005c_10_001.png */
-    { 2393, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1314 block005c_11_001.png */
-    { 2394, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1315 block005c_06_001.png */
-    { 2395, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1316 block005c_slope_01_001.png */
-    { 2396, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1317 block005c_slope_02_001.png */
-    { 2397, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1318 block005c_slope_square_01_001.png */
-    { 2398, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1319 block005c_slope_square_02_001.png */
-    { 2399, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1320 block005c_slope_square_03_001.png */
+    { 2401, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1299, NULL }, /* 1299 block005c_02_001.png */
+    { 2402, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1300, NULL }, /* 1300 block005c_03_001.png */
+    { 2403, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1301, NULL }, /* 1301 block005c_04_001.png */
+    { 2404, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1302, NULL }, /* 1302 block005c_10_001.png */
+    { 2405, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1303, NULL }, /* 1303 block005c_11_001.png */
+    { 2406, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1304, NULL }, /* 1304 block005c_06_001.png */
+    { 2407, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1305, NULL }, /* 1305 block005c_slope_01_001.png */
+    { 2408, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1306, NULL }, /* 1306 block005c_slope_02_001.png */
+    { 2409, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1307, NULL }, /* 1307 block005c_slope_square_01_001.png */
+    { 2410, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1308, NULL }, /* 1308 block005c_slope_square_02_001.png */
+    { 2411, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1309 block005c_slope_square_03_001.png */
+    { 2401, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1310 block005c_02_001.png */
+    { 2402, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1311 block005c_03_001.png */
+    { 2403, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1312 block005c_04_001.png */
+    { 2404, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1313 block005c_10_001.png */
+    { 2405, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1314 block005c_11_001.png */
+    { 2406, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1315 block005c_06_001.png */
+    { 2407, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1316 block005c_slope_01_001.png */
+    { 2408, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1317 block005c_slope_02_001.png */
+    { 2409, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1318 block005c_slope_square_01_001.png */
+    { 2410, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1319 block005c_slope_square_02_001.png */
+    { 2411, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1320 block005c_slope_square_03_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1321 - */
-    { 2400, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1322, NULL }, /* 1322 block006_26_001.png */
+    { 2412, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1322, NULL }, /* 1322 block006_26_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1323 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1324 - */
-    { 2401, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1325, NULL }, /* 1325 block006_slope_square_03_001.png */
-    { 2402, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1326, NULL }, /* 1326 block006_slope_square_04_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1327 GJBeast02_01_001.png */
-    { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1328 GJBeast03_01_001.png */
+    { 2413, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1325, NULL }, /* 1325 block006_slope_square_03_001.png */
+    { 2414, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1326, NULL }, /* 1326 block006_slope_square_04_001.png */
+    { 2415, 2416, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1327 GJBeast02_01_001.png */
+    { 2417, 2418, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1328 GJBeast03_01_001.png */
     { 871, -1, 0.00, 0.00, 5, 9, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_v2_1329 }, /* 1329 secretCoin_2_01_001.png */
