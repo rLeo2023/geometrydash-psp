@@ -43,6 +43,7 @@
 
 #ifdef __PSP__
 #include "../psp/src/psp_port.h"
+#include "triggers_v2.h"
 #endif
 
 #include "player/player.h"
@@ -928,9 +929,19 @@ void game_loop() {
             handle_practice_mode();
 
             u64 start_trig = svcGetSystemTick();
+#ifdef __PSP__
+            // the channels' own colors back, before triggers change them
+            trig2_unpulse_channels();
+#endif
             handle_triggers();
+#ifdef __PSP__
+            trig2_update(delta); // moves, fades, spawns, pulses
+#endif
             handle_col_triggers();
             calculate_lbg();
+#ifdef __PSP__
+            trig2_pulse_channels(); // and the pulses over them, for this frame
+#endif
             u64 end_trig = svcGetSystemTick();
             u64 ticks_trig = end_trig - start_trig;
             triggers_time = ticks_trig / CPU_TICKS_PER_MSEC;

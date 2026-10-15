@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include "state.h"
+#include "triggers_v2.h"
 
 Color p1_color;
 Color p2_color;
@@ -168,7 +169,13 @@ void handle_col_channel(int chan) {
 
         channels[channel].color = lerped_color;
 
+#ifdef __PSP__
+        // the frame's time while playing (30 fps took twice as long), the
+        // menus' fixed step else
+        buffer->time_run += game_state == STATE_GAME ? delta : DT;
+#else
         buffer->time_run += DT;
+#endif
 
         if (buffer->time_run > buffer->seconds) {
             buffer->active = false;
@@ -329,6 +336,10 @@ void run_trigger(int obj) {
             upload_to_buffer(obj, objects.target_color_id[obj]);
             break;
         default:
+#ifdef __PSP__
+            // move, alpha, toggle, spawn, pulse (triggers_v2.c)
+            if (trig2_run(obj)) break;
+#endif
             return;
     }
     SET_ACTIVATED(obj, true);
@@ -367,7 +378,13 @@ void handle_triggers() {
             Section *sec = get_section(sec_x, sec_y);
             for (int i = 0; i < sec->object_count; i++) {
                 int obj = sec->objects[i];
-                
+
+#ifdef __PSP__
+                // a group turned off has its triggers off too; some run
+                // only when a spawn trigger starts them
+                if (objects.toggled[obj] || trig2_spawn_only(obj)) continue;
+#endif
+
                 if (!GET_ACTIVATED(obj)) {
                     if (objects.touch_triggered[obj]) {
                         // Try p1
