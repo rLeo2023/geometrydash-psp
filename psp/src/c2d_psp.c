@@ -1535,7 +1535,9 @@ C2D_Image C2D_SpriteSheetGetImage( C2D_SpriteSheet sheet, size_t index )
 
 	if( !sheet || index >= sheet->num_images )
 	{
-		psp_log( "C2D_SpriteSheetGetImage: no image %d\n", (int)index );
+		// (a sheet that isn't there at all is said once, when loading)
+		if( sheet )
+			psp_log( "C2D_SpriteSheetGetImage: no image %d\n", (int)index );
 		return img;
 	}
 	img.tex = &sheet->pages[sheet->page_of[index]];

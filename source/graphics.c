@@ -67,7 +67,19 @@ SpriteTemplate sprite_templates[GAME_OBJECT_COUNT]; // global cache
 
 float touch_effect_drag_timer = 0.f;
 
+#ifdef __PSP__
+// the 2.0 objects' sheet (psp/tools/mkv2sheet.py, from the user's GD): may
+// not be there, then those objects draw nothing
+C2D_SpriteSheet spriteSheetV2;
+#endif
+
 static C2D_SpriteSheet *get_sprite_sheet(int index, int *rel_index) {
+#ifdef __PSP__
+    if (index >= V2_TEXTURE_START) {
+        *rel_index = index - V2_TEXTURE_START;
+        return &spriteSheetV2;
+    }
+#endif
     // Check if index belongs to spritesheet 1 (most objects)
     if (index < SPRITESHEET2_START) {
         *rel_index = index;
@@ -155,6 +167,12 @@ void cache_all_sprites() {
 
         // Get glow frame
         if (obj->glow_frame >= 0) {
+#ifdef __PSP__
+            // the 2.0 objects' glows are in their own sheet
+            if (obj->glow_frame >= V2_TEXTURE_START)
+                C2D_SpriteFromSheet(&sprite_templates[id].glow_template, spriteSheetV2, obj->glow_frame - V2_TEXTURE_START);
+            else
+#endif
             C2D_SpriteFromSheet(&sprite_templates[id].glow_template, glowSheet, obj->glow_frame);
             C3D_TexSetFilter(sprite_templates[id].glow_template.image.tex, GPU_LINEAR, GPU_LINEAR);
             C2D_SpriteSetCenter(&sprite_templates[id].glow_template, 0.5f, 0.5f);
