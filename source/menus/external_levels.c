@@ -371,6 +371,10 @@ void external_levels_loop() {
     ui_unload_screen(&screen);
     ui_unload_screen(&screen_top);
     first_time_loaded = true;
+    // the list went with the screen: read the folder again next time, even
+    // the same one (coming back from a level)
+    last_path[0] = 1;
+    last_path[1] = '\0';
 #endif
     C2D_TargetClear(bot, C2D_Color32(0, 0, 0, 255));
 }
