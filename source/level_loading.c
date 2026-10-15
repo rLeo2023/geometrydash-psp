@@ -857,12 +857,22 @@ void fill_object_data(int object, int key, GDValueType type, GDValue val) {
         case 19: // 1.9 channel id
             if (type == GD_VAL_INT) objects.v1p9_col_channel[object] = convert_one_point_nine_channel(val.i);
             break;
+#ifdef __PSP__
+        // 2.0 saves some objects (the sludge) with -1: their default color
+        case 21: // Main col channel
+            if (type == GD_VAL_INT && val.i > 0) objects.col_channel[object] = val.i;
+            break;
+        case 22: // Detail col channel
+            if (type == GD_VAL_INT && val.i > 0) objects.detail_col_channel[object] = val.i;
+            break;
+#else
         case 21: // Main col channel
             if (type == GD_VAL_INT) objects.col_channel[object] = val.i;
             break;
         case 22: // Detail col channel
             if (type == GD_VAL_INT) objects.detail_col_channel[object] = val.i;
             break;
+#endif
         case 23: // Target color ID
             if (type == GD_VAL_INT) objects.target_color_id[object] = val.i;
             break;
