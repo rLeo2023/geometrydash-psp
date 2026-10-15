@@ -68,6 +68,13 @@ typedef struct {
     int toRed;
     int toGreen;
     int toBlue;
+#ifdef __PSP__
+    bool v2;                    // from a 2.0 color string: these are set
+    float opacity;              // 7
+    int copy_id;                // 9
+    float h, s, v;              // 10: "h a s a v a s_add a v_add"
+    bool s_add, v_add;
+#endif
 } GDColorChannel;
 
 

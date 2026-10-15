@@ -57,10 +57,10 @@ PATCH = {
 # decorations OpenGD has no data for (monsters, sludge, the key): drawn
 # still, with the editor's sprite. id -> (z layer, z order, main channel)
 DECO = {
-    918: (3, 0, 1011),      # monster 1 (animated in GD)
+    918: (3, 0, 1010),      # monster 1 (animated in GD): black
     919: (3, 0, 1010),      # black sludge
-    1327: (3, 0, 1011),     # monster 2
-    1328: (3, 0, 1011),     # monster 3
+    1327: (3, 0, 1010),     # monster 2
+    1328: (3, 0, 1010),     # monster 3
     1275: (3, 0, 1011),     # key
 }
 

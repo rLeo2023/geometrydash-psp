@@ -74,6 +74,14 @@ void init_col_channels() {
         col_trigger_buffer[chan].active = false;
     }
 
+#ifdef __PSP__
+    for (size_t chan = 0; chan < COL_CHANNEL_NUM; chan++) {
+        channels[chan].alpha = 255;
+        col_trigger_buffer[chan].new_alpha = 255;
+    }
+    copy_link_count = 0;
+#endif
+
     int bg = get_col_channel_index(CHANNEL_BG);
     channels[bg].color.r = 0;
     channels[bg].color.g = 5;
@@ -178,6 +186,15 @@ void handle_col_channel(int chan) {
         channels[channel].color = lerped_color;
 
 #ifdef __PSP__
+        // the opacity too: the rest of the way, over the time that's left
+        float step = game_state == STATE_GAME ? delta : DT;
+        float left = buffer->seconds - buffer->time_run;
+        int a = channels[channel].alpha;
+        a += left > step ? (int)((buffer->new_alpha - a) * step / left) : buffer->new_alpha - a;
+        channels[channel].alpha = a;
+#endif
+
+#ifdef __PSP__
         // the frame's time while playing (30 fps took twice as long), the
         // menus' fixed step else
         buffer->time_run += game_state == STATE_GAME ? delta : DT;
@@ -188,6 +205,9 @@ void handle_col_channel(int chan) {
         if (buffer->time_run > buffer->seconds) {
             buffer->active = false;
             channels[channel].color = color_to_lerp;
+#ifdef __PSP__
+            channels[channel].alpha = buffer->new_alpha;
+#endif
         }
     }
 }
@@ -221,12 +241,31 @@ void upload_to_buffer(int obj, int channel) {
     if (channel < CHANNEL_BG) {
         channels[buffer_channel].blending = objects.blending[obj];
     }
-    
-    
+
+#ifdef __PSP__
+    // 2.0: the opacity, and copying another channel
+    float t_opacity, t_h, t_s, t_v;
+    int t_copied;
+    bool t_s_add, t_v_add;
+    buffer->new_alpha = 255;
+    col_clear_copy(channel);
+    if (trig2_color_info(obj, &t_opacity, &t_copied, &t_h, &t_s, &t_v, &t_s_add, &t_v_add)) {
+        buffer->new_alpha = (u8)(CLAMP(t_opacity, 0.f, 1.f) * 255);
+        if (t_copied > 0) {
+            int src = v2_channel(t_copied);
+            buffer->new_color = col_apply_hsv(channels[get_col_channel_index(src)].color, t_h, t_s, t_v, t_s_add, t_v_add);
+            col_set_copy(channel, src, t_h, t_s, t_v, t_s_add, t_v_add);
+        }
+    }
+#endif
+
     if (objects.trig_duration[obj] == 0) {
         Color color_to_lerp = buffer->new_color;
 
         channels[buffer_channel].color = color_to_lerp;
+#ifdef __PSP__
+        channels[buffer_channel].alpha = buffer->new_alpha;
+#endif
         return;
     }
     
@@ -341,7 +380,11 @@ void run_trigger(int obj) {
             break;
 
         case COL_TRIGGER: // 2.0 color trigger
+#ifdef __PSP__
+            upload_to_buffer(obj, v2_channel(objects.target_color_id[obj]));
+#else
             upload_to_buffer(obj, objects.target_color_id[obj]);
+#endif
             break;
         default:
 #ifdef __PSP__
@@ -464,3 +507,53 @@ void calculate_lbg() {
     channels[chan_lbg].color.b = b;
     channels[chan_lbg].blending = true;
 }
+
+#ifdef __PSP__
+CopyLink copy_links[MAX_COPY_LINKS];
+int copy_link_count;
+
+// hue in degrees, like GD's
+Color col_apply_hsv(Color c, float hue, float sat, float val, bool s_add, bool v_add) {
+    float h, s, v;
+    convertRGBtoHSV(c.r, c.g, c.b, &h, &s, &v);
+    h += hue / 60.f; // in sixths of the circle
+    while (h < 0) h += 6;
+    while (h >= 6) h -= 6;
+    s = s_add ? s + sat : s * sat;
+    v = v_add ? v + val : v * val;
+    s = clampf(s, 0.f, 1.f);
+    v = clampf(v, 0.f, 1.f);
+    Color out;
+    convertHSVtoRGB(h, s, v, &out.r, &out.g, &out.b);
+    return out;
+}
+
+void col_clear_copy(int ch) {
+    for (int i = 0; i < copy_link_count; i++) {
+        if (copy_links[i].ch == ch) {
+            copy_links[i] = copy_links[--copy_link_count];
+            return;
+        }
+    }
+}
+
+void col_set_copy(int ch, int src, float h, float s, float v, bool s_add, bool v_add) {
+    col_clear_copy(ch);
+    if (src == ch || copy_link_count >= MAX_COPY_LINKS) return;
+    copy_links[copy_link_count++] = (CopyLink){ ch, src, s_add, v_add, h, s, v };
+}
+
+// every frame: copies follow their source (twice, for copies of copies),
+// but not while a color trigger is fading the channel
+void col_apply_copies(void) {
+    for (int pass = 0; pass < 2; pass++) {
+        for (int i = 0; i < copy_link_count; i++) {
+            const CopyLink *l = &copy_links[i];
+            int idx = get_col_channel_index(l->ch);
+            if (col_trigger_buffer[idx].active) continue;
+            Color src = channels[get_col_channel_index(l->src)].color;
+            channels[idx].color = col_apply_hsv(src, l->h, l->s, l->v, l->s_add, l->v_add);
+        }
+    }
+}
+#endif

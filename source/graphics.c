@@ -1348,6 +1348,9 @@ void create_objects() {
 
             float opacity = obj->opacity;
 #ifdef __PSP__
+            // the channel's own opacity (2.0)
+            if (col_channel > 0 && col_channel != CHANNEL_INVISIBLE_GLOW && col_channel != CHANNEL_V2_LIGHTER)
+                opacity *= channels[get_col_channel_index(col_channel)].alpha * (1.f / 255.f);
             // its groups' alpha and pulses (2.0 triggers)
             trig2_object_color(game_object, obj->col_type, &col.color, &opacity);
 #endif

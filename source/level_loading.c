@@ -414,6 +414,12 @@ void parse_color_channel(GDColorChannel *channels, int i, char *channel_string) 
     int kvCount = 0;
     char **kvs = split_string(channel_string, '_', &kvCount);
 
+#ifdef __PSP__
+    channel.v2 = true;
+    channel.opacity = 1.f;
+    channel.s = channel.v = 1.f;
+#endif
+
     for (int j = 0; j + 1 < kvCount; j += 2) {
         int key = atoi(kvs[j]);
         const char *valStr = kvs[j + 1];
@@ -428,6 +434,22 @@ void parse_color_channel(GDColorChannel *channels, int i, char *channel_string) 
             case 11: channel.toRed = atoi(valStr); break;
             case 12: channel.toGreen = atoi(valStr); break;
             case 13: channel.toBlue = atoi(valStr); break;
+#ifdef __PSP__
+            case 7:  channel.opacity = atof(valStr); break;
+            case 9:  channel.copy_id = atoi(valStr); break;
+            case 10: {
+                float f[5] = { 0, 1, 1, 0, 0 };
+                const char *p = valStr;
+                for (int k = 0; k < 5 && *p; k++) {
+                    f[k] = atof(p);
+                    while (*p && *p != 'a') p++;
+                    if (*p == 'a') p++;
+                }
+                channel.h = f[0]; channel.s = f[1]; channel.v = f[2];
+                channel.s_add = f[3] != 0; channel.v_add = f[4] != 0;
+                break;
+            }
+#endif
         }
     }
 
@@ -1280,6 +1302,17 @@ void set_color_channels() {
                     if (id == CHANNEL_OBJ) {
                         channels[get_col_channel_index(CHANNEL_OBJ_BLENDING)].color = color;
                     }
+
+#ifdef __PSP__
+                    channels[chan].alpha = 255;
+                    if (colorChannel.v2) {
+                        channels[chan].alpha = (u8)(CLAMP(colorChannel.opacity, 0.f, 1.f) * 255);
+                        if (colorChannel.copy_id > 0) {
+                            col_set_copy(id, v2_channel(colorChannel.copy_id), colorChannel.h, colorChannel.s,
+                                         colorChannel.v, colorChannel.s_add, colorChannel.v_add);
+                        }
+                    }
+#endif
                 }
         }
     }
