@@ -51,15 +51,39 @@ typedef struct {
 typedef struct {
     Color color;
     bool blending;
+#ifdef __PSP__
+    u8 alpha;       // 2.0 channel opacity, 0-255
+#endif
 } ColorChannel;
 
 typedef struct {
     bool active;
     Color old_color;
     Color new_color;
+#ifdef __PSP__
+    u8 new_alpha;   // (fits in the padding)
+#endif
     float seconds;
     float time_run;
 } ColTriggerBuffer;
+
+#ifdef __PSP__
+// 2.0 channels that copy another one, with an HSV change, all the time
+#define MAX_COPY_LINKS 48
+typedef struct {
+    u16 ch, src;
+    bool s_add, v_add;
+    float h, s, v;
+} CopyLink;
+
+extern CopyLink copy_links[MAX_COPY_LINKS];
+extern int copy_link_count;
+
+void col_set_copy(int ch, int src, float h, float s, float v, bool s_add, bool v_add);
+void col_clear_copy(int ch);
+void col_apply_copies(void);
+Color col_apply_hsv(Color c, float h, float s, float v, bool s_add, bool v_add);
+#endif
 
 extern ColorChannel channels[COL_CHANNEL_NUM];
 extern ColTriggerBuffer col_trigger_buffer[COL_CHANNEL_NUM];

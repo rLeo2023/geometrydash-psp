@@ -19,6 +19,8 @@ void trig2_reset(void);
 bool trig2_run(int obj);
 // only spawn triggers start it, never the player passing it
 bool trig2_spawn_only(int obj);
+// a color trigger's 2.0 opacity (35) and channel copy (50, HSV 49)
+bool trig2_color_info(int obj, float *opacity, int *copied, float *h, float *s, float *v, bool *s_add, bool *v_add);
 
 // main.c, each frame the level runs: moves, fades, spawns, pulses
 void trig2_update(float dt);

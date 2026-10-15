@@ -144,6 +144,21 @@ static bool is_v2_trigger(int id) {
     return id == TRIG_MOVE || id == TRIG_PULSE || id == TRIG_ALPHA || id == TRIG_TOGGLE || id == TRIG_SPAWN;
 }
 
+// color triggers: run by color_channels.c, their 2.0 opacity and copy from here
+static bool is_color_trigger(int id) {
+    switch (id) {
+        case BG_TRIGGER: case GROUND_TRIGGER: case LINE_TRIGGER: case V2_0_LINE_TRIGGER:
+        case OBJ_TRIGGER: case OBJ_2_TRIGGER: case COL2_TRIGGER: case COL3_TRIGGER:
+        case COL4_TRIGGER: case THREEDL_TRIGGER: case COL_TRIGGER: case 900:
+            return true;
+    }
+    return false;
+}
+
+static bool has_params(int id) {
+    return is_v2_trigger(id) || is_color_trigger(id);
+}
+
 static Trig *new_trig(int obj) {
     if (ntrigs == trigs_cap) {
         trigs_cap = trigs_cap ? trigs_cap * 2 : 256;
@@ -152,6 +167,7 @@ static Trig *new_trig(int obj) {
     Trig *t = &trigs[ntrigs];
     memset(t, 0, sizeof(*t));
     t->rate = 2.f;
+    t->opacity = 1.f;
     t->copied = -1;
     t->s = t->v = 1.f;
     trig_of[obj] = ntrigs++;
@@ -194,10 +210,10 @@ void trig2_parse_object(int obj, char **tokens, int count) {
     }
 
     // any trigger can be spawn-only (color ones too): keep that
-    if (!is_v2_trigger(id) && !spawn_only) return;
+    if (!has_params(id) && !spawn_only) return;
     t = new_trig(obj);
     t->spawn_only = spawn_only;
-    if (!is_v2_trigger(id)) return;
+    if (!has_params(id)) return;
 
     for (int i = 0; i + 1 < count; i += 2) {
         int key = atoi(tokens[i]);
@@ -414,6 +430,16 @@ static float ease(int type, float rate, float t) {
 
 /* ---- running triggers ----------------------------------------------- */
 
+bool trig2_color_info(int obj, float *opacity, int *copied, float *h, float *s, float *v, bool *s_add, bool *v_add) {
+    if (!trig_of || obj < 0 || obj >= nobjs || trig_of[obj] < 0) return false;
+    const Trig *t = &trigs[trig_of[obj]];
+    *opacity = t->opacity;
+    *copied = t->copied;
+    *h = t->h; *s = t->s; *v = t->v;
+    *s_add = t->s_add; *v_add = t->v_add;
+    return true;
+}
+
 bool trig2_spawn_only(int obj) {
     return trig_of && trig_of[obj] >= 0 && trigs[trig_of[obj]].spawn_only;
 }
@@ -581,6 +607,7 @@ void trig2_unpulse_channels(void) {
 }
 
 void trig2_pulse_channels(void) {
+    col_apply_copies(); // copied channels first: pulses go on top
     for (int i = 0; i < MAX_PULSES; i++) {
         const Pulse *p = &st.pulses[i];
         if (!p->active || p->target_type != 0) continue;

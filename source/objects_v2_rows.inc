@@ -171,7 +171,7 @@
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 915 edit_eTintLBtn_001.png */
     { 2164, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 916 block006_color_05_001.png */
     { 339, -1, 0.00, 0.00, 3, -5, 1, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL }, /* 917 d_whiteBlock_02_001.png */
-    { 2165, 2166, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 918 GJBeast01_01_001.png */
+    { 2165, 2166, 0.00, 0.00, 3, 0, 1010, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 918 GJBeast01_01_001.png */
     { 2167, -1, 0.00, 0.00, 3, 0, 1010, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 919 dA_blackSludge_01_001.png */
     { 2169, -1, 0.00, 0.00, 5, 2, 1011, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_920, NULL }, /* 920 Fire_03_looped_001.png */
     { 2171, -1, 0.00, 0.00, 5, 2, 1011, COLOR_TYPE_BASE, 0, 1.00, 2, children_v2_921, NULL }, /* 921 Fire_04_looped_004.png */
@@ -580,6 +580,6 @@
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 1324 - */
     { 2415, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1325, NULL }, /* 1325 block006_slope_square_03_001.png */
     { 2416, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 1, children_v2_1326, NULL }, /* 1326 block006_slope_square_04_001.png */
-    { 2417, 2418, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1327 GJBeast02_01_001.png */
-    { 2419, 2420, 0.00, 0.00, 3, 0, 1011, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1328 GJBeast03_01_001.png */
+    { 2417, 2418, 0.00, 0.00, 3, 0, 1010, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1327 GJBeast02_01_001.png */
+    { 2419, 2420, 0.00, 0.00, 3, 0, 1010, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL }, /* 1328 GJBeast03_01_001.png */
     { 871, -1, 0.00, 0.00, 5, 9, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_v2_1329 }, /* 1329 secretCoin_2_01_001.png */

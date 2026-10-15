@@ -55,6 +55,8 @@ typedef struct CheckpointData {
 
 #ifdef __PSP__
     void *trig2; // the 2.0 triggers' groups at that point (triggers_v2.c)
+    CopyLink copy_links[MAX_COPY_LINKS];
+    int copy_link_count;
 #endif
 } CheckpointData;
 
@@ -127,6 +129,8 @@ void new_checkpoint() {
 #ifdef __PSP__
     trig2_free_snapshot(check->trig2); // the slot's last one, if any
     check->trig2 = trig2_save();
+    memcpy(check->copy_links, copy_links, sizeof(copy_links));
+    check->copy_link_count = copy_link_count;
 #endif
 
     set_checkpoint_timer(AUTO_CHECKPOINT_TIME);
@@ -180,6 +184,8 @@ void restore_checkpoint() {
 
 #ifdef __PSP__
     trig2_restore(check->trig2); // moved groups back, fades, toggles
+    memcpy(copy_links, check->copy_links, sizeof(copy_links));
+    copy_link_count = check->copy_link_count;
 #endif
 
     update_attempt_text_pos();
