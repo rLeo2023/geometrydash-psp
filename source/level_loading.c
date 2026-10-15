@@ -18,6 +18,7 @@
 #include "utils/string_helpers.h"
 
 #include "player/collision.h"
+#include "triggers_v2.h"
 
 ObjectsArray objects = { 0 };
 
@@ -88,6 +89,25 @@ void assign_object_to_section(int obj) {
     }
     sec->objects[sec->object_count++] = obj;
 }
+
+#ifdef __PSP__
+// An object moved (2.0 move triggers): into the section of where it is now,
+// if that's another one, so drawing and collisions still find it
+void move_object_section(int obj, float old_x, float old_y) {
+    int ox = (int)(old_x / SECTION_SIZE), oy = (int)(old_y / SECTION_SIZE);
+    int nx = (int)(objects.x[obj] / SECTION_SIZE), ny = (int)(objects.y[obj] / SECTION_SIZE);
+    if (ox == nx && oy == ny) return;
+
+    Section *sec = get_section(ox, oy);
+    for (int i = 0; i < sec->object_count; i++) {
+        if (sec->objects[i] == obj) {
+            sec->objects[i] = sec->objects[--sec->object_count];
+            break;
+        }
+    }
+    assign_object_to_section(obj);
+}
+#endif
 
 char *read_file(const char *filepath, size_t *out_size) {
     FILE *f = fopen(filepath, "rb");
@@ -977,6 +997,11 @@ int parse_gd_object(const char *objStr, int obj) {
         objects.id[obj] = 0;
     }
 
+#ifdef __PSP__
+    // its groups and, for a 2.0 trigger, what it does
+    trig2_parse_object(obj, tokens, count);
+#endif
+
     free_string_array(tokens, count);
     return 1;
 }
@@ -1198,6 +1223,10 @@ int parse_string(const char *levelString) {
         objects.coin_id[coin_ids[i]] = i;
         //output_log("Le coin %d on objeto %d\n", i, coin_ids[i]);
     }
+
+#ifdef __PSP__
+    trig2_level_loaded();
+#endif
     
     level_info.last_obj_x += (11 * 30.f);
 
@@ -1217,7 +1246,12 @@ void set_color_channels() {
                 break;
 
             default:
+#ifdef __PSP__
+                // every channel up to 999 (2.0 levels use them all), not just 1-4
+                if (id > 0 && id < CHANNEL_P1) {
+#else
                 if (!(id > COL_4 && id < CHANNEL_BG) && id < CHANNEL_P1) {
+#endif
                     int chan = get_col_channel_index(id);
 
                     memset(&channels[chan], 0, sizeof(ColorChannel));
@@ -1407,9 +1441,15 @@ void reload_level() {
 
     init_col_channels();
     set_color_channels();
+#ifdef __PSP__
+    trig2_reset(); // groups back where they started
+#endif
 }
 
 void unload_level() {
+#ifdef __PSP__
+    trig2_free();
+#endif
     free_arrays();
     free_sections();
     free_object_particles();

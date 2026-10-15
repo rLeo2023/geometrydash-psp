@@ -11,7 +11,12 @@ enum ColorChannelIDs {
     COL_2,
     COL_3,
     COL_4,
+#ifdef __PSP__
+    // every channel up to 999: 2.0 levels use them all
+    CHANNEL_NORMAL_END = 1000,
+#else
     CHANNEL_NORMAL_END,
+#endif
     CHANNEL_SPECIAL_START = 1000,
     CHANNEL_BG = CHANNEL_SPECIAL_START,
     CHANNEL_GROUND,

@@ -35,6 +35,7 @@
 
 #ifdef __PSP__
 #include "../psp/src/psp_port.h"
+#include "triggers_v2.h"
 #endif
 
 const Color white = { 255, 255, 255 };
@@ -1327,8 +1328,12 @@ void create_objects() {
             
             int game_object = obj->obj;
             float x = ((objects.x[game_object] - state.camera_x));
-            
+
             float opacity = obj->opacity;
+#ifdef __PSP__
+            // its groups' alpha and pulses (2.0 triggers)
+            trig2_object_color(game_object, obj->col_type, &col.color, &opacity);
+#endif
 
             // Handle invisible object opacity
             if (object_fades(game_object)) {

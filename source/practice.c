@@ -10,6 +10,7 @@
 #include "color_channels.h"
 #include "utils/gfx.h"
 #include "menus/settings.h"
+#include "triggers_v2.h"
 
 #define MAX_CHECKPOINTS 100
 #define CHECKPOINT_GFX_ID 6
@@ -52,6 +53,9 @@ typedef struct CheckpointData {
     
     float song_offset;
 
+#ifdef __PSP__
+    void *trig2; // the 2.0 triggers' groups at that point (triggers_v2.c)
+#endif
 } CheckpointData;
 
 CheckpointData checkpoints[MAX_CHECKPOINTS];
@@ -120,6 +124,11 @@ void new_checkpoint() {
     memcpy(check->channels, channels, sizeof(channels));
     memcpy(check->col_trigger_buffer, col_trigger_buffer, sizeof(col_trigger_buffer));
 
+#ifdef __PSP__
+    trig2_free_snapshot(check->trig2); // the slot's last one, if any
+    check->trig2 = trig2_save();
+#endif
+
     set_checkpoint_timer(AUTO_CHECKPOINT_TIME);
 }
 
@@ -169,6 +178,10 @@ void restore_checkpoint() {
     memcpy(channels, check->channels, sizeof(channels));
     memcpy(col_trigger_buffer, check->col_trigger_buffer, sizeof(col_trigger_buffer));
 
+#ifdef __PSP__
+    trig2_restore(check->trig2); // moved groups back, fades, toggles
+#endif
+
     update_attempt_text_pos();
 
     set_checkpoint_timer(AUTO_CHECKPOINT_TIME);
@@ -186,6 +199,12 @@ void delete_last_checkpoint() {
 }
 
 void clear_practice_mode() {
+#ifdef __PSP__
+    for (int i = 0; i < MAX_CHECKPOINTS; i++) {
+        trig2_free_snapshot(checkpoints[i].trig2);
+        checkpoints[i].trig2 = NULL;
+    }
+#endif
     checkpoint_count = 0;
     checkpoint_pointer = 0;
     state.practice_mode = false;
