@@ -32,6 +32,10 @@ void trig2_pulse_channels(void);
 // graphics.c: an object's color and opacity with its groups' alpha and pulses
 void trig2_object_color(int obj, int col_type, Color *color, float *opacity);
 
+// each object's size (key 32), NULL with no level
+extern float *trig2_obj_scale;
+#define OBJ_SCALE(o) (trig2_obj_scale ? trig2_obj_scale[o] : 1.f)
+
 // practice.c: the groups' state in a checkpoint
 void *trig2_save(void);
 void trig2_restore(const void *snapshot);

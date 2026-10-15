@@ -516,9 +516,9 @@ int copy_link_count;
 Color col_apply_hsv(Color c, float hue, float sat, float val, bool s_add, bool v_add) {
     float h, s, v;
     convertRGBtoHSV(c.r, c.g, c.b, &h, &s, &v);
-    h += hue / 60.f; // in sixths of the circle
-    while (h < 0) h += 6;
-    while (h >= 6) h -= 6;
+    h += hue; // degrees, both
+    while (h < 0) h += 360;
+    while (h >= 360) h -= 360;
     s = s_add ? s + sat : s * sat;
     v = v_add ? v + val : v * val;
     s = clampf(s, 0.f, 1.f);

@@ -18,6 +18,16 @@
 #include "save/saving.h"
 #include "menus/level_select.h"
 
+#ifdef __PSP__
+#include "triggers_v2.h"
+// a hitbox at the object's size (2.0 key 32)
+#define HB_W(hb, o) ((hb)->width * OBJ_SCALE(o))
+#define HB_H(hb, o) ((hb)->height * OBJ_SCALE(o))
+#else
+#define HB_W(hb, o) ((hb)->width)
+#define HB_H(hb, o) ((hb)->height)
+#endif
+
 Player *player_1 = &state.player;
 Player *player_2 = &state.player2;
 
@@ -1147,7 +1157,7 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
                 // Only do the funny grav snap if player is touching a gravity object and internal hitbox is touching block
                 bool internalCollidingBlock = intersect(
                     player->x, player->y, internal.width, internal.height, 0, 
-                    objects.x[obj], objects.y[obj], hitbox->width, hitbox->height, objects.rotation[obj]
+                    objects.x[obj], objects.y[obj], HB_W(hitbox, obj), HB_H(hitbox, obj), objects.rotation[obj]
                 );
 
                 float diff = obj_gravBottom(player, obj) - gravInternalBottom(player);
@@ -1159,8 +1169,8 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
             
             // Check collision with internal hitbox
             if ((player->gamemode == GAMEMODE_DART || (!gravSnap && !safeZone)) && intersect(
-                player->x, player->y, internal.width, internal.height, 0, 
-                objects.x[obj], objects.y[obj], hitbox->width, hitbox->height, objects.rotation[obj]
+                player->x, player->y, internal.width, internal.height, 0,
+                objects.x[obj], objects.y[obj], HB_W(hitbox, obj), HB_H(hitbox, obj), objects.rotation[obj]
             )) {
                 if (objects.id[obj] == BREAKABLE_BLOCK) {
                     // Spawn breakable brick particles
@@ -1276,7 +1286,11 @@ void collide_with_obj(Player *player, int obj) {
     if (UNLIKELY(hitbox->type == COLLISION_CIRCLE)) {
         if (intersect_rect_circle(
             player->x, player->y, player->width, player->height, 0, 
+#ifdef __PSP__
+            x, y, hitbox->width * OBJ_SCALE(obj)
+#else
             x, y, hitbox->width
+#endif
         )) {
             handle_collision(player, obj, hitbox);
             SET_COLLIDED(obj, true);
@@ -1324,6 +1338,10 @@ void collide_with_slope(Player *player, int obj, bool has_slope) {
     
     float width = hitbox->width;
     float height = hitbox->height;
+#ifdef __PSP__
+    width *= OBJ_SCALE(obj);
+    height *= OBJ_SCALE(obj);
+#endif
 
     if (intersect(
         player->x, player->y, player->width, player->height, 0, 
