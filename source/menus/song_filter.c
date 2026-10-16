@@ -38,6 +38,10 @@ const char *song_names[] = {
     "16. Hexagon Force",
     "17. Blast Processing",
     "18. Theory of Everything 2",
+#ifdef __PSP__
+    "19. Geometrical Dominator",
+    "20. Deadlocked",
+#endif
 };
 
 
