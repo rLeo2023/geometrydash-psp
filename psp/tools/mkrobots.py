@@ -25,7 +25,7 @@ sys.path.insert(0, HERE)
 from mkv2sheet import cut  # noqa: E402
 
 # the first ones only (GD has 68): the same as ROBOT_COUNT in source/icons.h
-ROBOTS = 5
+ROBOTS = 25
 LAYERS = ('_001', '_2_001', '_extra_001')
 
 
