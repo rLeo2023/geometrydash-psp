@@ -1009,10 +1009,10 @@ void update_p1_trail(Player *player, int player_id) {
     // Every 2/60 s rather than every 3 frames: at 30 fps (the PSP's default)
     // the copies came twice as far apart. Each one where the player was at
     // that moment, between this frame and the last, so they stay evenly spaced
-    #define P1_TRAIL_EVERY (1.f / 120.f)
+    #define P1_TRAIL_EVERY (1.f / 40.f)
     static float since_spawn[2], last_x[2], last_y[2];
     since_spawn[player_id] += delta;
-    if (since_spawn[player_id] > 6 * P1_TRAIL_EVERY) since_spawn[player_id] = P1_TRAIL_EVERY;
+    if (since_spawn[player_id] > 3 * P1_TRAIL_EVERY) since_spawn[player_id] = P1_TRAIL_EVERY;
     while (since_spawn[player_id] >= P1_TRAIL_EVERY) {
         since_spawn[player_id] -= P1_TRAIL_EVERY;
         if (state.dead || !p1_trail || !(player_id == 0 || state.dual)) continue;
@@ -1044,7 +1044,13 @@ void update_p1_trail(Player *player, int player_id) {
         P1Trail *trail_data = &state.p1_trail_data[player_id][i];
 
         if (trail_data->active) {
+#ifdef __PSP__
+            // from 0.7 down to 0 over its life (not below: it wraps around)
+            trail_data->opacity -= (0.7f / P1_TRAIL_DURATION) * delta;
+            if (trail_data->opacity < 0) trail_data->opacity = 0;
+#else
             trail_data->opacity -= (0.8f / P1_TRAIL_DURATION) * delta;
+#endif
             trail_data->scale += trail_data->delta_scale * delta;
 
             trail_data->life -= delta;
