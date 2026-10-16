@@ -82,6 +82,9 @@ void init_values() {
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ufo",  1);
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "wave", 1);
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "trail", 0);
+#ifdef __PSP__
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "robot", 1);
+#endif
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   DEFAULT_P1);
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   DEFAULT_P2);
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", DEFAULT_GLOW);
@@ -126,7 +129,11 @@ void cfg_init() {
     selected_ufo  = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ufo",  1);
     selected_wave = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "wave", 1);
     selected_trail = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "trail", 0);
-    selected_p1   = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   DEFAULT_P1);
+#ifdef __PSP__
+    selected_robot = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "robot", 1);
+    if (selected_robot < 1 || selected_robot > ROBOT_COUNT) selected_robot = 1;
+#endif
+    selected_p1  = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   DEFAULT_P1);
     selected_p2   = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   DEFAULT_P2);
     selected_glow = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", DEFAULT_GLOW);
     player_glow_enabled = config_get_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", false);
@@ -160,6 +167,9 @@ void cfg_save() {
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ufo",  selected_ufo );
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "wave", selected_wave);
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "trail", selected_trail);
+#ifdef __PSP__
+    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "robot", selected_robot);
+#endif
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   selected_p1  );
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   selected_p2  );
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", selected_glow);

@@ -1004,7 +1004,21 @@ int parse_gd_object(const char *objStr, int obj) {
     }
 
     int obj_id = objects.id[obj];
-    
+
+#ifdef __PSP__
+    // a text object: its text (31, base64) and size (32), drawn by graphics.c
+    if (obj_id == TEXT_OBJECT) {
+        const char *text = NULL;
+        float scale = 1.f;
+        for (int i = 0; i + 1 < count; i += 2) {
+            int key = atoi(tokens[i]);
+            if (key == 31) text = tokens[i + 1];
+            else if (key == 32) scale = atof(tokens[i + 1]);
+        }
+        if (text) text_object_add(obj, text, scale);
+    }
+#endif
+
     if (is_valid_object(obj_id)) {
         // Get coins
         if (obj_id == SECRET_COIN) {
@@ -1273,6 +1287,7 @@ int parse_string(const char *levelString) {
     // room for the teleports' ways out
     tp_count = 0;
     totalCount += count_teleports(sections + 1, objectCount);
+    text_objects_clear();
 #endif
 
     printf("%d\n", objectCount);

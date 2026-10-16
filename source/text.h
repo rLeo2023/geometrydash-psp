@@ -24,6 +24,10 @@ typedef struct {
 
 bool parse_hex_color(const char *str, u32 *out);
 
+#ifdef __PSP__
+extern u32 draw_text_tint;
+#endif
+
 void draw_text(const Charset *font, C2D_SpriteSheet *sheet, const float x, const float y, const float scaleX, const float scaleY, float alignment, bool parse_tags, const char *text, ...);
 float get_text_length(const Charset *font, const float zoom_x, bool parse_tags, const char *text);
 float get_longest_line_length(const Charset *font, const float zoom_x, const char *text);

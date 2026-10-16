@@ -1633,7 +1633,11 @@ void draw_objects() {
 #endif
 
             C2D_DrawSpriteTinted(&obj->spr, &obj->tint);
-        } else {   
+        } else {
+#ifdef __PSP__
+            // the texts at the player's layer: over what is behind it
+            draw_text_objects();
+#endif
             draw_player_graphics();
         }
     }
@@ -1860,6 +1864,7 @@ void spawn_icon_at(
 // in memory only while a level that has them is (512 KB on a PSP-1000).
 // Without the sheet those objects just don't show
 void v2_sheet_need(bool need) {
+    robots_sheet_need(need);
     if (need == (spriteSheetV2 != NULL)) return;
     if (need) {
         spriteSheetV2 = C2D_SpriteSheetLoad("romfs:/gfx/sprites_v2.t3x");
@@ -1872,11 +1877,117 @@ void v2_sheet_need(bool need) {
     cache_all_sprites();
 }
 
-// the 2.0 robot standing: its main color's parts, the second color's on top
-// (one picture each, put together from GD's when building)
+typedef struct {
+    int obj;
+    float scale;
+    char *text;
+} TextObject;
+
+static TextObject *text_objs;
+static int text_obj_count, text_obj_cap;
+
+void text_objects_clear(void) {
+    for (int i = 0; i < text_obj_count; i++) free(text_objs[i].text);
+    free(text_objs);
+    text_objs = NULL;
+    text_obj_count = text_obj_cap = 0;
+}
+
+void text_object_add(int obj, const char *b64, float scale) {
+    // GD's base64 is the URL one, and may come without its padding
+    size_t n = strlen(b64);
+    char *in = malloc(n + 4);
+    unsigned char *out = malloc(n + 4);
+    if (!in || !out) {
+        free(in);
+        free(out);
+        return;
+    }
+    memcpy(in, b64, n + 1);
+    while (n % 4) in[n++] = '=';
+    in[n] = 0;
+    fix_base64_url(in);
+    int len = base64_decode(in, out);
+    free(in);
+    if (len <= 0) {
+        free(out);
+        return;
+    }
+    out[len] = 0;
+
+    if (text_obj_count == text_obj_cap) {
+        int cap = text_obj_cap ? text_obj_cap * 2 : 16;
+        TextObject *grown = realloc(text_objs, cap * sizeof(TextObject));
+        if (!grown) {
+            free(out);
+            return;
+        }
+        text_objs = grown;
+        text_obj_cap = cap;
+    }
+    text_objs[text_obj_count++] = (TextObject){ obj, scale > 0 ? scale : 1.f, (char *)out };
+}
+
+// in bigFont, like the attempts' text, in their channel (white if none), with
+// their groups' alpha and moves and the fade at the screen's edges
+void draw_text_objects(void) {
+    for (int i = 0; i < text_obj_count; i++) {
+        int obj = text_objs[i].obj;
+        if (objects.toggled[obj]) continue;
+
+        float calc_x = objects.x[obj] - state.camera_x;
+        float calc_y = SCREEN_HEIGHT - (objects.y[obj] - state.camera_y);
+        // (wider than an object: a text is long)
+        if (calc_x < -300 || calc_x >= (SCREEN_WIDTH / SCALE) + 300) continue;
+        if (calc_y < -100 || calc_y >= (SCREEN_HEIGHT / SCALE) + 100) continue;
+
+        int ch = objects.col_channel[obj] ? v2_channel(objects.col_channel[obj]) : CHANNEL_V2_WHITE;
+        ColorChannel col = channels[get_col_channel_index(ch)];
+        float opacity = col.alpha * (1.f / 255.f);
+        trig2_object_color(obj, COLOR_TYPE_BASE, &col.color, &opacity);
+        int alpha = get_obj_opacity(obj, calc_x) * opacity;
+        if (alpha <= 0) continue;
+
+        change_blending(col.blending);
+        draw_text_tint = C2D_Color32(col.color.r, col.color.g, col.color.b, alpha);
+        float s = text_objs[i].scale;
+        draw_text(&bigFont_fontCharset, &bigFont_sheet, get_mirror_x(calc_x, state.mirror_factor), calc_y,
+                  s, s, 0.5f, false, "%s", text_objs[i].text);
+    }
+    draw_text_tint = C2D_Color32(255, 255, 255, 255);
+    change_blending(false);
+}
+
+static C2D_SpriteSheet robotSheet;
+
+void robots_sheet_need(bool need) {
+    if (need == (robotSheet != NULL)) return;
+    if (need) {
+        robotSheet = C2D_SpriteSheetLoad("romfs:/gfx/robots.t3x");
+    } else {
+        C2D_SpriteSheetFree(robotSheet);
+        robotSheet = NULL;
+    }
+}
+
+// robots.psheet (psp/tools/mkrobots.py): 12 sprites a robot, 3 a part (main
+// color, second color, uncolored extra). The poses' parts are these (the
+// order of robot_part_tex in objects_v2_anim.inc)
+#define ROBOT_SHEET_SPRITES 12
+static const unsigned char robot_slot_part[ROBOT_PARTS] = { 3, 2, 4, 1, 3, 2, 4 };
+
 void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
                     float scale, u32 p1_color, u32 p2_color, u8 *anim, float t) {
-    if (!spriteSheetV2) return;
+    spawn_robot_id_at(selected_robot, x, y, deg, flip_x, flip_y, scale, p1_color, p2_color, anim, t);
+}
+
+// the robot posed: its parts' second color, the main one over it and the
+// extra over both
+void spawn_robot_id_at(int id, float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
+                       float scale, u32 p1_color, u32 p2_color, u8 *anim, float t) {
+    // without the robots' sheet, the first one (from the 2.0 objects' sheet)
+    bool own = robotSheet && id >= 1 && id <= ROBOT_COUNT;
+    if (!own && !spriteSheetV2) return;
 
     // as wiidash: 30 frames a second; a start goes on to its loop two frames
     // before its end
@@ -1914,9 +2025,18 @@ void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned 
         float sy_ = y + (px * sin_r - py * cos_r) * scale;
 
         // the second color under the main one (a ghost copy: p2_color 0, only the main)
-        for (int layer = p2_color ? 1 : 0; layer >= 0; layer--) {
+        int first = p2_color ? 1 : 0, last = (own && p2_color) ? -1 : 0;
+        for (int layer = first; layer >= last; layer--) {
             int rel;
-            C2D_SpriteSheet *sheet = get_sprite_sheet(robot_part_tex[i][layer], &rel);
+            C2D_SpriteSheet *sheet;
+            if (own) {
+                // the extra (layer -1 here, 2 in the sheet), last and uncolored
+                int sheet_layer = layer < 0 ? 2 : layer;
+                rel = (id - 1) * ROBOT_SHEET_SPRITES + (robot_slot_part[i] - 1) * 3 + sheet_layer;
+                sheet = &robotSheet;
+            } else {
+                sheet = get_sprite_sheet(robot_part_tex[i][layer], &rel);
+            }
             C2D_Sprite spr = { 0 };
             C2D_ImageTint tint;
             C2D_SpriteFromSheet(&spr, *sheet, rel);
@@ -1925,7 +2045,7 @@ void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned 
             C2D_SpriteSetPos(&spr, sx_, sy_);
             C2D_SpriteSetScale(&spr, scale * psx * fx, scale * psy * fy);
             C2D_SpriteSetRotation(&spr, rad + C3D_AngleFromDegrees(turned ? -prot : prot));
-            C2D_PlainImageTint(&tint, colors[layer], 1.0f);
+            C2D_PlainImageTint(&tint, layer < 0 ? (0x00FFFFFF | (p1_color & 0xFF000000)) : colors[layer], 1.0f);
             C2D_DrawSpriteTinted(&spr, &tint);
         }
     }
