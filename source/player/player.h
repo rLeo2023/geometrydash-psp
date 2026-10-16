@@ -111,6 +111,8 @@ typedef struct {
     // 2.0 robot: a cube (GAMEMODE_PLAYER) that jumps differently
     bool robot;
     float robot_boost; // seconds of held jump left
+    u8 robot_anim;     // ROBOT_ANIM_*, drawn by spawn_robot_at
+    float robot_anim_t;
 #endif
 
     int rotation_direction;

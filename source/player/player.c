@@ -161,6 +161,21 @@ void cube_gamemode(Player *player) {
         } else {
             player->robot_boost = 0;
             player->gravity = -2794.1082f * 0.9f;
+            // the rise is over: falling
+            if (player->robot_anim == ROBOT_ANIM_JUMP) {
+                player->robot_anim = ROBOT_ANIM_FALL_START;
+                player->robot_anim_t = 0;
+            }
+        }
+
+        // its animation (wiidash's): running on the ground; off it without
+        // a jump (a pad, an orb, an edge), up or down
+        player->robot_anim_t += STEPS_DT;
+        if (player->on_ground) {
+            player->robot_anim = ROBOT_ANIM_RUN;
+        } else if (player->robot_anim == ROBOT_ANIM_RUN) {
+            player->robot_anim = player->vel_y * (player->upside_down ? -1 : 1) > 0 ? ROBOT_ANIM_JUMP_START : ROBOT_ANIM_FALL_START;
+            player->robot_anim_t = 0;
         }
     }
 
@@ -230,6 +245,8 @@ void cube_gamemode(Player *player) {
             player->vel_y *= 0.5f;
             player->robot_boost = 1.5f / 5.4f;
             player->gravity = 0;
+            player->robot_anim = ROBOT_ANIM_JUMP_START;
+            player->robot_anim_t = 0;
         }
 #endif
         player->inverse_rotation = false;
@@ -1099,7 +1116,7 @@ void draw_player(Player *player) {
             if (player->robot) {
                 // always upright (the cube's turns are 90 degree steps)
                 spawn_robot_at(calc_x_mirror, calc_y, 0, flip_x, player->upside_down, scale,
-                               primary_color, secondary_color);
+                               primary_color, secondary_color, &player->robot_anim, player->robot_anim_t);
                 break;
             }
 #endif
