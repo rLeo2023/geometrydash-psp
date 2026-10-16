@@ -14,10 +14,10 @@ extern int frame_skipped;
 #define STEPS_DT_UNMOD (1.f / STEPS_HZ) // 1/240 seconds per physics step
 
 #ifdef __PSP__
-// a copy every 1/40 s that lives 0.1 s: four copies a quarter of a block
-// apart, the last about a block behind the icon
-#define P1_TRAIL_LENGTH 8
-#define P1_TRAIL_DURATION 0.1f
+// a copy every 1/40 s that lives 0.16 s: six copies a quarter of a block
+// apart, the last about a block and a half behind the icon
+#define P1_TRAIL_LENGTH 10
+#define P1_TRAIL_DURATION 0.16f
 #else
 #define P1_TRAIL_LENGTH 10
 #define P1_TRAIL_DURATION 0.45f
