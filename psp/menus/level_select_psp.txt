@@ -54,3 +54,5 @@ image x=160 y=211 id=0 sheet=6 sx=0.9 sy=0.727272
 image x=-4 y=205 id=178
 image x=324 y=205 id=178 sx=-1.0
 button x=-12 y=32 id=6 scale=0.65 action="exit" keyBinds="B"
+# the level's stats (GD's "i"), Triangle too
+button x=332 y=32 id=90 scale=0.8 action="level_info" tag="info" keyBinds="X"
