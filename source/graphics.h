@@ -152,7 +152,7 @@ void robots_sheet_need(bool need);
 // are drawn over the level's other objects
 #define TEXT_OBJECT 914
 void text_objects_clear(void);
-void text_object_add(int obj, const char *b64, float scale);
+void text_object_add(int obj, const char *b64, float scale_x, float scale_y);
 void draw_text_objects(void);
 #endif
 void spawn_icon_at(

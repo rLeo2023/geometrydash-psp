@@ -32,7 +32,9 @@ typedef enum {
 // the icon kit's robot page (after the trails': the robot isn't a gamemode of
 // its own, it's the cube's in robot portals)
 #define ROBOT 6
-#define ROBOT_COUNT 68
+// (GD has 68: the first ones only, to keep their sheet small; with
+// psp/tools/mkrobots.py's ROBOTS)
+#define ROBOT_COUNT 5
 #define ICON_COUNT_ROBOT (ROBOT_COUNT + 1)
 #define ICON_KIT_PAGES 7
 #else

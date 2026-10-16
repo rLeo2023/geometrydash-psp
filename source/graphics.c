@@ -1879,7 +1879,7 @@ void v2_sheet_need(bool need) {
 
 typedef struct {
     int obj;
-    float scale;
+    float scale_x, scale_y;
     char *text;
 } TextObject;
 
@@ -1893,7 +1893,7 @@ void text_objects_clear(void) {
     text_obj_count = text_obj_cap = 0;
 }
 
-void text_object_add(int obj, const char *b64, float scale) {
+void text_object_add(int obj, const char *b64, float scale_x, float scale_y) {
     // GD's base64 is the URL one, and may come without its padding
     size_t n = strlen(b64);
     char *in = malloc(n + 4);
@@ -1925,7 +1925,7 @@ void text_object_add(int obj, const char *b64, float scale) {
         text_objs = grown;
         text_obj_cap = cap;
     }
-    text_objs[text_obj_count++] = (TextObject){ obj, scale > 0 ? scale : 1.f, (char *)out };
+    text_objs[text_obj_count++] = (TextObject){ obj, scale_x > 0 ? scale_x : 1.f, scale_y > 0 ? scale_y : 1.f, (char *)out };
 }
 
 // in bigFont, like the attempts' text, in their channel (white if none), with
@@ -1950,9 +1950,14 @@ void draw_text_objects(void) {
 
         change_blending(col.blending);
         draw_text_tint = C2D_Color32(col.color.r, col.color.g, col.color.b, alpha);
-        float s = text_objs[i].scale;
-        draw_text(&bigFont_fontCharset, &bigFont_sheet, get_mirror_x(calc_x, state.mirror_factor), calc_y,
-                  s, s, 0.5f, false, "%s", text_objs[i].text);
+        // turned about its center, as GD's objects (clockwise)
+        C3D_Mtx view;
+        C2D_ViewSave(&view);
+        C2D_ViewTranslate(get_mirror_x(calc_x, state.mirror_factor), calc_y);
+        if (objects.rotation[obj] != 0) C2D_ViewRotateDegrees(objects.rotation[obj]);
+        draw_text(&bigFont_fontCharset, &bigFont_sheet, 0, 0,
+                  text_objs[i].scale_x, text_objs[i].scale_y, 0.5f, false, "%s", text_objs[i].text);
+        C2D_ViewRestore(&view);
     }
     draw_text_tint = C2D_Color32(255, 255, 255, 255);
     change_blending(false);

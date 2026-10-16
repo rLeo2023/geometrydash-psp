@@ -1008,14 +1008,17 @@ int parse_gd_object(const char *objStr, int obj) {
 #ifdef __PSP__
     // a text object: its text (31, base64) and size (32), drawn by graphics.c
     if (obj_id == TEXT_OBJECT) {
+        // (2.2 saves its width and height apart: 128, 129)
         const char *text = NULL;
-        float scale = 1.f;
+        float scale = 1.f, sx = 1.f, sy = 1.f;
         for (int i = 0; i + 1 < count; i += 2) {
             int key = atoi(tokens[i]);
             if (key == 31) text = tokens[i + 1];
             else if (key == 32) scale = atof(tokens[i + 1]);
+            else if (key == 128) sx = atof(tokens[i + 1]);
+            else if (key == 129) sy = atof(tokens[i + 1]);
         }
-        if (text) text_object_add(obj, text, scale);
+        if (text) text_object_add(obj, text, scale * sx, scale * sy);
     }
 #endif
 

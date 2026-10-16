@@ -32,6 +32,7 @@ checkpoint) puts everything where it was. How these behave follows OpenGD
 #include "objects.h"
 #include "state.h"
 #include "player/collision.h"
+#include "graphics.h" // TEXT_OBJECT
 
 #define MAX_GROUP   1000
 #define MAX_MOVES   128
@@ -316,6 +317,8 @@ void trig2_free(void) {
 
 static bool is_trigger_obj(int obj) {
     int id = objects.id[obj];
+    // (a text has no sprite either, but it moves: graphics.c draws it)
+    if (id == TEXT_OBJECT) return false;
     return id > 0 && id < GAME_OBJECT_COUNT && game_objects[id].texture < 0;
 }
 
