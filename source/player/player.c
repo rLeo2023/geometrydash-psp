@@ -1009,10 +1009,10 @@ void update_p1_trail(Player *player, int player_id) {
     // Every 2/60 s rather than every 3 frames: at 30 fps (the PSP's default)
     // the copies came twice as far apart. Each one where the player was at
     // that moment, between this frame and the last, so they stay evenly spaced
-    #define P1_TRAIL_EVERY (1.f / 60.f)
+    #define P1_TRAIL_EVERY (1.f / 120.f)
     static float since_spawn[2], last_x[2], last_y[2];
     since_spawn[player_id] += delta;
-    if (since_spawn[player_id] > 2 * P1_TRAIL_EVERY) since_spawn[player_id] = P1_TRAIL_EVERY;
+    if (since_spawn[player_id] > 6 * P1_TRAIL_EVERY) since_spawn[player_id] = P1_TRAIL_EVERY;
     while (since_spawn[player_id] >= P1_TRAIL_EVERY) {
         since_spawn[player_id] -= P1_TRAIL_EVERY;
         if (state.dead || !p1_trail || !(player_id == 0 || state.dual)) continue;
