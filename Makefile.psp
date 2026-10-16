@@ -49,7 +49,8 @@ $(OBJ_DIR)/%.o: %.c
 # ---- the files next to the EBOOT -------------------------------------------
 
 OUT    := psp/out/gdpsp
-SHEETS := $(shell find gfx -name '*.t3s')
+# (the backgrounds go one per sheet here, bg_one_NN, not two sheets of them)
+SHEETS := $(filter-out %/bg_sheet_01.t3s %/bg_sheet_02.t3s,$(shell find gfx -name '*.t3s'))
 
 # The PSP layouts sit next to the 3DS ones in psp/menus/, but the EBOOT.PBP at the
 # repo root runs off romfs/ directly, so they are copied in for every build (the
