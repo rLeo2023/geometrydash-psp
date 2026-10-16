@@ -321,8 +321,13 @@ void external_levels_loop() {
             C2D_SceneBegin(bot);
             draw_fade();
 
+#ifdef __PSP__
+            // one screen: the touch screen's half goes on top of the other,
+            // so the list would cover the level's window
+            if (!in_external_popup)
+#endif
             ui_screen_draw(&screen);
-            
+
             if (in_external_popup) external_popup_draw_bot();
 
 

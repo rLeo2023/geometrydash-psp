@@ -1,0 +1,26 @@
+# PSP: a custom level's window on one screen. This half is the window and
+# the level's details along its top; the touch screen's half
+# (external_pop_up_psp.txt) puts play, the progress and the song under them.
+# The description is left out (the info button still shows it)
+darken opacity=0.4 darkenTime=0.15
+
+window x=200 y=122 w=356 h=212 style=0
+
+label x=46 y=38 text="Unknown" font=0 scale=0.7 align=LEFT tag="levelname" w=220
+label x=46 y=58 text="By Unknown" scale=0.55 font=2 align=LEFT tag="creatorname"
+
+image id=251 sheet=0 x=318 y=56 scale=0.7 tag="difficultyface"
+
+window x=200 y=145 w=300 h=90 style=9 psphide=1
+label x=200 y=145 font=1 text="No description found." scale=0.8 align=CENTER tag="description" psphide=1
+
+label x=356 y=214 font=1 text="<#3F2215>ID: N/A</>" scale=0.5 align=RIGHT tag="levelid"
+
+image id=97 x=50 y=80 scale=0.5 tag="likeimage"
+label x=62 y=81 text="N/A" font=0 scale=0.45 align=LEFT tag="likecount" w=60
+
+image id=58 x=116 y=80 scale=0.5
+label x=128 y=81 text="N/A" font=0 scale=0.45 align=LEFT tag="downloadcount" w=60
+
+image id=184 x=182 y=80 scale=0.52
+label x=194 y=81 text="N/A" font=0 scale=0.45 align=LEFT tag="stars" w=60
