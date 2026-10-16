@@ -4,7 +4,7 @@ const ObjectHitbox hitbox_v2_745[] = {
     { HITBOX_SPECIAL, 0.00, 0.00, 34.00, 86.00, COLLISION_BOX },
 };
 const ChildSprite children_v2_745[] = {
-    { 2000, -11.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2000, 0.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 #define V2_ROW_745 { 2001, -1, 0.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_v2_745, hitbox_v2_745 } /* portal_17_front_001.png */
@@ -13,14 +13,14 @@ const ObjectHitbox hitbox_v2_747[] = {
     { HITBOX_SPECIAL, 0.00, 0.00, 25.00, 75.00, COLLISION_BOX },
 };
 const ChildSprite children_v2_747[] = {
-    { 2002, -10.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2002, 0.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ObjectHitbox hitbox_v2_749[] = {
     { HITBOX_SPECIAL, 0.00, 0.00, 25.00, 75.00, COLLISION_BOX },
 };
 const ChildSprite children_v2_749[] = {
-    { 2004, -10.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2004, 0.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_v2_752[] = {

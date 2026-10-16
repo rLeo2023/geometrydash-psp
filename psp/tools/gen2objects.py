@@ -224,6 +224,12 @@ def main():
                     renamed = tex[ct].replace(old, new, 1)
                     if renamed != tex[ct] and renamed in frames:
                         c[0] = str(texture_for(renamed))
+                        # the game's sprite is trimmed, its place makes up
+                        # for it; this one is whole (mkv2sheet.py)
+                        if tex[ct] in frames:
+                            ox, oy = (float(v) for v in frames[tex[ct]]['spriteOffset'].strip('{}').split(','))
+                            c[1] = '%.2f' % (float(c[1]) - ox)
+                            c[2] = '%.2f' % (float(c[2]) - oy)
                 children.append(c)
         elif j:
             for c, x, y, sx, sy, rot in flatten(j.get('children'), w, h):
