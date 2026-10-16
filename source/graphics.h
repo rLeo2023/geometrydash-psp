@@ -14,7 +14,13 @@
 #define LINE_WIDTH 444
 #define LINE_HEIGHT 2
 
+#ifdef __PSP__
+// a heavy official level peaks around 600 (the log says, "peak: N sprites"):
+// 8192 of them took 900 KB of a PSP-1000's RAM
+#define MAX_SPRITES   4096
+#else
 #define MAX_SPRITES   8192
+#endif
 
 #define SCREEN_HEIGHT_AREA (320.f)
 #define SCREEN_WIDTH_AREA ((SCREEN_HEIGHT_AREA / SCREEN_HEIGHT) * SCREEN_WIDTH)
