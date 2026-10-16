@@ -514,7 +514,13 @@ void main_menu_loop() {
                 draw_fade();
 
                 begin_eye_layer(DEPTH_BACKGROUND);
+#ifdef __PSP__
+                // the background's lighter, lower part (as in a level): its
+                // top is darker, and the one screen showed it as a dark band
+                draw_background(-40 + (bg_scroll / 8), 200);
+#else
                 draw_background(-40 + (bg_scroll / 8), 0);
+#endif
                 end_eye_layer();
 
                 C2D_ViewScale(SCALE, SCALE);
