@@ -111,6 +111,16 @@ Setting settings[] = {
         .var = &settingsState.fps60,
         .key = CONFIG_GRAPHICS_PATH "fps60"
     },
+    {
+        .id = "showFps",
+        .label = "Show FPS",
+        .additionalInfo = "Shows the frame rate in the<p>top left corner.",
+        .page = PAGE_GRAPHICS,
+
+        .defaultValue = false,
+        .var = &settingsState.showFps,
+        .key = CONFIG_GRAPHICS_PATH "showFps"
+    },
 #endif
     {
         .id = "particlesDisabled",

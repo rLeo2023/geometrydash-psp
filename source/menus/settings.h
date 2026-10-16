@@ -54,11 +54,12 @@ typedef struct {
     bool quickCheckpoints;
 #ifdef __PSP__
     bool fps60; // off: 30 fps, every other vblank
+    bool showFps;
 #endif
 } SettingState;
 
 #ifdef __PSP__
-extern Setting settings[26];
+extern Setting settings[27];
 #else
 extern Setting settings[25];
 #endif
