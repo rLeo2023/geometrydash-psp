@@ -127,4 +127,19 @@ MainLevelDefinition main_levels[] = {
         .difficulty = MAIN_DIFF_DEMON,
         .stars = 14
     },
+    // GD 2.0's (their songs come from the player's GD, Makefile.psp's V2_SONGS)
+    {
+        .level_name = "Geometrical Dominator",
+        .gmd_path = "romfs:/main_levels/GeometricalDominator.gmd",
+        .song_path = "romfs:/songs/GeometricalDominator.mp3",
+        .difficulty = MAIN_DIFF_HARDER,
+        .stars = 10
+    },
+    {
+        .level_name = "Deadlocked",
+        .gmd_path = "romfs:/main_levels/Deadlocked.gmd",
+        .song_path = "romfs:/songs/Deadlocked.mp3",
+        .difficulty = MAIN_DIFF_DEMON,
+        .stars = 15
+    },
 };

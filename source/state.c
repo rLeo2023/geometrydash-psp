@@ -477,15 +477,14 @@ void clear_bg_flash() {
 #ifdef __PSP__
 // GD's official songs after the main levels' (2.0 and later): the mp3s come
 // from the player's own GD (Makefile.psp copies them when it has its files)
+// (Geometrical Dominator, 18, and Deadlocked, 19, are main levels now)
 static const char *extra_official_songs[] = {
-    "romfs:/songs/GeometricalDominator.mp3", // 18
-    "romfs:/songs/Deadlocked.mp3",           // 19
     "romfs:/songs/Fingerdash.mp3",           // 20
     "romfs:/songs/Dash.mp3",                 // 21
 };
 
 const char *official_song_name(int id) {
-    static const char *names[] = { "Geometrical Dominator", "Deadlocked", "Fingerdash", "Dash" };
+    static const char *names[] = { "Fingerdash", "Dash" };
     if (id >= 0 && id < MAIN_LEVELS_NUM) return main_levels[id].level_name;
     id -= MAIN_LEVELS_NUM;
     if (id >= 0 && id < (int)ARRAY_LEN(names)) return names[id];
