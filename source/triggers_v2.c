@@ -232,7 +232,7 @@ void trig2_parse_object(int obj, char **tokens, int count) {
         int key = atoi(tokens[i]);
         const char *v = tokens[i + 1];
         switch (key) {
-            case 51: t->target = (u16)atoi(v); break;
+            case 51: t->target = (u16)atoi(v); col_note_used(t->target); break;
             case 28: t->dx = atof(v); break;
             case 29: t->dy = atof(v); break;
             case 30: t->easing = (u8)atoi(v); break;

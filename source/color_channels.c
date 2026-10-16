@@ -512,6 +512,56 @@ void calculate_lbg() {
 CopyLink copy_links[MAX_COPY_LINKS];
 int copy_link_count;
 
+// the normal channels a level uses are 1 up to this (not included)
+static int col_used_end = COL_4 + 1;
+
+void col_reset_used(void) {
+    col_used_end = COL_4 + 1;
+}
+
+void col_note_used(int ch) {
+    if (ch > 0 && ch < CHANNEL_NORMAL_END && ch + 1 > col_used_end) col_used_end = ch + 1;
+}
+
+// a checkpoint's channels: the used normal ones and the special ones
+typedef struct {
+    int n;
+    // n normal, then the special ones: channels, then their buffers
+} ColSnapHead;
+
+#define COL_SPECIAL_COUNT (COL_CHANNEL_NUM - CHANNEL_NORMAL_END)
+
+void *col_snapshot_save(void *old) {
+    int n = col_used_end;
+    int total = n + COL_SPECIAL_COUNT;
+    ColSnapHead *h = realloc(old, sizeof(ColSnapHead) + total * (sizeof(ColorChannel) + sizeof(ColTriggerBuffer)));
+    if (!h) {
+        free(old);
+        return NULL;
+    }
+    h->n = n;
+    ColorChannel *c = (ColorChannel *)(h + 1);
+    ColTriggerBuffer *b = (ColTriggerBuffer *)(c + total);
+    memcpy(c, channels, sizeof(ColorChannel) * n);
+    memcpy(c + n, channels + CHANNEL_NORMAL_END, sizeof(ColorChannel) * COL_SPECIAL_COUNT);
+    memcpy(b, col_trigger_buffer, sizeof(ColTriggerBuffer) * n);
+    memcpy(b + n, col_trigger_buffer + CHANNEL_NORMAL_END, sizeof(ColTriggerBuffer) * COL_SPECIAL_COUNT);
+    return h;
+}
+
+void col_snapshot_restore(const void *snap) {
+    if (!snap) return;
+    const ColSnapHead *h = snap;
+    int n = h->n;
+    int total = n + COL_SPECIAL_COUNT;
+    const ColorChannel *c = (const ColorChannel *)(h + 1);
+    const ColTriggerBuffer *b = (const ColTriggerBuffer *)(c + total);
+    memcpy(channels, c, sizeof(ColorChannel) * n);
+    memcpy(channels + CHANNEL_NORMAL_END, c + n, sizeof(ColorChannel) * COL_SPECIAL_COUNT);
+    memcpy(col_trigger_buffer, b, sizeof(ColTriggerBuffer) * n);
+    memcpy(col_trigger_buffer + CHANNEL_NORMAL_END, b + n, sizeof(ColTriggerBuffer) * COL_SPECIAL_COUNT);
+}
+
 // hue in degrees, like GD's
 Color col_apply_hsv(Color c, float hue, float sat, float val, bool s_add, bool v_add) {
     float h, s, v;
@@ -539,6 +589,8 @@ void col_clear_copy(int ch) {
 
 void col_set_copy(int ch, int src, float h, float s, float v, bool s_add, bool v_add) {
     col_clear_copy(ch);
+    col_note_used(ch);
+    col_note_used(src);
     if (src == ch || copy_link_count >= MAX_COPY_LINKS) return;
     copy_links[copy_link_count++] = (CopyLink){ ch, src, s_add, v_add, h, s, v };
 }

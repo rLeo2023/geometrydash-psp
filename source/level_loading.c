@@ -883,9 +883,11 @@ void fill_object_data(int object, int key, GDValueType type, GDValue val) {
         // 2.0 saves some objects (the sludge) with -1: their default color
         case 21: // Main col channel
             if (type == GD_VAL_INT && val.i > 0) objects.col_channel[object] = val.i;
+            col_note_used(val.i);
             break;
         case 22: // Detail col channel
             if (type == GD_VAL_INT && val.i > 0) objects.detail_col_channel[object] = val.i;
+            col_note_used(val.i);
             break;
 #else
         case 21: // Main col channel
@@ -897,6 +899,9 @@ void fill_object_data(int object, int key, GDValueType type, GDValue val) {
 #endif
         case 23: // Target color ID
             if (type == GD_VAL_INT) objects.target_color_id[object] = val.i;
+#ifdef __PSP__
+            col_note_used(val.i);
+#endif
             break;
         case 24: // Z layer
             if (type == GD_VAL_INT) objects.zlayer[object] = val.i;
@@ -1236,6 +1241,9 @@ int parse_string(const char *levelString) {
     printf("Aproximately %d bytes of pure objects\n", sizeof(ObjectsArray) * objectCount);
     
     coin_count = 0;
+#ifdef __PSP__
+    col_reset_used();
+#endif
 
     for (int i = 0; i < objectCount; i++) {
         // Parse
@@ -1304,6 +1312,7 @@ void set_color_channels() {
                     }
 
 #ifdef __PSP__
+                    col_note_used(id);
                     channels[chan].alpha = 255;
                     if (colorChannel.v2) {
                         channels[chan].alpha = (u8)(CLAMP(colorChannel.opacity, 0.f, 1.f) * 255);
@@ -1463,6 +1472,14 @@ int load_level(char *path) {
     init_col_channels();
     set_color_channels();
 
+#ifdef __PSP__
+    // the 2.0 sheet only for a level with 2.0 objects or the robot (before
+    // the pulse rods' sprites below: loading it redoes the sprites)
+    bool v2 = level_info.initial_robot;
+    for (int i = 0; i < objects.count && !v2; i++) v2 = objects.id[i] >= ROBOT_PORTAL;
+    v2_sheet_need(v2);
+#endif
+
     // Set pulserod pulse ball image
     current_pulserod_ball_image = game_objects[15].children[0].texture + (rand() % 3);
 
@@ -1501,6 +1518,7 @@ void reload_level() {
 void unload_level() {
 #ifdef __PSP__
     trig2_free();
+    v2_sheet_need(false);
 #endif
     free_arrays();
     free_sections();
