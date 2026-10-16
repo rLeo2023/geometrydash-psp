@@ -972,6 +972,12 @@ void spawn_p1_trail(Player *player, int player_id) {
 
     trail_data->delta_scale = (end_scale - trail_data->scale) / P1_TRAIL_DURATION;
     
+#ifdef __PSP__
+    trail_data->robot = player->robot && player->gamemode == GAMEMODE_PLAYER;
+    trail_data->robot_anim = player->robot_anim;
+    trail_data->robot_anim_t = player->robot_anim_t;
+    if (trail_data->robot) trail_data->upside_down = player->upside_down;
+#endif
     trail_data->x = player->x;
     trail_data->y = player->y;
     trail_data->rot = player->rotation;
@@ -1048,6 +1054,17 @@ void draw_p1_trail(Player *player, int player_id) {
             bool flip_x = (state.mirror_mult < 0);
 
             u32 color = (player_id == 1) ? C2D_Color32(p2_color.r, p2_color.g, p2_color.b, trail_data->opacity * 255) : C2D_Color32(p1_color.r, p1_color.g, p1_color.b, trail_data->opacity * 255);
+
+#ifdef __PSP__
+            if (trail_data->robot) {
+                // the robot's copy: its main color parts, in the pose it had
+                u8 anim = trail_data->robot_anim;
+                spawn_robot_at(get_mirror_x(calc_x, state.mirror_factor), calc_y, 0,
+                               flip_x, trail_data->upside_down, trail_data->scale,
+                               color, 0, &anim, trail_data->robot_anim_t);
+                continue;
+            }
+#endif
 
             spawn_p1_layer_at(
                 trail_data->gamemode, *current_icons[trail_data->gamemode], 

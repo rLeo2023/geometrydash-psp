@@ -1908,8 +1908,8 @@ void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned 
         float sx_ = x + (px * cos_r + py * sin_r) * scale;
         float sy_ = y + (px * sin_r - py * cos_r) * scale;
 
-        // the second color under the main one
-        for (int layer = 1; layer >= 0; layer--) {
+        // the second color under the main one (a ghost copy: p2_color 0, only the main)
+        for (int layer = p2_color ? 1 : 0; layer >= 0; layer--) {
             int rel;
             C2D_SpriteSheet *sheet = get_sprite_sheet(robot_part_tex[i][layer], &rel);
             C2D_Sprite spr = { 0 };
