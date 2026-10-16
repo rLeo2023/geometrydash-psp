@@ -934,6 +934,41 @@ bool is_valid_object(int id) {
     return id >= 1 && id < GAME_OBJECT_COUNT;
 }
 
+#ifdef __PSP__
+// GD 2.0 teleport portals: the level saves only the way in (747) and how far
+// above it the way out is (54); the 749 is made at load, as GD (and wiidash)
+// do, right after the level's own objects
+#define MAX_TELEPORTS 128
+static int tp_in[MAX_TELEPORTS], tp_out[MAX_TELEPORTS];
+static float tp_dy[MAX_TELEPORTS];
+static int tp_count;
+
+int teleport_exit(int obj) {
+    for (int i = 0; i < tp_count; i++)
+        if (tp_in[i] == obj) return tp_out[i];
+    return -1;
+}
+
+static void note_teleport(int obj, char **tokens, int count) {
+    if (tp_count >= MAX_TELEPORTS) return;
+    float dy = 0;
+    for (int i = 0; i + 1 < count; i += 2)
+        if (atoi(tokens[i]) == 54) dy = atof(tokens[i + 1]);
+    tp_in[tp_count] = obj;
+    tp_out[tp_count] = -1;
+    tp_dy[tp_count] = dy;
+    tp_count++;
+}
+
+// how many 747s the level string has (GD saves the id first: "1,747,...")
+static int count_teleports(char **sections, int count) {
+    int n = 0;
+    for (int i = 0; i < count; i++)
+        if (!strncmp(sections[i], "1,747,", 6)) n++;
+    return n < MAX_TELEPORTS ? n : MAX_TELEPORTS;
+}
+#endif
+
 int parse_gd_object(const char *objStr, int obj) {
     int count = 0;
     // Split object into each key
@@ -1037,6 +1072,7 @@ int parse_gd_object(const char *objStr, int obj) {
 #ifdef __PSP__
     // its groups and, for a 2.0 trigger, what it does
     trig2_parse_object(obj, tokens, count);
+    if (objects.id[obj] == BLUE_TP_PORTAL) note_teleport(obj, tokens, count);
 #endif
 
     free_string_array(tokens, count);
@@ -1227,15 +1263,21 @@ int parse_string(const char *levelString) {
     }
     
     int objectCount = sectionCount - 1;
+    int totalCount = objectCount;
+#ifdef __PSP__
+    // room for the teleports' ways out
+    tp_count = 0;
+    totalCount += count_teleports(sections + 1, objectCount);
+#endif
 
     printf("%d\n", objectCount);
-    
-    if (!init_arrays(objectCount)) {
+
+    if (!init_arrays(totalCount)) {
         output_log("Failed to allocate object array\n");
         return 4;
     }
 
-    objects.count = objectCount;
+    objects.count = totalCount;
 
     printf("Parsing string and converting objects...\n");
     printf("Aproximately %d bytes of pure objects\n", sizeof(ObjectsArray) * objectCount);
@@ -1255,6 +1297,30 @@ int parse_string(const char *levelString) {
 
         assign_object_to_section(i);
     }
+
+#ifdef __PSP__
+    // each teleport's way out: the way in's keys (its groups, colors, ...),
+    // then its own id and place. As wiidash: a bit behind it, turned around
+    int out = objectCount;
+    for (int k = 0; k < tp_count && out < totalCount; k++) {
+        int in = tp_in[k];
+        float rot = objects.rotation[in];
+        float x = objects.x[in] - 10 * fabsf(cosf(DegToRad(rot)));
+        float y = objects.y[in] + tp_dy[k];
+        float out_rot = fmodf(rot + (objects.flippedH[in] ? 180 : 0) + 180, 360);
+        const char *src = sections[in + 1];
+        size_t len = strlen(src) + 96;
+        char *str = malloc(len);
+        if (!str) break;
+        snprintf(str, len, "%s,1,%d,2,%.3f,3,%.3f,6,%.3f,4,0,5,0", src, ORANGE_TP_PORTAL, x, y, out_rot);
+        int ok = parse_gd_object(str, out);
+        free(str);
+        if (!ok) break;
+        tp_out[k] = out;
+        assign_object_to_section(out);
+        out++;
+    }
+#endif
 
     qsort(coin_ids, coin_count, sizeof(int), compare_coins);
 

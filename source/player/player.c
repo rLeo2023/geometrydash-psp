@@ -152,13 +152,15 @@ void cube_gamemode(Player *player) {
     }
 
 #ifdef __PSP__
-    // Robot: rises at a constant speed while the jump is held, up to 0.25 s
+    // Robot (as wiidash does it): rises at a constant speed while the jump is
+    // held, up to 1.5 / 5.4 s; the rest of the time it falls at 0.9 gravity
     if (player->robot) {
-        if (player->robot_boost > 0 && state.input.holdJump && player->vel_y > 0 && !player->on_ground) {
+        if (player->robot_boost > 0 && state.input.holdJump && !player->on_ground) {
             player->gravity = 0;
             player->robot_boost -= STEPS_DT;
         } else {
             player->robot_boost = 0;
+            player->gravity = -2794.1082f * 0.9f;
         }
     }
 
@@ -226,7 +228,8 @@ void cube_gamemode(Player *player) {
 #ifdef __PSP__
         if (player->robot) {
             player->vel_y *= 0.5f;
-            player->robot_boost = 0.25f;
+            player->robot_boost = 1.5f / 5.4f;
+            player->gravity = 0;
         }
 #endif
         player->inverse_rotation = false;
