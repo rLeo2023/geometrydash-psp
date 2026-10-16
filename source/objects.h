@@ -58,11 +58,14 @@ typedef struct {
     int child_count;
     const ChildSprite* children;
     const ObjectHitbox* hitbox;
+#ifdef __PSP__
+    int detail_color; // the detail's default channel when not 1 (2.0 objects), else 0
+#endif
 } GameObject;
 
 #define TEXTURE_COUNT 883
 #ifdef __PSP__
-// and the objects GD 2.0 added (psp/tools/gen2objects.py), their sprites in
+// and the objects GD 2.0 added (psp/tools/wii2objects.py), their sprites in
 // a sheet of their own from texture V2_TEXTURE_START
 #include "objects_v2.h"
 #define GAME_OBJECT_COUNT GAME_OBJECT_COUNT_V2

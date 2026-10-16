@@ -8,7 +8,10 @@ the standard resolution: the game's sprites are at that size), back to its
 untrimmed size so it centers like GD draws it, and the lot packed like any
 other sheet (mkatlas.py).
 
-Usage: mkv2sheet.py <GD Resources folder> <work folder> <out.psheet>
+wii:<name> sprites (wii2objects.py) come from wiidash's own PNGs instead
+(data/*/<name>, whole and at twice the size: halved here).
+
+Usage: mkv2sheet.py <GD Resources folder> <work folder> <out.psheet> [wiidash folder]
 """
 import os
 import plistlib
@@ -93,8 +96,18 @@ def robot_layer(res, robot, layer):
     return canvas
 
 
+def wiidash_pngs(wii):
+    found = {}
+    for root, _, files in os.walk(os.path.join(wii, 'data')):
+        for f in files:
+            if f.endswith('.png'):
+                found.setdefault(f, os.path.join(root, f))
+    return found
+
+
 def main():
     res, work, out = sys.argv[1:4]
+    wii = wiidash_pngs(sys.argv[4]) if len(sys.argv) > 4 else {}
     names = [l.strip() for l in open(os.path.join(HERE, '..', 'gfx2', 'sprites_v2.list')) if l.strip()]
 
     frames = {}
@@ -116,6 +129,13 @@ def main():
             robot, layer = n[len('psp_robot_'):-4].rsplit('_', 1)
             robot_layer(res, robot, int(layer)).save(os.path.join(work, n))
             t3s.append(n)
+            continue
+        if n.startswith('wii:'):
+            img = Image.open(wii[n[4:]]).convert('RGBA')
+            img = img.resize((max(1, round(img.width / 2)), max(1, round(img.height / 2))), Image.LANCZOS)
+            f = 'wii_' + n[4:]
+            img.save(os.path.join(work, f))
+            t3s.append(f)
             continue
         png, d = frames[n]
         if png not in sheets:

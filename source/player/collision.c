@@ -389,7 +389,14 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             if (!GET_ACTIVATED(obj) && (state.input.holdJump) && player->buffering_state == BUFFER_READY) {
                 MotionTrail_ResumeStroke(trail);
                 player->vel_y = jump_heights_table[state.speed][JUMP_YELLOW_ORB][player->gamemode][player->mini];
-                
+#ifdef __PSP__
+                // the robot's yellow orb jump is 0.9 of the cube's (wiidash's table)
+                if (player->robot && player->gamemode == GAMEMODE_PLAYER) {
+                    player->vel_y *= 0.9f;
+                    player->robot_boost = 0;
+                }
+#endif
+
                 player->ball_rotation_speed = -BALL_SLOW_ROTATION;
                 
                 player->on_ground = false;
@@ -482,6 +489,9 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                     player->vel_y /= -2;
                     player->upside_down = false;
                     player->inverse_rotation = false;
+#ifdef __PSP__
+                    player->robot_boost = 0; // a flip ends the robot's rise (wiidash)
+#endif
 
                     if (player->gamemode == GAMEMODE_BIRD) 
                         player->rotation = 0;
@@ -511,6 +521,9 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                     player->vel_y /= -2;
                     player->upside_down = true;
                     player->inverse_rotation = false;
+#ifdef __PSP__
+                    player->robot_boost = 0;
+#endif
 
                     if (player->gamemode == GAMEMODE_BIRD) 
                         player->rotation = 0;
