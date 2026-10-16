@@ -905,7 +905,7 @@ Paths
 The game names its files "romfs:/..." (inside the 3DS executable) and
 "sdmc:/..." (the SD card). Here both are folders next to the EBOOT: romfs/,
 and mstick/ for the SD card, where the game's own folder 3ds/gd3ds/ is
-psp/gdpsp/ (saves, external_levels, custom_songs). The calls are wrapped at
+psp/gdpsp/ (saves, external_levels, saved_songs). The calls are wrapped at
 link time (-Wl,--wrap=...), which also reaches the libraries (mpg123 opens
 the songs itself).
 
