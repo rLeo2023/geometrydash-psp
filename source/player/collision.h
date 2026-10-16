@@ -53,6 +53,8 @@ extern int number_of_collisions_checks;
 #define UFO_PORTAL 111
 #define WAVE_PORTAL 660
 #define ROBOT_PORTAL 745
+#define BLUE_TP_PORTAL 747   // GD 2.0 teleport: in...
+#define ORANGE_TP_PORTAL 749 // ... and out (made at load, 54 above the in one)
 
 #define BLUE_GRAVITY_PORTAL 10
 #define YELLOW_GRAVITY_PORTAL 11

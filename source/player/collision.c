@@ -733,7 +733,41 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                 SET_ACTIVATED(obj, true);
             }
             break;
-        case SHIP_PORTAL: 
+#ifdef __PSP__
+        case BLUE_TP_PORTAL:
+            // GD 2.0 teleport (as wiidash): straight to the way out's height
+            if (!GET_ACTIVATED(obj)) {
+                int out = teleport_exit(obj);
+                if (out >= 0) {
+                    float to_y = objects.y[out];
+                    player->y = to_y;
+                    MotionTrail_StopStroke(trail);
+
+                    // far off screen: the camera jumps there too
+                    if (player->gamemode == GAMEMODE_PLAYER &&
+                        fabsf(state.camera_y + SCREEN_HEIGHT_AREA / 2 - to_y) >= SCREEN_HEIGHT_AREA / 2 + 60) {
+                        state.camera_y = to_y - SCREEN_HEIGHT_AREA / 2;
+                        if (state.camera_y < 0) state.camera_y = 0;
+                    }
+
+                    UseEffect *e_in = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
+                    if (e_in) {
+                        e_in->def.colorR = 56 / 255.f;
+                        e_in->def.colorG = 200 / 255.f;
+                        e_in->def.colorB = 255 / 255.f;
+                    }
+                    UseEffect *e_out = add_use_effect(objects.x[out], objects.y[out], out, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
+                    if (e_out) {
+                        e_out->def.colorR = 255 / 255.f;
+                        e_out->def.colorG = 255 / 255.f;
+                        e_out->def.colorB = 0 / 255.f;
+                    }
+                }
+                SET_ACTIVATED(obj, true);
+            }
+            break;
+#endif
+        case SHIP_PORTAL:
             if (!GET_ACTIVATED(obj)) {
                 state.ground_y = fmaxf(0, ip1_ceilf((objects.y[obj] - 180) / 30.f)) * 30;
                 state.ceiling_y = state.ground_y + 300;

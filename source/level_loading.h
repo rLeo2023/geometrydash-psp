@@ -138,6 +138,11 @@ bool obj_has_detail(const GameObject *obj);
 
 bool is_valid_object(int id);
 
+#ifdef __PSP__
+// a teleport portal's (747) way out, the 749 made for it at load (-1: none)
+int teleport_exit(int obj);
+#endif
+
 char *get_level_name(char *data_ptr);
 char *load_user_song(int id, size_t *out_size); 
 bool check_song(int id);
