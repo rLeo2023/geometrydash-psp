@@ -137,105 +137,105 @@ const ChildSprite children_v2_774[] = {
 
 
 const ChildSprite children_v2_807[] = {
-    { 2045, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2045, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_808[] = {
-    { 2047, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2047, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_809[] = {
-    { 2048, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2048, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_810[] = {
-    { 2050, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2050, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_811[] = {
-    { 2051, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2051, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_812[] = {
-    { 2053, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2053, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_813[] = {
-    { 2054, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2054, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_814[] = {
-    { 2056, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2056, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_815[] = {
-    { 2057, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2057, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_816[] = {
-    { 2059, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2059, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_817[] = {
-    { 2060, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2060, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_818[] = {
-    { 2062, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2062, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_819[] = {
-    { 2063, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2063, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_820[] = {
-    { 2065, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2065, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_821[] = {
-    { 2066, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2066, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_822[] = {
-    { 2068, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2068, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 
 
 const ChildSprite children_v2_825[] = {
-    { 2071, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2071, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_826[] = {
-    { 2073, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2073, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_827[] = {
-    { 2075, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2075, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_828[] = {
-    { 2076, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2076, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_829[] = {
-    { 2078, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2078, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_830[] = {
-    { 2079, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2079, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_831[] = {
-    { 2081, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2081, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_832[] = {
-    { 2082, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2082, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_833[] = {
-    { 2084, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2084, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 
@@ -810,19 +810,19 @@ const ChildSprite children_v2_1077[] = {
 };
 
 const ChildSprite children_v2_1078[] = {
-    { 2357, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2357, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_1079[] = {
-    { 2359, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2359, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_1080[] = {
-    { 2361, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2361, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_1081[] = {
-    { 2363, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 2363, 0.00, -0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_BLACK, 1.00 },
 };
 
 const ChildSprite children_v2_1082[] = {

@@ -256,6 +256,9 @@ float particle_calc_time = 0;
 float triggers_time = 0;
 
 float delta = 0;
+#ifdef __PSP__
+bool psp_autoload_test; // started from an autoload.gmd (logs what it draws)
+#endif
 unsigned int level_frame = 0;
 unsigned int frame_counter = 0;
 
@@ -1020,7 +1023,29 @@ void game_loop() {
             MotionTrail_Update(&trail_p2, delta);
             MotionTrail_UpdateWaveTrail(&wave_trail_p2, delta);
             update_p1_trail(&state.player2, 1);
-            
+#ifdef __PSP__
+            {
+                // autoload test: what's on screen and its colors, now and then
+                extern bool psp_autoload_test;
+                static float dump_t;
+                dump_t += delta;
+                if (psp_autoload_test && dump_t > 2.f) {
+                    dump_t = 0;
+                    psp_log("dump at x %.0f\n", state.player.x);
+                    for (int o = 0; o < objects.count; o++) {
+                        if (objects.x[o] < state.camera_x || objects.x[o] > state.camera_x + 420) continue;
+                        if (!is_valid_object(objects.id[o])) continue;
+                        int cm = objects.col_channel[o], cd = objects.detail_col_channel[o];
+                        Color a = channels[get_col_channel_index(v2_channel(cm))].color;
+                        Color b = channels[get_col_channel_index(v2_channel(cd))].color;
+                        psp_log("  id %d at %.0f,%.0f v19 %d main %d (%d,%d,%d) detail %d (%d,%d,%d)\n",
+                                objects.id[o], objects.x[o], objects.y[o], objects.v1p9_col_channel[o],
+                                cm, a.r, a.g, a.b, cd, b.r, b.g, b.b);
+                    }
+                }
+            }
+#endif
+
             // If not dual, fade the p2 wave trial
             if (!state.dual) {
                 if (wave_trail_p2.opacity > 0) wave_trail_p2.opacity -= (0.02f * STEPS_HZ) * delta;
@@ -1241,7 +1266,7 @@ void game_loop() {
             if (state.noclip) {
 #ifdef __PSP__
                 // the 3DS's bottom edge falls off the PSP's screen
-                draw_text(&bigFont_fontCharset, &bigFont_sheet, 4, 216, 0.5f, 0.5f, 0, true, "Noclip Activated");
+                draw_text(&bigFont_fontCharset, &bigFont_sheet, 4, 222, 0.35f, 0.35f, 0, true, "Noclip Activated");
 #else
                 draw_text(&bigFont_fontCharset, &bigFont_sheet, 0, 234, 0.5f, 0.5f, 0, true, "Noclip Activated");
 #endif
@@ -1479,6 +1504,20 @@ int main(int argc, char* argv[]) {
 
     // Set to known value
     change_blending(false);
+
+#ifdef __PSP__
+    // For testing: an autoload.gmd next to the EBOOT is played right away,
+    // with noclip (it plays through by itself)
+    FILE *autoload = fopen("autoload.gmd", "rb");
+    if (autoload) {
+        fclose(autoload);
+        snprintf(state.custom_level_path, sizeof(state.custom_level_path), "autoload.gmd");
+        state.custom_level = true;
+        state.noclip = true;
+        game_state = STATE_GAME;
+        psp_autoload_test = true;
+    }
+#endif
 
     bool exit = false;
     while (aptMainLoop() && !exit) {
