@@ -35,17 +35,18 @@ Geometry Dash PSP brings AleFunky's Nintendo 3DS version of Geometry Dash ([GD3D
 
 ### Features
 
-- All the main levels, from Stereo Madness to Theory of Everything 2
+- All the main levels, from Stereo Madness to Theory of Everything 2, plus Geometrical Dominator and Deadlocked
+- **GD 2.0 support** (based on AleFunky's [wiidash](https://github.com/AleFunky)): robot, teleport portals, 2.0 objects, groups and the Move, Alpha, Toggle, Spawn and Pulse triggers
 - Accurate physics, particles, player trails and level coins
 - Practice mode, with auto-checkpoints on by default
-- Custom levels (GD 1.9 objects) loaded from the Memory Stick
-- Icon kit, settings, progress and statistics, all saved on the Memory Stick
+- Custom levels (up to GD 2.0) loaded from the Memory Stick
+- Icon kit (with robots), settings, progress and statistics, all saved on the Memory Stick
 - Every menu redesigned for one 480x272 screen
 - 30 FPS by default, with a **60 FPS Switch** option in the settings
 - Music decoded on the PSP's Media Engine
 - Runs on **every PSP model, including the PSP-1000**, and on PPSSPP
 
-Not included: online features, the level editor, and GD 2.0+ objects and triggers.
+Not included: online features, the level editor, and GD 2.1+ objects and triggers.
 
 ### Installation
 
@@ -62,10 +63,10 @@ The first time it starts, the game creates a `mstick` folder next to the EBOOT, 
 1. Start the game once, so its folders get created.
 2. Get the level as a `.gmd` file, for example with the [GDShare](https://geode-sdk.org/mods/hjfod.gdshare) mod or from [GDHistory](https://history.geometrydash.eu/).
 3. Copy it to `PSP\GAME\GeometryDashPSP\mstick\psp\gdpsp\external_levels\`.
-4. If it uses a custom song, copy the `.mp3` to `...\mstick\psp\gdpsp\saved_songs\`, named after its Newgrounds ID (for example `467339.mp3`).
+4. If it uses a custom song, copy the `.mp3` to `...\mstick\psp\gdpsp\saved_songs\`, named after its Newgrounds ID (for example `467339.mp3`). Use MP3s at 128 kbps of no more than 8 MB: bigger ones may not load on a PSP, which has little memory.
 5. In the game: **Creator** (the tools button) > **Custom**.
 
-Levels that use GD 2.0 objects or triggers won't load properly, and very object-heavy levels may run slowly.
+GD 2.0 levels are supported (robot, teleport portals, groups and the Move, Alpha, Toggle, Spawn and Pulse triggers). Levels that use GD 2.1 or 2.2 features (spider, newer triggers) may not work properly, and very object-heavy levels may run slowly.
 
 ### Controls
 
@@ -110,17 +111,18 @@ Geometry Dash PSP lleva a la PSP la versión de Geometry Dash para Nintendo 3DS 
 
 ### Características
 
-- Todos los niveles principales, de Stereo Madness a Theory of Everything 2
+- Todos los niveles principales, de Stereo Madness a Theory of Everything 2, más Geometrical Dominator y Deadlocked
+- **Soporte de GD 2.0** (basado en [wiidash](https://github.com/AleFunky), de AleFunky): robot, portales de teletransporte, objetos de la 2.0, grupos y los triggers Move, Alpha, Toggle, Spawn y Pulse
 - Física precisa, partículas, estelas del jugador y monedas
 - Modo práctica, con checkpoints automáticos activados por defecto
-- Niveles custom (objetos de GD 1.9) cargados desde la Memory Stick
-- Icon kit, opciones, progreso y estadísticas, todo guardado en la Memory Stick
+- Niveles custom (hasta GD 2.0) cargados desde la Memory Stick
+- Icon kit (con robots), opciones, progreso y estadísticas, todo guardado en la Memory Stick
 - Todos los menús rediseñados para una sola pantalla de 480x272
 - 30 FPS por defecto, con la opción **60 FPS Switch** en los ajustes
 - Música decodificada en el Media Engine de la PSP
 - Funciona en **todos los modelos de PSP, incluida la PSP-1000**, y en PPSSPP
 
-No incluye: funciones online, el editor de niveles, ni objetos y triggers de GD 2.0 en adelante.
+No incluye: funciones online, el editor de niveles, ni objetos y triggers de GD 2.1 en adelante.
 
 ### Instalación
 
@@ -137,10 +139,10 @@ La primera vez que arranca, el juego crea una carpeta `mstick` al lado del EBOOT
 1. Abrí el juego una vez para que se creen sus carpetas.
 2. Conseguí el nivel como archivo `.gmd`, por ejemplo con el mod [GDShare](https://geode-sdk.org/mods/hjfod.gdshare) o desde [GDHistory](https://history.geometrydash.eu/).
 3. Copialo a `PSP\GAME\GeometryDashPSP\mstick\psp\gdpsp\external_levels\`.
-4. Si usa una canción custom, copiá el `.mp3` a `...\mstick\psp\gdpsp\saved_songs\`, con el ID de Newgrounds como nombre (por ejemplo `467339.mp3`).
+4. Si usa una canción custom, copiá el `.mp3` a `...\mstick\psp\gdpsp\saved_songs\`, con el ID de Newgrounds como nombre (por ejemplo `467339.mp3`). Usá MP3 a 128 kbps de 8 MB como máximo: los más grandes pueden no cargar en la PSP, que tiene poca memoria.
 5. En el juego: **Creator** (el botón de herramientas) > **Custom**.
 
-Los niveles que usan objetos o triggers de GD 2.0 no cargan bien, y los niveles con muchísimos objetos pueden ir lentos.
+Los niveles de GD 2.0 están soportados (robot, portales de teletransporte, grupos y los triggers Move, Alpha, Toggle, Spawn y Pulse). Los que usan cosas de GD 2.1 o 2.2 (spider, triggers nuevos) pueden no funcionar bien, y los niveles con muchísimos objetos pueden ir lentos.
 
 ### Controles
 
