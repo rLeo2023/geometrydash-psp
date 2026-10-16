@@ -1687,6 +1687,30 @@ void spawn_icon_at(
     }
 }
 
+#ifdef __PSP__
+// the 2.0 robot standing: its main color's parts, the second color's on top
+// (one picture each, put together from GD's when building)
+void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
+                    float scale, u32 p1_color, u32 p2_color) {
+    if (!spriteSheetV2) return;
+    u32 colors[2] = { p1_color, p2_color };
+    for (int layer = 0; layer < 2; layer++) {
+        int rel;
+        C2D_SpriteSheet *sheet = get_sprite_sheet(V2_TEX_ROBOT + layer, &rel);
+        C2D_Sprite spr = { 0 };
+        C2D_ImageTint tint;
+        C2D_SpriteFromSheet(&spr, *sheet, rel);
+        C2D_SpriteSetCenter(&spr, 0.5f, 0.5f);
+        C3D_TexSetFilter(spr.image.tex, GPU_LINEAR, GPU_LINEAR);
+        C2D_SpriteSetPos(&spr, x, y);
+        C2D_SpriteSetScale(&spr, scale * (flip_x ? -1 : 1), scale * (flip_y ? -1 : 1));
+        C2D_SpriteSetRotation(&spr, C3D_AngleFromDegrees(deg));
+        C2D_PlainImageTint(&tint, colors[layer], 1.0f);
+        C2D_DrawSpriteTinted(&spr, &tint);
+    }
+}
+#endif
+
 void spawn_p1_layer_at(
     int gamemode,
     int id,
