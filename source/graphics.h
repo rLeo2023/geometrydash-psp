@@ -132,8 +132,15 @@ void update_player_colors();
 void set_player_colors(Color p1, Color p2, Color glow);
 #ifdef __PSP__
 void v2_sheet_need(bool need);
+// the animated 2.0 objects' clock, while the level runs
+void obj_anim_tick(float dt);
+// the robot's animations (wiidash's, from GD's robot.plist): running, then
+// a jump's start and its loop, a fall's start and its loop
+enum { ROBOT_ANIM_RUN, ROBOT_ANIM_JUMP_START, ROBOT_ANIM_JUMP, ROBOT_ANIM_FALL_START, ROBOT_ANIM_FALL };
+// draws the robot's parts posed for *anim at t seconds (a start that ended
+// moves *anim on to its loop)
 void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
-                    float scale, u32 p1_color, u32 p2_color);
+                    float scale, u32 p1_color, u32 p2_color, u8 *anim, float t);
 #endif
 void spawn_icon_at(
     int gamemode,

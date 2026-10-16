@@ -2,5 +2,4 @@
 #pragma once
 #define GAME_OBJECT_COUNT_V2 1330
 #define V2_TEXTURE_START 2000
-#define V2_TEXTURE_COUNT 644
-#define V2_TEX_ROBOT 2642 /* main color, then the second color */
+#define V2_TEXTURE_COUNT 764

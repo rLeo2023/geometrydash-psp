@@ -936,6 +936,7 @@ void game_loop() {
             handle_triggers();
 #ifdef __PSP__
             trig2_update(delta); // moves, fades, spawns, pulses
+            obj_anim_tick(delta); // fire, water, monsters (graphics.c)
 #endif
             handle_col_triggers();
             calculate_lbg();
