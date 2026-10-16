@@ -1,0 +1,15 @@
+# PSP: how to play on one screen. All of it is drawn by the touch screen's
+# half (how_to_play_psp.txt): that half goes over everything, the settings
+# window it opens from too, which would cover a window drawn up here. These
+# stay for the code (it switches the pages by their tags), hidden
+darken opacity=0.4 darkenTime=0.15 psphide=1
+
+window x=200 y=120 w=300 h=130 style=0 psphide=1
+label x=200 y=75 text="Cube" scale=0.9 font=2 align=CENTER tag="page1" psphide=1
+label x=200 y=75 text="Ship" scale=0.9 font=2 align=CENTER tag="page2" psphide=1
+label x=200 y=75 text="Ball" scale=0.9 font=2 align=CENTER tag="page3" psphide=1
+label x=200 y=75 text="Ufo" scale=0.9 font=2 align=CENTER tag="page4" psphide=1
+label x=200 y=75 text="Wave" scale=0.9 font=2 align=CENTER tag="page5" psphide=1
+label x=200 y=75 text="Orbs" scale=0.9 font=2 align=CENTER tag="page6" psphide=1
+label x=200 y=75 text="Practice Mode" scale=0.9 font=2 align=CENTER tag="page7" psphide=1
+label x=200 y=75 text="Practice Mode" scale=0.9 font=2 align=CENTER tag="page8" psphide=1

@@ -1,0 +1,37 @@
+# PSP: how to play on one screen, all of it in the touch screen's half
+# (40 + x, y), which goes over everything else: one window with the title
+# and the picture up top, the text under them, close and Next in its
+# corners. "Press X": the PSP's Cross jumps
+@merge 40 0 1
+
+darken opacity=0.4 darkenTime=0.15
+
+window x=160 y=120 w=360 h=216 style=0
+label x=160 y=36 text="Cube" scale=0.8 font=2 align=CENTER tag="page1"
+label x=160 y=36 text="Ship" scale=0.8 font=2 align=CENTER tag="page2"
+label x=160 y=36 text="Ball" scale=0.8 font=2 align=CENTER tag="page3"
+label x=160 y=36 text="Ufo" scale=0.8 font=2 align=CENTER tag="page4"
+label x=160 y=36 text="Wave" scale=0.8 font=2 align=CENTER tag="page5"
+label x=160 y=36 text="Orbs" scale=0.8 font=2 align=CENTER tag="page6"
+label x=160 y=36 text="Practice Mode" scale=0.8 font=2 align=CENTER tag="page7"
+label x=160 y=36 text="Practice Mode" scale=0.8 font=2 align=CENTER tag="page8"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=45 tag="page1"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=46 tag="page2"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=51 tag="page3"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=50 tag="page4"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=52 tag="page5"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=49 tag="page6"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=47 tag="page7"
+image w=305 h=91 y=86 x=160 scale=0.6 sheet=1 id=48 tag="page8"
+
+button x=-4 y=28 id=31 scale=0.6 action="exit" keyBinds="B"
+label x=160 y=158 text="<#00FF00>Tap</> the screen or<p><#00FF00>press</> X to jump.<p><p><#00FF00>Hold</> down to keep<p>jumping." tag="page1" scale=0.5 align=CENTER
+label x=160 y=158 text="<#00FF00>Hold</> to fly up.<p><p><#00FF00>Release</> to fly down." tag="page2" scale=0.5 align=CENTER
+label x=160 y=158 text="<#00FF00>Tap</> to switch gravity." tag="page3" scale=0.5 align=CENTER
+label x=160 y=158 text="<#00FF00>Tap</> to boost upwards." tag="page4" scale=0.5 align=CENTER
+label x=160 y=158 text="<#00FF00>Hold</> to move upwards.<p><p><#00FF00>Release</> to go back<p>down." tag="page5" scale=0.5 align=CENTER
+label x=160 y=158 text="Tap while touching <p>a <#FFFF00>Jump Orb</> to use<p>its effect." tag="page6" scale=0.5 align=CENTER
+label x=160 y=158 text="<#599cff>Practice mode</> lets<p>you place <#00FF00>checkpoints</>.<p><p>Enter it from the<p>pause menu." tag="page7" scale=0.5 align=CENTER
+label x=160 y=158 text="You can place them <p>manually, or use <p>the <#00FF00>auto-checkpoints</><p>feature." tag="page8" scale=0.5 align=CENTER
+
+windowbutton x=282 y=208 w=72 h=28 text="Next" action="next" tag="nextbutton" style=5 keyBinds="A" textScale=0.65

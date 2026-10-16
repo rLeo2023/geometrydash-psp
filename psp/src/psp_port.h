@@ -65,3 +65,22 @@ u32 PSP_PresentVcount( void );
 
 // ctru_psp.c: drawn last every frame (the touch cursor)
 void PSP_DrawOverlay( void );
+
+// sine and cosine together on the VFPU, one instruction (sinf and cosf are
+// long software routines on the PSP's FPU). About 6 digits: for drawing, not
+// for the physics, which stay on the game's own math. Needs a thread made
+// with PSP_THREAD_ATTR_VFPU (the main one is)
+static inline void psp_sincosf( float rad, float *s, float *c )
+{
+	float vs, vc;
+	__asm__ volatile(
+		"mtv     %2, S000\n"
+		"vcst.s  S001, VFPU_2_PI\n"       // radians to quarter turns
+		"vmul.s  S000, S000, S001\n"
+		"vrot.p  C010, S000, [s, c]\n"    // S010 = sin, S011 = cos
+		"mfv     %0, S010\n"
+		"mfv     %1, S011\n"
+		: "=r"( vs ), "=r"( vc ) : "r"( rad ));
+	*s = vs;
+	*c = vc;
+}

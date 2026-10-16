@@ -2,6 +2,10 @@
 
 #include <malloc.h>
 #include <assert.h>
+#ifdef __PSP__
+#include <psputils.h>
+#include <pspthreadman.h> // sceKernelGetSystemTimeLow (the frame timing log)
+#endif
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1066,13 +1070,22 @@ void game_loop() {
 
         u64 end = svcGetSystemTick();
         u64 ticks = end - start;
+#ifdef __PSP__
+        u32 perf_t0 = sceKernelGetSystemTimeLow(), perf_t1 = 0, perf_t2 = 0;
+#endif
 
         // Render the scene
         do {
             update_bottom_particles(delta);
             update_touch_effect(delta);
 
+#ifdef __PSP__
+            perf_t1 = sceKernelGetSystemTimeLow();
+#endif
             C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+#ifdef __PSP__
+            perf_t2 = sceKernelGetSystemTimeLow();
+#endif
             C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ZERO);
             draw_fade();
 
@@ -1220,6 +1233,38 @@ void game_loop() {
 
             C3D_FrameEnd(0);
         } while (handle_fading());
+
+#ifdef __PSP__
+        // where a frame's time goes, averaged every 2 s of play, to the log
+        if (settingsState.enableDebugBindings && !game_paused && !state.dead) {
+            static u32 n, sum[7], peak[7];
+            u32 now = sceKernelGetSystemTimeLow();
+            u32 v[7] = {
+                (u32)(ticks / CPU_TICKS_PER_MSEC * 1000),  // the update, all of it
+                (u32)(physics_calc_time * 1000),           //  physics and collisions
+                (u32)(sprite_drawing_time * 1000),         //  the objects' sprites: pick, sort, color
+                (u32)(particle_calc_time * 1000),          //  particles and effects
+                (u32)(triggers_time * 1000),               //  triggers and colors
+                perf_t2 - perf_t1,                         // waiting for the GE / the vblank
+                now - perf_t2,                             // drawing (the CPU's side)
+            };
+            for (int i = 0; i < 7; i++) {
+                sum[i] += v[i];
+                if (v[i] > peak[i]) peak[i] = v[i];
+            }
+            (void)perf_t0;
+            if (++n == 120) {
+                psp_log("perf ms (avg/max): update %.1f/%.1f [physics %.1f/%.1f objects %.1f/%.1f particles %.1f/%.1f triggers %.1f/%.1f] wait %.1f/%.1f draw %.1f/%.1f, %d sprites\n",
+                    sum[0] / 120000.f, peak[0] / 1000.f, sum[1] / 120000.f, peak[1] / 1000.f,
+                    sum[2] / 120000.f, peak[2] / 1000.f, sum[3] / 120000.f, peak[3] / 1000.f,
+                    sum[4] / 120000.f, peak[4] / 1000.f, sum[5] / 120000.f, peak[5] / 1000.f,
+                    sum[6] / 120000.f, peak[6] / 1000.f, sprite_count);
+                n = 0;
+                memset(sum, 0, sizeof(sum));
+                memset(peak, 0, sizeof(peak));
+            }
+        }
+#endif
 
         if (being_faded) {
             if (song_loaded) unpause_playback_mp3();

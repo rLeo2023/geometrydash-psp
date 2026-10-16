@@ -1,0 +1,2 @@
+# PSP: soggy on one screen, the top screen's half: the picture
+image x=200 y=120 id=18 sheet=1

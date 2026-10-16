@@ -25,7 +25,10 @@ typedef struct {
 	int channels;
 	bool paused;
 	float gain_l, gain_r;
-	double pos;             // frames into head
+	// frames into head, and the 1/65536ths past that: fixed point, as a
+	// double here was a software-emulated operation (the PSP's FPU has no
+	// doubles) on every sample of every channel
+	u32 pos, frac;
 } Channel;
 
 static Channel chn[NDSP_NUM_CHANNELS];
@@ -71,12 +74,12 @@ static void ResetChannel( Channel *c )
 	c->channels = 1;
 	c->paused = false;
 	c->gain_l = c->gain_r = 1.0f;
-	c->pos = 0;
+	c->pos = c->frac = 0;
 }
 
 static void MixChannel( Channel *c )
 {
-	double step = c->rate / OUT_RATE;
+	u32 step = (u32)( c->rate * ( 65536.0f / OUT_RATE ));
 	int i;
 
 	for( i = 0; i < OUT_FRAMES && c->head; i++ )
@@ -84,8 +87,8 @@ static void MixChannel( Channel *c )
 		ndspWaveBuf *b = c->head;
 		const s16 *s = b->data_pcm16;
 		u32 n = b->nsamples;
-		u32 f = (u32)c->pos;
-		float t = (float)( c->pos - f );
+		u32 f = c->pos;
+		float t = c->frac * ( 1.0f / 65536.0f );
 		float l, r;
 
 		if( f + 1 < n )
@@ -127,7 +130,9 @@ static void MixChannel( Channel *c )
 		mix_l[i] += (int)( l * c->gain_l );
 		mix_r[i] += (int)( r * c->gain_r );
 
-		c->pos += step;
+		c->frac += step;
+		c->pos += c->frac >> 16;
+		c->frac &= 0xffff;
 		if( c->pos >= n )
 		{
 			// on to the next buffer
@@ -139,7 +144,7 @@ static void MixChannel( Channel *c )
 			if( !c->head )
 			{
 				c->tail = NULL;
-				c->pos = 0;
+				c->pos = c->frac = 0;
 			}
 			else
 			{
@@ -306,7 +311,7 @@ void ndspChnWaveBufAdd( int id, ndspWaveBuf *buf )
 	else
 	{
 		c->head = c->tail = buf;
-		c->pos = 0;
+		c->pos = c->frac = 0;
 		buf->status = NDSP_WBUF_PLAYING;
 	}
 	Unlock();
