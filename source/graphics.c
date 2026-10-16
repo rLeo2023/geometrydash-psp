@@ -528,6 +528,14 @@ int get_obj_random_layer(int obj, int id) {
 
 // Deco saws rotate slower than normal saws. If not a saw, rotation speed is just 0
 float get_rotation_speed(int id) {
+#ifdef __PSP__
+    // GD 2.0's (wiidash's speeds)
+    if (id >= 746) {
+        for (size_t i = 0; i < sizeof(v2_spin) / sizeof(v2_spin[0]); i++)
+            if (v2_spin[i].id == id) return v2_spin[i].speed;
+        return 0.f;
+    }
+#endif
     switch (id) {
         case 88: 
         case 89:

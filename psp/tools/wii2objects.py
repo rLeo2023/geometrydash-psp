@@ -18,9 +18,10 @@ from wiidash's layers:
   a detail layer's channel                      -> detail_color (else 1)
   y offset (down, on wiidash's screen)          -> up, as this table has it
 
-The hitboxes stay the ones the table already has (GD 2.113's data, through
-OpenGD); an object that has none takes wiidash's. Objects wiidash draws with
-no layers (triggers, monsters it animates, ...) keep their current rows.
+The hitboxes stay the ones gen2objects.py's table has (GD 2.113's data,
+through OpenGD; kept in opengd_base/); an object that has none takes
+wiidash's. Objects wiidash draws with no layers (triggers, ...) keep that
+table's rows.
 
 The sprites go in psp/gfx2/sprites_v2.list as wii:<name> (mkv2sheet.py takes
 them from wiidash's PNGs, at half size); a kept row's sprite would stay a
@@ -152,10 +153,13 @@ def wiidash_table(wii):
 
 # ---- the table as it is ----------------------------------------------------
 
+BASE = os.path.join(HERE, 'opengd_base')  # gen2objects.py's table, as it made it
+
+
 def current():
-    rows_src = open(os.path.join(SRC, 'objects_v2_rows.inc')).read()
-    defs_src = open(os.path.join(SRC, 'objects_v2_defs.inc')).read()
-    names = [l.strip() for l in open(LIST) if l.strip()]
+    rows_src = open(os.path.join(BASE, 'objects_v2_rows.inc')).read()
+    defs_src = open(os.path.join(BASE, 'objects_v2_defs.inc')).read()
+    names = [l.strip() for l in open(os.path.join(BASE, 'sprites_v2.list')) if l.strip()]
     rows = {}
     for m in re.finditer(r'^\s*(\{.*\}),\s*/\*\s*(\d+)\s+(.*?)\s*\*/', rows_src, re.M):
         rows[int(m.group(2))] = (m.group(1), m.group(3))
@@ -233,7 +237,7 @@ def main():
         else:
             out_rows.append('    %s, /* %d %s */' % (row, oid, old[1]))
 
-    anim = anim_source(sprite, None, skel) + robot_source(wii, sprite)
+    anim = anim_source(sprite, None, skel) + robot_source(wii, sprite) + spin_source(wii, ids)
     open(os.path.join(SRC, 'objects_v2_anim.inc'), 'w').write(anim)
 
     open(os.path.join(SRC, 'objects_v2_defs.inc'), 'w').write('\n'.join(defs) + '\n')
@@ -334,6 +338,26 @@ def skel_row(oid, spec, wii, w, blocks, sprite, defs):
                         'def_zorder': w.get('def_zorder', '2')}, blocks, sprite, defs, glow_details=True)
     frames = plist_frames(os.path.join(wii, 'data', 'extra', plist), anim)
     return row, (fps, [parts[s][3] for s in SLOTS[oid]], frames)
+
+
+def spin_source(wii, ids):
+    """The 2.0 objects that turn by themselves (saws, wheels, the green orb)
+    and how fast: wiidash's get_rotation_speed()."""
+    src = strip_comments(open(os.path.join(wii, 'source', 'objects.c')).read())
+    m = re.search(r'float get_rotation_speed\([^)]*\)\s*\{', src)
+    body = inside(src, m.end() - 1)
+    speeds, pending = {}, []
+    for tok in re.finditer(r'case\s+(\w+)\s*:|return\s+([-\d.]+)f?\s*;', body):
+        if tok.group(1):
+            pending.append(tok.group(1))
+        else:
+            for name in pending:
+                if name in ids:
+                    speeds[ids[name]] = float(tok.group(2))
+            pending = []
+    rows = ['    { %d, %d },' % (i, s) for i, s in sorted(speeds.items()) if i >= FIRST_ID and s]
+    return '\n/* the 2.0 objects that turn by themselves, degrees a second (wiidash) */\n' \
+           'static const struct { short id; short speed; } v2_spin[] = {\n' + '\n'.join(rows) + '\n};\n'
 
 
 ROBOT_ANIMS = ['Robot_run', 'Robot_jump_start', 'Robot_jump_loop', 'Robot_fall_start', 'Robot_fall_loop']
@@ -458,7 +482,8 @@ def wii_row(oid, w, blocks, sprite, defs, glow_details=False):
         if kind:
             r = num(hb.get('radius'))
             circle = hb.get('is_circular', '').upper() in ('TRUE', '1', 'true') and r > 0
-            ww, hh = (2 * r, 2 * r) if circle else (num(hb.get('width')), num(hb.get('height')))
+            # a circle's "width" is its radius here (as the game's saws have it)
+            ww, hh = (r, r) if circle else (num(hb.get('width')), num(hb.get('height')))
             shape = 'COLLISION_SLOPE' if w.get('is_slope', '').upper() in ('TRUE', '1') else (
                 'COLLISION_CIRCLE' if circle else 'COLLISION_BOX')
             if ww > 0 and hh > 0:

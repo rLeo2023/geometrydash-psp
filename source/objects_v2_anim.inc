@@ -171,3 +171,22 @@ static const struct { unsigned char frames; const AnimPose *poses; } robot_anims
     { 7, robot_fall_start },
     { 5, robot_fall_loop },
 };
+
+/* the 2.0 objects that turn by themselves, degrees a second (wiidash) */
+static const struct { short id; short speed; } v2_spin[] = {
+    { 997, 180 },
+    { 998, 180 },
+    { 999, 180 },
+    { 1000, 180 },
+    { 1019, 300 },
+    { 1020, 300 },
+    { 1021, 300 },
+    { 1022, 180 },
+    { 1055, 180 },
+    { 1056, 180 },
+    { 1057, 180 },
+    { 1058, 300 },
+    { 1059, 300 },
+    { 1060, 300 },
+    { 1061, 300 },
+};

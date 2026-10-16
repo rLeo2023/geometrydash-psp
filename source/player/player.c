@@ -168,6 +168,16 @@ void cube_gamemode(Player *player) {
             }
         }
 
+        // the fire under its feet while it rises (wiidash: ROBOT_JUMP_PARTICLES),
+        // the ship's fire
+        bool rising = player->robot_boost > 0 && state.input.holdJump && !player->on_ground;
+        ParticleSystem *fire = &ship_fire_particles[state.current_player];
+        fire->emitterX = player->x - player->width / 2 + 5 * (player->mini ? 0.6f : 1.f);
+        fire->emitterY = fabsf(gravBottom(player)) + (player->upside_down ? -2 : 2);
+        fire->emitting = rising;
+        fire->gravityFlipped = player->upside_down;
+        fire->scale = (player->mini ? 0.6f : 1.0f);
+
         // its animation (wiidash's): running on the ground; off it without
         // a jump (a pad, an orb, an edge), up or down
         player->robot_anim_t += STEPS_DT;
