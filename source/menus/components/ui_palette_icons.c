@@ -5,6 +5,7 @@
 #include "menus/core/ui_props.h"
 #include "menus/palette_kit.h"
 #include "graphics.h"
+#include "main.h"
 
 #define ICON_WIDTH 30
 
@@ -19,10 +20,29 @@ static void ui_palette_icons_draw(UIElement* e, UITransform *transform) {
 
     bool glow_enabled = (player_glow_enabled || ((p1_color.r | p1_color.g | p1_color.b) == 0));
     
-    float length = ((GAMEMODE_COUNT - 1) * (ICON_WIDTH + palette_icons->spacing)) * transform->scaleX;
+#ifdef __PSP__
+    // and the robot after the wave
+    int count = GAMEMODE_COUNT + 1;
+#else
+    int count = GAMEMODE_COUNT;
+#endif
+    float length = ((count - 1) * (ICON_WIDTH + palette_icons->spacing)) * transform->scaleX;
 
     float x = transform->x - length * 0.5f;
-    
+
+#ifdef __PSP__
+    {
+        static float robot_t;
+        u8 anim = ROBOT_ANIM_RUN;
+        robot_t += DT;
+        spawn_robot_at(x + (ICON_WIDTH + palette_icons->spacing) * transform->scaleX * GAMEMODE_COUNT,
+            transform->y, 0, 0, 0, transform->scaleX,
+            C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255),
+            C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255),
+            &anim, robot_t);
+    }
+#endif
+
     for (size_t g = 0; g < GAMEMODE_COUNT; g++) {
         float icon_x = x + (ICON_WIDTH + palette_icons->spacing) * transform->scaleX * g;
         spawn_icon_at(
