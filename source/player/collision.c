@@ -20,6 +20,8 @@
 
 #ifdef __PSP__
 #include "triggers_v2.h"
+#include "menus/settings.h"
+#include "../psp/src/psp_port.h"
 // a hitbox at the object's size (2.0 key 32)
 #define HB_W(hb, o) ((hb)->width * OBJ_SCALE(o))
 #define HB_H(hb, o) ((hb)->height * OBJ_SCALE(o))
@@ -795,7 +797,13 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                 int out = teleport_exit(obj);
                 if (out >= 0) {
                     float to_y = objects.y[out];
+                    if (settingsState.enableDebugBindings)
+                        psp_log("teleport: obj %d (%.0f,%.0f rot %.0f) -> %.0f, player %.0f,%.0f gm %d\n", obj,
+                                objects.x[obj], objects.y[obj], objects.rotation[obj], to_y, player->x, player->y, player->gamemode);
                     player->y = to_y;
+                    // as wiidash: no movement counted across the jump (the
+                    // collisions would see it pass through everything between)
+                    state.old_player.y = to_y;
                     MotionTrail_StopStroke(trail);
 
                     // far off screen: the camera jumps there too
@@ -1269,6 +1277,11 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
                     objects.toggled[obj] = true;
                 } else {
                     // Not a brick, die
+#ifdef __PSP__
+                    if (settingsState.enableDebugBindings && !state.noclip)
+                        psp_log("crushed in obj %d (id %d at %.0f,%.0f), player %.0f,%.0f\n", obj, objects.id[obj],
+                                objects.x[obj], objects.y[obj], player->x, player->y);
+#endif
                     kill_player(DEATH_BLOCK);
                 }
 
@@ -1351,6 +1364,11 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
             }
             break;
         case HITBOX_HAZARD:
+#ifdef __PSP__
+            if (settingsState.enableDebugBindings && !state.noclip)
+                psp_log("killed by obj %d (id %d at %.0f,%.0f), player %.0f,%.0f\n", obj, objects.id[obj],
+                        objects.x[obj], objects.y[obj], player->x, player->y);
+#endif
             kill_player(hitbox->type == COLLISION_CIRCLE ? DEATH_SAW : DEATH_SPIKE);
             break;
         case HITBOX_SPECIAL:
