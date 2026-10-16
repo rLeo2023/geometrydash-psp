@@ -44,6 +44,10 @@ static const SongEntries songs[] = {
     { "Hexagon Force", "Waterflame" },
     { "Blast Processing", "Waterflame" },
     { "Theory of Everything 2", "DJ-Nate" },
+#ifdef __PSP__
+    { "Geometrical Dominator", "Waterflame" },
+    { "Deadlocked", "F-777" },
+#endif
 };
 
 void exit_songs(UIElement* e) {
