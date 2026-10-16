@@ -1,73 +1,176 @@
-# Geometry Dash for the 3DS
+<p align="center">
+  <img src="docs/images/title.png" alt="Geometry Dash PSP" width="520">
+</p>
 
-This is a demake of the popular mobile game **Geometry Dash** for the **Nintendo 3DS**.
+<p align="center">
+  A port of <b>Geometry Dash</b> to the <b>Sony PSP</b>, based on <a href="https://github.com/AleFunky/gd3ds">GD3DS</a> by AleFunky.<br>
+  Un port de <b>Geometry Dash</b> para <b>Sony PSP</b>, basado en <a href="https://github.com/AleFunky/gd3ds">GD3DS</a> de AleFunky.
+</p>
 
-Geometry Dash and its respective resources are by RobTop Games.
-<img width="1460" height="480" alt="Main Menu" src="https://github.com/user-attachments/assets/d802266b-2eb9-4115-870c-0073ed5a50ff" />
-<img width="1460" height="480" alt="Icon Kit" src="https://github.com/user-attachments/assets/d55b2434-4f4b-4136-bab8-668f5e8e62c7" />
-<img width="1460" height="480" alt="Gameplay" src="https://github.com/user-attachments/assets/cec39d8a-0326-4924-a8f0-20c90dc403fa" />
-<img width="1460" height="480" alt="Pause Menu" src="https://github.com/user-attachments/assets/05b43079-c36e-4ce9-a433-61bd6dbfb9c8" />
+<p align="center">
+  <a href="#english">English</a> · <a href="#español">Español</a>
+</p>
 
+<p align="center">
+  <img src="docs/images/main_menu.png" alt="Main menu" width="400">
+  <img src="docs/images/gameplay.png" alt="Gameplay" width="400">
+</p>
+<p align="center">
+  <img src="docs/images/level_select.png" alt="Level select" width="400">
+  <img src="docs/images/practice.png" alt="Practice mode" width="400">
+</p>
+<p align="center">
+  <img src="docs/images/icon_kit.png" alt="Icon kit" width="400">
+</p>
 
-## Features
-- [x] Main levels up to Theory of Everything 2
-- [x] Gameplay
-- [x] Accurate physics
-- [x] Hitbox display
-- [x] Click-On-Steps functionality
-- [x] Particles
-- [x] Player trails
-- [x] Practice mode
-- [x] Practice music sync
-- [x] Level coins
-- [x] Settings and Icon Saving
-- [x] Progress tracking and Statistics
-- [x] 3D support
-- [x] Dual-screen UI
-- [x] 1.9 Custom Level Importing (via SD Card)
-- [x] Bottom screen tap effects 
-- [x] Icons on the Title Screen
-- [x] Various in-game visual effects and UI animations
-- [x] Auto-Checkpoints
-- [x] Better bottom screen HUD
-- [ ] Online support
-- [ ] Start position support
+> Geometry Dash and all of its assets belong to **RobTop Games**. This is a non-commercial fan project, not affiliated with or endorsed by RobTop Games. If you enjoy it, please support the original game.
 
-## Features that aren't planned but may be added either way
-- [ ] Achievements
-- [ ] Touchscreen-less navigation options
-- [ ] Dual death effect
-- [ ] Size portal lightning effect
-- [ ] Portal flash effect upon use
-- [ ] Gravity switch effect
-- [ ] Startpos switcher
-- [ ] Cheat display
+---
 
-## Additional Credits
- - __camila314__ - Pathfinder Mod's physics
+## English
 
-## Download
-The current release is available on Universal Updater. Alternatively, you can manually download both the .3dsx and the .cia files [here](https://github.com/AleFunky/gd3ds/releases/latest), or you can scan the QR code below in FBI to install the game to your home menu automatically.\
-<img width="256" height="256" alt="imagen" src="https://github.com/user-attachments/assets/0df1a8b2-f653-41ff-a0ce-608d73cf54d1" />
+### About
 
-# Discord
-You can visit our Discord server and get support (or talk if you want to): [Discord](https://discord.gg/Yh6JrS7eSU)
+Geometry Dash PSP brings AleFunky's Nintendo 3DS version of Geometry Dash ([GD3DS](https://github.com/AleFunky/gd3ds)) to the PSP. The game code is GD3DS's, almost untouched: the PSP side recreates the 3DS libraries it uses (libctru, citro2d, citro3d) on top of the PSP SDK, and the two 3DS screens were redesigned to fit on the PSP's single 480x272 screen.
 
-# FAQ
-### How do I install this on my 3DS?
-The current easiest way is to open the Universal Updater app on your 3DS and download the game from there. If you prefer doing it manually, download either the .3dsx or .cia file from the releases page and place it on your SD Card, then depending on which file you chose, launch it through the Homebrew Launcher, or install it to your home menu through FBI.
+### Features
 
-### The game is saying something about "missing DSP firmware", what do I do?
-If you're playing on actual hardware this shouldn't be an issue as most 3DS homebrew tutorials dump this file in the process. If you're playing on an emulator, navigate to ```(your emulator's data folder)\sdmc\3ds\``` and create a file named ```dspfirm.cdc``` in said location. It can be completely empty for all the emulator cares, it just has to be present. In case you're running into this error on a real console, open the Luma menu (usually accessed by pressing ``L``, ``DPAD DOWN`` and ``SELECT`` at the same time), scroll to ``Miscellaneous options...`` and press ``Dump DSP firmware``.
+- All the main levels, from Stereo Madness to Theory of Everything 2
+- Accurate physics, particles, player trails and level coins
+- Practice mode, with auto-checkpoints on by default
+- Custom levels (GD 1.9 objects) loaded from the Memory Stick
+- Icon kit, settings, progress and statistics, all saved on the Memory Stick
+- Every menu redesigned for one 480x272 screen
+- 30 FPS by default, with a **60 FPS Switch** option in the settings
+- Music decoded on the PSP's Media Engine
+- Runs on **every PSP model, including the PSP-1000**, and on PPSSPP
 
-### How do I play / add custom levels?
-You'll need to either export a copy of your level of choice using the [GDShare Geode mod](https://geode-sdk.org/mods/hjfod.gdshare) or download an archive of said level from [GDHistory](https://history.geometrydash.eu/). If the level uses a custom song, you'll also need to either extract it from your Geometry Dash songs folder (```%localappdata%\GeometryDash``` on Windows), or download it separately from [Newgrounds](https://www.newgrounds.com/audio). Once you have the level .gmd (and song, renamed to its Newgrounds ID) prepared, copy them to ```\3ds\gd3ds\external_levels\``` and ```\3ds\gd3ds\saved_songs\``` on your SD Card respectively. Putting the level files into additional folders within the main ```\external_levels\``` directory is supported. Do keep in mind, however, that any objects from updates 2.0 and above will not load, and object-heavy levels are not guaranteed to be playable - especially on non-New 3DS models.
+Not included: online features, the level editor, and GD 2.0+ objects and triggers.
 
-### Are you going to add a level editor?
-The short answer is no. The long answer is that it's simply too much work for something that would run poorly on the already underpowered 3DS hardware, would be unable to upload levels to the Geometry Dash servers and that 99% of people would not care about. 
+### Installation
 
-### Can you add X feature / X gamemode / X level?
-Everything that's planned to be implemented is listed in the planned features section above - in short, anything major from updates above 1.9 will not be added. However, if you come up with an improvement or a quality of life feature the game could use, you're welcome to suggest it in the Discord server.
+You need a PSP with custom firmware (for example 6.61 PRO-C, LME or ARK-4) and about 40 MB free on the Memory Stick.
 
-### Why not add 2.0 / 2.1 / 2.2 / whatever?
-Theoretically all features up to 2.1 ARE possible to implement, but they'd be a large undertaking to add in an adequately performant and accurate way. 2.2 only amplifies these concerns, not to mention it having some features that are fully impossible to have work faithfully on 3DS hardware (namely, shader triggers). Many 1.9 levels already struggle to run on the original 3DS, due to their high object counts, and future updates, with moving objects and much more decoration, exponentially worsen this issue. 
+1. Download the zip from [Releases](../../releases/latest).
+2. Extract it to the root of the Memory Stick. It contains `PSP\GAME\GeometryDashPSP\`, with `EBOOT.PBP` and the `romfs` folder inside.
+3. On the PSP, go to **Game > Memory Stick** and open **Geometry Dash PSP**.
+
+The first time it starts, the game creates a `mstick` folder next to the EBOOT, where it keeps your progress and settings. Delete that folder to start from scratch.
+
+### Custom levels
+
+1. Start the game once, so its folders get created.
+2. Get the level as a `.gmd` file, for example with the [GDShare](https://geode-sdk.org/mods/hjfod.gdshare) mod or from [GDHistory](https://history.geometrydash.eu/).
+3. Copy it to `PSP\GAME\GeometryDashPSP\mstick\psp\gdpsp\external_levels\`.
+4. If it uses a custom song, copy the `.mp3` to `...\mstick\psp\gdpsp\saved_songs\`, named after its Newgrounds ID (for example `467339.mp3`).
+5. In the game: **Creator** (the tools button) > **Custom**.
+
+Levels that use GD 2.0 objects or triggers won't load properly, and very object-heavy levels may run slowly.
+
+### Controls
+
+| Button | Action |
+|---|---|
+| Cross | Jump / press the selected button |
+| Circle | Back (on the main menu: quit the game) |
+| Start | Pause |
+| D-pad / analog stick | Move between buttons in the menus |
+
+### Troubleshooting
+
+The game writes `psp_log.txt` next to the EBOOT. If it crashes, copy that file **before** starting the game again (every start overwrites it) and open an [issue](../../issues) with it and with what you were doing at the time.
+
+### Building
+
+You need the [PSP toolchain](https://github.com/pspdev/pspdev) (`PSPDEV` set and its `bin` in `PATH`) and Python 3 with Pillow built with libimagequant support (Debian/Ubuntu's `python3-pil` is).
+
+```
+make -f Makefile.psp package                       # psp/out/gdpsp/: EBOOT.PBP + romfs/
+make -f Makefile.psp deploy DEPLOY=/path/to/folder  # copy it to a folder (a Memory Stick, PPSSPP...)
+```
+
+[README-PSP.md](README-PSP.md) explains how the port is organized. The original 3DS README is in [README-3DS.md](README-3DS.md).
+
+### Credits
+
+- **RobTop Games**: Geometry Dash and all of its assets.
+- **AleFunky** and the GD3DS contributors: [GD3DS](https://github.com/AleFunky/gd3ds), the 3DS version this port is based on.
+- **camila314**: the physics from Pathfinder, used by GD3DS.
+- **rLeo**: PSP port.
+- **Claude** (Anthropic): collaborator on the PSP port.
+- **pspdev**: the PSP toolchain and SDK.
+
+---
+
+## Español
+
+### Qué es
+
+Geometry Dash PSP lleva a la PSP la versión de Geometry Dash para Nintendo 3DS hecha por AleFunky ([GD3DS](https://github.com/AleFunky/gd3ds)). El código del juego es el de GD3DS, casi sin cambios: del lado de la PSP se recrean las librerías de 3DS que usa (libctru, citro2d, citro3d) sobre el SDK de PSP, y las dos pantallas de la 3DS se rediseñaron para entrar en la única pantalla de 480x272 de la PSP.
+
+### Características
+
+- Todos los niveles principales, de Stereo Madness a Theory of Everything 2
+- Física precisa, partículas, estelas del jugador y monedas
+- Modo práctica, con checkpoints automáticos activados por defecto
+- Niveles custom (objetos de GD 1.9) cargados desde la Memory Stick
+- Icon kit, opciones, progreso y estadísticas, todo guardado en la Memory Stick
+- Todos los menús rediseñados para una sola pantalla de 480x272
+- 30 FPS por defecto, con la opción **60 FPS Switch** en los ajustes
+- Música decodificada en el Media Engine de la PSP
+- Funciona en **todos los modelos de PSP, incluida la PSP-1000**, y en PPSSPP
+
+No incluye: funciones online, el editor de niveles, ni objetos y triggers de GD 2.0 en adelante.
+
+### Instalación
+
+Necesitás una PSP con custom firmware (por ejemplo 6.61 PRO-C, LME o ARK-4) y unos 40 MB libres en la Memory Stick.
+
+1. Descargá el zip desde [Releases](../../releases/latest).
+2. Descomprimilo en la raíz de la Memory Stick. Trae `PSP\GAME\GeometryDashPSP\`, con `EBOOT.PBP` y la carpeta `romfs` adentro.
+3. En la PSP, andá a **Juego > Memory Stick** y abrí **Geometry Dash PSP**.
+
+La primera vez que arranca, el juego crea una carpeta `mstick` al lado del EBOOT, donde guarda el progreso y las opciones. Para empezar de cero, borrá esa carpeta.
+
+### Niveles custom
+
+1. Abrí el juego una vez para que se creen sus carpetas.
+2. Conseguí el nivel como archivo `.gmd`, por ejemplo con el mod [GDShare](https://geode-sdk.org/mods/hjfod.gdshare) o desde [GDHistory](https://history.geometrydash.eu/).
+3. Copialo a `PSP\GAME\GeometryDashPSP\mstick\psp\gdpsp\external_levels\`.
+4. Si usa una canción custom, copiá el `.mp3` a `...\mstick\psp\gdpsp\saved_songs\`, con el ID de Newgrounds como nombre (por ejemplo `467339.mp3`).
+5. En el juego: **Creator** (el botón de herramientas) > **Custom**.
+
+Los niveles que usan objetos o triggers de GD 2.0 no cargan bien, y los niveles con muchísimos objetos pueden ir lentos.
+
+### Controles
+
+| Botón | Acción |
+|---|---|
+| Cruz | Saltar / apretar el botón seleccionado |
+| Círculo | Volver (en el menú principal: salir del juego) |
+| Start | Pausa |
+| Cruceta / stick | Moverse entre los botones de los menús |
+
+### Si algo falla
+
+El juego escribe `psp_log.txt` al lado del EBOOT. Si se cuelga, copiá ese archivo **antes** de volver a abrir el juego (cada arranque lo pisa) y abrí un [issue](../../issues) con el archivo y con lo que estabas haciendo en ese momento.
+
+### Compilar
+
+Necesitás el [toolchain de PSP](https://github.com/pspdev/pspdev) (`PSPDEV` configurado y su `bin` en el `PATH`) y Python 3 con Pillow compilado con soporte para libimagequant (el `python3-pil` de Debian/Ubuntu lo trae).
+
+```
+make -f Makefile.psp package                        # psp/out/gdpsp/: EBOOT.PBP + romfs/
+make -f Makefile.psp deploy DEPLOY=/ruta/a/carpeta   # lo copia a una carpeta (Memory Stick, PPSSPP...)
+```
+
+[README-PSP.md](README-PSP.md) explica cómo está organizado el port. El README original de la versión de 3DS está en [README-3DS.md](README-3DS.md).
+
+### Créditos
+
+- **RobTop Games**: Geometry Dash y todos sus recursos.
+- **AleFunky** y quienes colaboraron en GD3DS: [GD3DS](https://github.com/AleFunky/gd3ds), la versión de 3DS en la que se basa este port.
+- **camila314**: la física de Pathfinder, que usa GD3DS.
+- **rLeo**: port a PSP.
+- **Claude** (Anthropic): colaborador en el port a PSP.
+- **pspdev**: el toolchain y el SDK de PSP.

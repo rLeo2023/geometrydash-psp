@@ -1,7 +1,8 @@
 # Geometry Dash PSP
 
-A PSP port of [GD3DS](README.md) (AleFunky's Geometry Dash for the 3DS), by rLeo,
-with Claude as port helper. It runs on PSP-1000 and later, and in PPSSPP.
+A PSP port of [GD3DS](https://github.com/AleFunky/gd3ds) (AleFunky's Geometry
+Dash for the 3DS; its README is [README-3DS.md](README-3DS.md)), by rLeo, with
+Claude as collaborator. It runs on PSP-1000 and later, and in PPSSPP.
 
 The game code is the 3DS one, mostly unchanged: the PSP side fakes the 3DS
 libraries it uses (libctru, citro2d, citro3d) in `psp/`. Where the PSP needs
@@ -18,7 +19,7 @@ make -f Makefile.psp deploy DEPLOY=/path/to/folder
 ```
 
 Copy `psp/out/gdpsp/` to `ms0:/PSP/GAME/`, or open its `EBOOT.PBP` in PPSSPP.
-Saves, custom levels (`external_levels/`) and custom songs (`custom_songs/`)
+Saves, custom levels (`external_levels/`) and custom songs (`saved_songs/`)
 go in `mstick/psp/gdpsp/` next to the EBOOT.
 
 ## What's where
