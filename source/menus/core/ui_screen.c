@@ -244,8 +244,11 @@ void required_loading_screen_assets_init() {
     bar_sheet = C2D_SpriteSheetLoad("romfs:/gfx/bars.t3x");
     if (!bar_sheet) svcBreak(USERBREAK_PANIC);
 
+#ifndef __PSP__
+    // (PSP: one background at a time, graphics.c)
     bgSheet = C2D_SpriteSheetLoad("romfs:/gfx/bg_sheet_01.t3x");
     if (!bgSheet) svcBreak(USERBREAK_PANIC);
+#endif
 }
 
 void ui_assets_init() {
@@ -261,9 +264,11 @@ void ui_assets_init() {
     bg_gradient_sheet = C2D_SpriteSheetLoad("romfs:/gfx/bg_gradient.t3x");
     if (!bg_gradient_sheet) svcBreak(USERBREAK_PANIC);
     
+#ifndef __PSP__
     bg2Sheet = C2D_SpriteSheetLoad("romfs:/gfx/bg_sheet_02.t3x");
     if (!bg2Sheet) svcBreak(USERBREAK_PANIC);
-    
+#endif
+
     groundSheet = C2D_SpriteSheetLoad("romfs:/gfx/grounds.t3x");
     if (!groundSheet) svcBreak(USERBREAK_PANIC);
 }

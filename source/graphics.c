@@ -987,6 +987,25 @@ void change_blending(bool blending) {
     blending_state = blending;
 }
 
+#ifdef __PSP__
+// Only the background on screen is in memory (256 KB; all seven were 1.75 MB
+// of a PSP-1000's RAM): each is its own sheet, bg_one_NN, loaded when the
+// background changes. The previous one goes (the free waits for the GE)
+static C2D_SpriteSheet bg_one;
+static int bg_one_id = -1;
+
+static C2D_SpriteSheet background_sheet(int id) {
+    if (id != bg_one_id) {
+        char path[48];
+        C2D_SpriteSheetFree(bg_one);
+        snprintf(path, sizeof(path), "romfs:/gfx/bg_one_%02d.t3x", id + 1);
+        bg_one = C2D_SpriteSheetLoad(path);
+        bg_one_id = id;
+    }
+    return bg_one;
+}
+#endif
+
 void draw_background(float x, float y) {
 #ifdef __PSP__
     // one merged screen: the top screen's background is the only one
@@ -1014,7 +1033,13 @@ void draw_background(float x, float y) {
         float draw_x = -calc_x + i * offset;
 
         
+#ifdef __PSP__
+        C2D_SpriteSheet sheet = background_sheet(bg_id);
+        if (!sheet) return;
+        C2D_SpriteFromSheet(&bg, sheet, 0);
+#else
         C2D_SpriteFromSheet(&bg, bg_id < 4 ? bgSheet : bg2Sheet, bg_id & 0b11);
+#endif
         C3D_TexSetFilter(bg.image.tex, GPU_LINEAR, GPU_LINEAR);
         C2D_SpriteSetPos(&bg, (int)draw_x, (int)draw_y);
         C2D_SpriteSetScale(&bg, BACKGROUND_SCALE, BACKGROUND_SCALE);
