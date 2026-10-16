@@ -83,6 +83,12 @@ void col_set_copy(int ch, int src, float h, float s, float v, bool s_add, bool v
 void col_clear_copy(int ch);
 void col_apply_copies(void);
 Color col_apply_hsv(Color c, float h, float s, float v, bool s_add, bool v_add);
+
+// the channels a level uses (noted while it loads), for checkpoints
+void col_reset_used(void);
+void col_note_used(int ch);
+void *col_snapshot_save(void *old);   // reuses old's memory
+void col_snapshot_restore(const void *snap);
 #endif
 
 extern ColorChannel channels[COL_CHANNEL_NUM];

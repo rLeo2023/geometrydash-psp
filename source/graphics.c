@@ -204,6 +204,7 @@ void free_cached_sprites() {
     for (int i = 0; i < GAME_OBJECT_COUNT; i++) {
         if (sprite_templates[i].child_templates)
             free(sprite_templates[i].child_templates);
+        sprite_templates[i].child_templates = NULL;
     }
 }
 
@@ -1688,6 +1689,22 @@ void spawn_icon_at(
 }
 
 #ifdef __PSP__
+// GD 2.0's objects (and the robot), made from the player's own copy of GD:
+// in memory only while a level that has them is (512 KB on a PSP-1000).
+// Without the sheet those objects just don't show
+void v2_sheet_need(bool need) {
+    if (need == (spriteSheetV2 != NULL)) return;
+    if (need) {
+        spriteSheetV2 = C2D_SpriteSheetLoad("romfs:/gfx/sprites_v2.t3x");
+    } else {
+        C2D_SpriteSheetFree(spriteSheetV2);
+        spriteSheetV2 = NULL;
+    }
+    // the objects' sprites point into it
+    free_cached_sprites();
+    cache_all_sprites();
+}
+
 // the 2.0 robot standing: its main color's parts, the second color's on top
 // (one picture each, put together from GD's when building)
 void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,

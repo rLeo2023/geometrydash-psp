@@ -48,9 +48,15 @@ typedef struct CheckpointData {
     int current_fading_effect;
     bool p1_trail;
 
+#ifdef __PSP__
+    // only the channels the level uses (col_snapshot_*): all 1000 in a
+    // hundred checkpoints were 2 MB, too much for a PSP-1000
+    void *col_snap;
+#else
     ColorChannel channels[COL_CHANNEL_NUM];
     ColTriggerBuffer col_trigger_buffer[COL_CHANNEL_NUM];
-    
+#endif
+
     float song_offset;
 
 #ifdef __PSP__
@@ -123,8 +129,12 @@ void new_checkpoint() {
 
     check->song_offset = level_info.song_offset + state.player.timeElapsed;
 
+#ifdef __PSP__
+    check->col_snap = col_snapshot_save(check->col_snap);
+#else
     memcpy(check->channels, channels, sizeof(channels));
     memcpy(check->col_trigger_buffer, col_trigger_buffer, sizeof(col_trigger_buffer));
+#endif
 
 #ifdef __PSP__
     trig2_free_snapshot(check->trig2); // the slot's last one, if any
@@ -179,8 +189,12 @@ void restore_checkpoint() {
 
     if (settingsState.practiceMusicSync) seek_mp3(check->song_offset);
     
+#ifdef __PSP__
+    col_snapshot_restore(check->col_snap);
+#else
     memcpy(channels, check->channels, sizeof(channels));
     memcpy(col_trigger_buffer, check->col_trigger_buffer, sizeof(col_trigger_buffer));
+#endif
 
 #ifdef __PSP__
     trig2_restore(check->trig2); // moved groups back, fades, toggles
@@ -209,6 +223,8 @@ void clear_practice_mode() {
     for (int i = 0; i < MAX_CHECKPOINTS; i++) {
         trig2_free_snapshot(checkpoints[i].trig2);
         checkpoints[i].trig2 = NULL;
+        free(checkpoints[i].col_snap);
+        checkpoints[i].col_snap = NULL;
     }
 #endif
     checkpoint_count = 0;
