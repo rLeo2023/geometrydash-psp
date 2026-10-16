@@ -1057,10 +1057,6 @@ void update_p1_trail(Player *player, int player_id) {
 }
 
 void draw_p1_trail(Player *player, int player_id) {
-#ifdef __PSP__
-    // the ghost trail doesn't look like GD's yet: off for now
-    return;
-#endif
     for (size_t i = 0; i < P1_TRAIL_LENGTH; i++) {
         P1Trail *trail_data = &state.p1_trail_data[player_id][i];
 
