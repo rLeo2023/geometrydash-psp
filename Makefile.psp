@@ -82,7 +82,7 @@ package: EBOOT.PBP
 	@if [ -d "$(STEAM_RES)" ] && { [ ! -f $(OUT)/romfs/gfx/sprites_v2.psheet ] \
 			|| [ psp/gfx2/sprites_v2.list -nt $(OUT)/romfs/gfx/sprites_v2.psheet ] \
 			|| [ psp/tools/mkv2sheet.py -nt $(OUT)/romfs/gfx/sprites_v2.psheet ]; }; then \
-		python3 psp/tools/mkv2sheet.py "$(STEAM_RES)" psp/build/gfx2 $(OUT)/romfs/gfx/sprites_v2.psheet || exit 1; \
+		python3 psp/tools/mkv2sheet.py "$(STEAM_RES)" psp/build/gfx2 $(OUT)/romfs/gfx/sprites_v2.psheet "$(WIIDASH)" || exit 1; \
 	fi
 	cp -r romfs/main_levels romfs/menus romfs/sfx romfs/songs $(OUT)/romfs/
 	cp psp/menus/*_psp.txt $(OUT)/romfs/menus/
@@ -96,6 +96,9 @@ V2_SONGS = GeometricalDominator.mp3 Deadlocked.mp3 Fingerdash.mp3 Dash.mp3
 # (its Resources folder: GJ_GameSheet*.png/.plist); without it they don't show.
 # Their table (source/objects_v2_*.inc) is made by psp/tools/gen2objects.py
 STEAM_RES ?= steam-resources/Resources
+# Most of them come drawn whole from wiidash (AleFunky's Wii port: its data/
+# folder), the table made by psp/tools/wii2objects.py
+WIIDASH ?= wiidash
 
 # ---- the folder PPSSPP runs -----------------------------------------------
 

@@ -1024,7 +1024,12 @@ int parse_gd_object(const char *objStr, int obj) {
             }
         } else {
             if (!objects.col_channel[obj]) objects.col_channel[obj] = game_object->base_color;
+#ifdef __PSP__
+            if (!objects.detail_col_channel[obj])
+                objects.detail_col_channel[obj] = game_object->detail_color ? game_object->detail_color : 1;
+#else
             if (!objects.detail_col_channel[obj]) objects.detail_col_channel[obj] = 1;
+#endif
         }
 
         // Give each object its own random value
