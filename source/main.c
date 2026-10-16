@@ -1144,17 +1144,6 @@ void game_loop() {
                 // The level rides in front of the screen, the background stays way back
                 begin_eye_layer(DEPTH_LEVEL);
 
-#ifdef __PSP__
-                // The level moves by whole PSP pixels (0.9 per unit: 0.75 here,
-                // 1.2 onto the PSP's screen). By fractions, each frame filtered
-                // the textures a bit differently and they seemed to vibrate
-                float snap_dx = 0, snap_dy = 0;
-                if (state.mirror_factor == 0) {
-                    snap_dx = state.camera_x - roundf(state.camera_x * 0.9f) / 0.9f;
-                    snap_dy = roundf(state.camera_y * 0.9f) / 0.9f - state.camera_y;
-                }
-                C2D_ViewTranslate(snap_dx, snap_dy);
-#endif
                 draw_objects();
 
                 draw_end_wall(delta);
@@ -1178,9 +1167,6 @@ void game_loop() {
                 }
 
                 end_eye_layer();
-#ifdef __PSP__
-                C2D_ViewTranslate(-snap_dx, -snap_dy);
-#endif
 
                 change_blending(false);
 
