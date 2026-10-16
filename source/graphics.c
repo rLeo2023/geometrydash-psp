@@ -1626,7 +1626,12 @@ void draw_objects() {
 
             // Cull invisible objects
             if ((col.color.r | col.color.g | col.color.b) == 0 && col.blending) continue;
-            
+#ifdef __PSP__
+            // and fully faded ones (alpha triggers, the fade-in at the edges):
+            // nothing to see, but each one costs its vertices
+            if ((obj->tint.corners[0].color >> 24) == 0) continue;
+#endif
+
             C2D_DrawSpriteTinted(&obj->spr, &obj->tint);
         } else {   
             draw_player_graphics();

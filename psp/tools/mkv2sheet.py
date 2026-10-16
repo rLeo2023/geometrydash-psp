@@ -122,7 +122,9 @@ def main():
 
     os.makedirs(work, exist_ok=True)
     sheets = {}
-    t3s = ['--atlas --border transparent -f rgba8888 -z auto']
+    # edge, not transparent: with linear filtering a transparent border makes
+    # the edges of the blocks see-through, and a line shows between two blocks
+    t3s = ['--atlas --border edge -f rgba8888 -z auto']
     for n in names:
         if n.startswith('psp_robot_'):
             # psp_robot_<robot>_<layer>.png: put together from its parts
