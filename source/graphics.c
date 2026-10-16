@@ -530,8 +530,14 @@ void spawn_object_at(
     const GameObject* obj = &game_objects[id];
 
     float rad = C3D_AngleFromDegrees(adjust_angle(deg, 0, state.mirror_mult < 0));
+#ifdef __PSP__
+    // every object on screen, every frame: one VFPU instruction
+    float cos_r, sin_r;
+    psp_sincosf(rad, &sin_r, &cos_r);
+#else
     float cos_r = cosf(rad);
     float sin_r = sinf(rad);
+#endif
 
     int flip_x_mult = (flip_x ? -1 : 1);
     int flip_y_mult = (flip_y ? -1 : 1);

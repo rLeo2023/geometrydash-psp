@@ -1,0 +1,16 @@
+# PSP: custom levels on one screen: the folder window under the title, back
+# in the corner. Touch screen's half, centered over the top screen (40 + x, y);
+# the top screen's gradient and corners are the background
+@merge 40 0 1
+
+bggradient tag="gradient" psphide=1
+
+button x=-12 y=32 id=6 scale=0.65 action="exit" keyBinds="B"
+window x=160 y=140 w=300 h=186 style=6
+window x=160 y=150 w=284 h=154 style=7
+list x=160 y=150 w=276 h=146 tag="list" bgColor="#2f2f2f"
+label x=24 y=58 font=1 scale=0.75 text="" align=LEFT tag="path"
+label x=160 y=88 font=0 scale=0.6 text="No levels found!" align=CENTER tag="no_levels"
+label x=160 y=134 font=1 scale=0.6 text="To import levels, go to mstick\psp\gdpsp\ next to<p>the EBOOT on your Memory Stick and copy the .gmd's<p>of your choice along with their matching songs to<p>\external_levels\ and \saved_songs\ respectively." align=CENTER tag="no_levels"
+label x=160 y=186 font=1 scale=0.6 text="For more detailed instructions,<p>check the project's GitHub." align=CENTER tag="no_levels"
+button x=292 y=58 id=200 scale=0.7 action="go_back"

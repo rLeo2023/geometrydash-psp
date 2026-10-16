@@ -573,8 +573,8 @@ void C2Di_CalcQuad( C2Di_Quad *quad, const C2D_DrawParams *params )
 
 	if( params->angle != 0.0f )
 	{
-		float c = cosf( params->angle );
-		float s = sinf( params->angle );
+		float c, s;
+		psp_sincosf( params->angle, &s, &c );
 #define ROTATE( _v ) do { \
 			float a = _v[0] * c - _v[1] * s; \
 			float b = _v[1] * c + _v[0] * s; \

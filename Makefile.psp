@@ -13,7 +13,13 @@ OBJ_DIR  := psp/build
 OBJS     := $(addprefix $(OBJ_DIR)/,$(GAME_SRC:.c=.o) $(PORT_SRC:.c=.o))
 
 INCDIR   = psp/include source libraries
-CFLAGS   = -O2 -G0 -Wall -std=gnu11 -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function $(CFLAGS_EXTRA)
+# The PSP's FPU has no doubles: each double operation is a software routine,
+# and the game (written for the 3DS, which has them) writes its constants as
+# doubles (0.8, not 0.8f). -fsingle-precision-constant makes them floats: no
+# more software math per sprite, per particle, per physics step. And sqrtf
+# and the like don't have to set errno: one instruction
+FPU_FLAGS = -fsingle-precision-constant -fno-math-errno
+CFLAGS   = -O2 -G0 -Wall -std=gnu11 -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function $(FPU_FLAGS) $(CFLAGS_EXTRA)
 CXXFLAGS = $(CFLAGS)
 ASFLAGS  = $(CFLAGS)
 
