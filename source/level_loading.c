@@ -1305,19 +1305,20 @@ int parse_string(const char *levelString) {
 
 #ifdef __PSP__
     // each teleport's way out: the way in's keys (its groups, colors, ...),
-    // then its own id and place. As wiidash: a bit behind it, turned around
+    // then its own id and place. As wiidash: a bit behind it, facing the
+    // other way (the way in mirrored: turned 180 it came out upside down)
     int out = objectCount;
     for (int k = 0; k < tp_count && out < totalCount; k++) {
         int in = tp_in[k];
         float rot = objects.rotation[in];
         float x = objects.x[in] - 10 * fabsf(cosf(DegToRad(rot)));
         float y = objects.y[in] + tp_dy[k];
-        float out_rot = fmodf(rot + (objects.flippedH[in] ? 180 : 0) + 180, 360);
         const char *src = sections[in + 1];
         size_t len = strlen(src) + 96;
         char *str = malloc(len);
         if (!str) break;
-        snprintf(str, len, "%s,1,%d,2,%.3f,3,%.3f,6,%.3f,4,0,5,0", src, ORANGE_TP_PORTAL, x, y, out_rot);
+        snprintf(str, len, "%s,1,%d,2,%.3f,3,%.3f,6,%.3f,4,%d,5,%d", src, ORANGE_TP_PORTAL, x, y, rot,
+                 !objects.flippedH[in], objects.flippedV[in]);
         int ok = parse_gd_object(str, out);
         free(str);
         if (!ok) break;

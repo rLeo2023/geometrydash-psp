@@ -13,7 +13,8 @@ from wiidash's layers:
   the first layer at the object's own z layer   -> the row's sprite
   the layers before it / after it               -> details behind / in front
   a *_glow_* layer                              -> the row's glow
-  main / detail / unmodified / glow             -> COLOR_TYPE_BASE / DETAIL / WHITE / GLOW
+  main / detail / glow                          -> COLOR_TYPE_BASE / DETAIL / GLOW
+  unmodified (a fixed black or white)           -> COLOR_TYPE_BLACK / WHITE
   a main layer's channel                        -> base_color (GD's numbers)
   a detail layer's channel                      -> detail_color (else 1)
   y offset (down, on wiidash's screen)          -> up, as this table has it
@@ -444,8 +445,10 @@ def wii_row(oid, w, blocks, sprite, defs, glow_details=False):
 
     def color(l):
         ct = l.get('color_type', 'COLOR_MAIN')
-        return {'COLOR_DETAIL': 'COLOR_TYPE_DETAIL', 'COLOR_UNMOD': 'COLOR_TYPE_WHITE',
-                'COLOR_GLOW': 'COLOR_TYPE_GLOW'}.get(ct, 'COLOR_TYPE_BASE')
+        if ct == 'COLOR_UNMOD':
+            # a fixed color: its channel's (wiidash only has black and white ones)
+            return 'COLOR_TYPE_BLACK' if l.get('col_channel', '').strip() == 'BLACK' else 'COLOR_TYPE_WHITE'
+        return {'COLOR_DETAIL': 'COLOR_TYPE_DETAIL', 'COLOR_GLOW': 'COLOR_TYPE_GLOW'}.get(ct, 'COLOR_TYPE_BASE')
 
     base_color = detail_color = 0
     has_main = False

@@ -52,6 +52,9 @@ const char *category_names[] = {
 // Conditions
 
 bool condition_supports_wide() {
+#ifdef __PSP__
+    return false; // a 3DS screen mode: the option isn't listed
+#endif
     u8 model = get_model();
 
     return model != CFG_MODEL_2DS && !is_citra();
@@ -131,8 +134,14 @@ Setting settings[] = {
     },
     {
         .id = "yButton",
+#ifdef __PSP__
+        // the 3DS's Y is the PSP's square
+        .label = "Square to jump",
+        .additionalInfo = "Swaps your jump input to Square.",
+#else
         .label = "Y to jump",
         .additionalInfo = "Swaps your jump input to Y.",
+#endif
         .page = PAGE_INPUT, 
 
         .defaultValue = false,
@@ -152,7 +161,11 @@ Setting settings[] = {
     {
         .id = "enableDebugBindings",
         .label = "Enable debug keys",
+#ifdef __PSP__
+        .additionalInfo = "Enables debug key shortcuts.<p>(Circle + L, Circle + R, Triangle)",
+#else
         .additionalInfo = "Enables debug key shortcuts.<p>(B + L, B + R, X)",
+#endif
         .page = PAGE_INPUT,
 
         .defaultValue = false,

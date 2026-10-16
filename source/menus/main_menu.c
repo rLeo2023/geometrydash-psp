@@ -116,7 +116,11 @@ void action_open_info_card(int id) {
             break;
         case 3:
             // more jump buttons info
+#ifdef __PSP__
+            set_info_content("Swaps your jump input to Square.");
+#else
             set_info_content("Swaps your jump input to Y.");
+#endif
             break;
         case 4:
             // hitboxes info
@@ -124,7 +128,11 @@ void action_open_info_card(int id) {
             break;
         case 5:
             // debug info
+#ifdef __PSP__
+            set_info_content("Enables debug key shortcuts.<p>(Circle + L, Circle + R, Triangle)");
+#else
             set_info_content("Enables debug key shortcuts.<p>(B + L, B + R, X)");
+#endif
             break;
         case 6:
             // accurate percentage info
