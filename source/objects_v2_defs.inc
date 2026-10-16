@@ -467,7 +467,7 @@ const ChildSprite children_v2_904[] = {
 
 
 const ObjectHitbox hitbox_v2_918[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 48.00, 48.00, COLLISION_CIRCLE },
+    { HITBOX_HAZARD, 0.00, 0.00, 24.00, 24.00, COLLISION_CIRCLE },
 };
 const ChildSprite children_v2_918[] = {
     { 2186, 0.00, -0.00, 1.00, 1.00, 0, 0, -2, 0, 0.00, COLOR_TYPE_GLOW, 1.00 },

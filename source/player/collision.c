@@ -445,6 +445,48 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                 SET_ACTIVATED(obj, true);
             } 
             break;
+#ifdef __PSP__
+        case GREEN_ORB:
+            // GD 2.0 (as wiidash): flips gravity and jumps like the yellow orb
+            if (!GET_COLLIDED(obj)) add_use_effect(objects.x[obj], objects.y[obj], obj, &orb_collide_effect, get_use_effect_array_ptr(GFX_TOP));
+            if (!GET_ACTIVATED(obj) && (state.input.holdJump) && player->buffering_state == BUFFER_READY) {
+                MotionTrail_ResumeStroke(trail);
+                if (player->gamemode == GAMEMODE_DART) MotionTrail_AddWavePoint(wave_trail);
+                player->gravObj_id = obj;
+                player->ceiling_inv_time = 0.5f;
+
+                player->upside_down ^= 1;
+                player->vel_y = jump_heights_table[state.speed][JUMP_YELLOW_ORB][player->gamemode][player->mini];
+                if (player->gamemode == GAMEMODE_SHIP) player->vel_y *= 0.7f;
+                if (player->robot && player->gamemode == GAMEMODE_PLAYER) {
+                    player->vel_y *= 0.9f;
+                    player->robot_boost = 0;
+                    player->robot_anim = ROBOT_ANIM_JUMP_START;
+                    player->robot_anim_t = 0;
+                }
+                update_rotation_direction(player);
+                flip_other_player(state.current_player);
+
+                state.current_data.jumps++;
+                player->ball_rotation_speed = -BALL_SLOW_ROTATION;
+
+                player->on_ground = false;
+                player->on_ceiling = false;
+                player->inverse_rotation = false;
+                player->left_ground = true;
+                player->buffering_state = BUFFER_END;
+
+                UseEffect *effect = add_use_effect(objects.x[obj], objects.y[obj], obj, &orb_use_effect, get_use_effect_array_ptr(GFX_TOP));
+                if (effect) {
+                    effect->def.colorR = 0;
+                    effect->def.colorG = 255 / 255.f;
+                    effect->def.colorB = 0;
+                }
+
+                SET_ACTIVATED(obj, true);
+            }
+            break;
+#endif
         case BLUE_ORB:
             if (!GET_COLLIDED(obj)) add_use_effect(objects.x[obj], objects.y[obj], obj, &orb_collide_effect, get_use_effect_array_ptr(GFX_TOP));
             if (!GET_ACTIVATED(obj) && (state.input.holdJump) && player->buffering_state == BUFFER_READY) {    

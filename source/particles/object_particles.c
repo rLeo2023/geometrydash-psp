@@ -48,11 +48,19 @@ static float get_object_particle_depth(int id) {
         case FASTER_SPEED_PORTAL:
         case DUAL_PORTAL:
         case DIVORCE_PORTAL:
+#ifdef __PSP__
+        case ROBOT_PORTAL:
+        case BLUE_TP_PORTAL:
+        case ORANGE_TP_PORTAL:
+#endif
             return 0.5f;
         // Orbs and coins hang in mid air, so theirs carry a bit further
         case YELLOW_ORB:
         case BLUE_ORB:
         case PINK_ORB:
+#ifdef __PSP__
+        case GREEN_ORB:
+#endif
         case SECRET_COIN:
             return 0.7f;
     }
@@ -194,6 +202,40 @@ void spawn_object_particles(int obj) {
                 }
             }
             break;
+#ifdef __PSP__
+        // GD 2.0's, in wiidash's colors
+        case GREEN_ORB:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &ring_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 1, 0);
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case ROBOT_PORTAL:
+        case BLUE_TP_PORTAL:
+        case ORANGE_TP_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    if (objects.id[obj] == ROBOT_PORTAL)
+                        set_particle_color(&object_particle[index].ps.cfg, 1, 1, 1);
+                    else if (objects.id[obj] == BLUE_TP_PORTAL)
+                        set_particle_color(&object_particle[index].ps.cfg, 56 / 255.f, 200 / 255.f, 1);
+                    else
+                        set_particle_color(&object_particle[index].ps.cfg, 1, 91 / 255.f, 0);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+#endif
         case YELLOW_PAD:
             if (!is_ps_already_loaded(obj)) {
                 index = load_object_particles(obj, &bump_effect, false);
