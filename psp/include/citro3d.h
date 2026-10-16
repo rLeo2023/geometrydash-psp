@@ -74,6 +74,7 @@ typedef struct C3D_Tex {
 	u8 psm;            // GU_PSM_*
 	u8 filter;         // GPU_NEAREST / GPU_LINEAR
 	u8 swizzled;       // stored in the GE's 16x8 blocks
+	u8 in_vram;        // data is in VRAM (kept for good, never freed)
 } C3D_Tex;
 void C3D_TexSetFilter(C3D_Tex *tex, GPU_TEXTURE_FILTER_PARAM magFilter, GPU_TEXTURE_FILTER_PARAM minFilter);
 

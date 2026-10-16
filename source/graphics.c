@@ -1223,6 +1223,16 @@ void create_objects() {
     
     start = svcGetSystemTick();
     // Sort
+#ifdef __PSP__
+    {
+        // the most sprites a frame has had, in the log (to size MAX_SPRITES)
+        static int peak;
+        if (sprite_count > peak + peak / 8) {
+            peak = sprite_count;
+            psp_log("peak: %d sprites\n", peak);
+        }
+    }
+#endif
     sort_viewable_objects(viewable_objects_ptr, sprite_count);
     end = svcGetSystemTick();
     ticks = end - start;

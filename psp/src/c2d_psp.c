@@ -16,6 +16,7 @@ utils/c2d_internal.h), so the batching follows that header's context.
 #include <pspkernel.h>
 #include <pspdisplay.h>
 #include <pspgu.h>
+#include <pspge.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
@@ -31,8 +32,9 @@ utils/c2d_internal.h), so the batching follows that header's context.
 #define PSP_BUF_W   512
 #define FB_SIZE     ( PSP_BUF_W * PSP_SCR_H * 4 )
 
-// one frame's commands and vertices; a frame that needs more is cut in two
-#define LIST_SIZE   ( 1024 * 1024 )
+// one frame's commands and vertices; a frame that needs more is cut in two.
+// A heavy official level peaks around 100 KB ("peak: display list")
+#define LIST_SIZE   ( 512 * 1024 )
 
 #define VTX_MAX     6144
 #define IDX_MAX     ( VTX_MAX * 3 / 2 )
@@ -184,8 +186,10 @@ typedef struct {
 	};
 } GeOp;
 
-#define DEFER_OPS   4096
-#define DEFER_VERTS 24576
+// the touch screen's half of a menu: the icon kit, the busiest, is about 100
+// ops and 500 vertices ("peak: deferred" in the log)
+#define DEFER_OPS   1024
+#define DEFER_VERTS 4096
 
 static GeOp defer_ops[DEFER_OPS];
 static int defer_nops;
@@ -259,7 +263,12 @@ static PspVertex *GE_DrawBegin( int n )
 	if( !deferring )
 		return PSP_GetMemory( n * sizeof( PspVertex ));
 	if( defer_nverts + n > DEFER_VERTS )
+	{
+		static bool told;
+		if( !told ) psp_log( "deferred vertices full: some of the menu not drawn\n" );
+		told = true;
 		return NULL;
+	}
 	return &defer_verts[defer_nverts];
 }
 
@@ -393,6 +402,9 @@ static void *PSP_GetMemory( size_t size )
 	// The margin is for the state commands sent before the next vertices
 	if( sceGuCheckList() + size + 16 * 1024 > LIST_SIZE )
 	{
+		static int flushes;
+		if(( flushes++ & 255 ) == 0 )
+			psp_log( "display list full: sent early (%d times)\n", flushes );
 		sceGuFinish();
 		sceGuSync( 0, 0 );
 		PSP_ListStart();
@@ -1112,6 +1124,17 @@ void C3D_FrameEnd( u8 flags )
 	if( deferring )
 		GE_EndDeferred();
 
+	// the most the buffers have held, in the log when it grows (to size them)
+	{
+		static int peak_ops, peak_verts;
+		if( defer_nops > peak_ops + peak_ops / 8 || defer_nverts > peak_verts + peak_verts / 8 )
+		{
+			if( defer_nops > peak_ops ) peak_ops = defer_nops;
+			if( defer_nverts > peak_verts ) peak_verts = defer_nverts;
+			psp_log( "peak: deferred %d ops, %d verts\n", peak_ops, peak_verts );
+		}
+	}
+
 	if( psp_view == PSP_VIEW_MERGED )
 	{
 		// the touch screen over the top one, then the fade over both
@@ -1122,6 +1145,16 @@ void C3D_FrameEnd( u8 flags )
 	defer_nops = defer_nverts = 0;
 
 	PSP_DrawOverlay(); // ctru_psp.c: the touch cursor
+
+	{
+		static int peak_list;
+		int used = sceGuCheckList();
+		if( used > peak_list + peak_list / 8 )
+		{
+			peak_list = used;
+			psp_log( "peak: display list %d KB\n", used / 1024 );
+		}
+	}
 
 	sceGuFinish();
 	in_frame = false;
@@ -1336,6 +1369,30 @@ static int PSP_PsmBytes( int psm, int texels )
 	}
 }
 
+/*
+VRAM is 2 MB: the two frame buffers take 1.06 MB and the depth buffer after
+them is never used (no depth test, never cleared), so the rest, 960 KB, holds
+the level objects' sheet for good: 896 KB less of RAM, and the GE reads its
+own memory faster. Handed out once, never given back
+*/
+#define VRAM_SIZE  ( 2 * 1024 * 1024 )
+static u32 vram_next = FB_SIZE * 2;
+
+static void *PSP_VramAlloc( int size )
+{
+	u32 at = ( vram_next + 15 ) & ~15;
+	if( at + size > VRAM_SIZE )
+		return NULL;
+	vram_next = at + size;
+	return (void *)((u32)sceGeEdramGetAddr() + at );
+}
+
+// the sheets that live in VRAM: loaded at start, never freed
+static bool PSP_SheetInVram( const char *path )
+{
+	return strstr( path, "/sprites.psheet" ) != NULL;
+}
+
 C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 {
 	char path[256];
@@ -1386,6 +1443,14 @@ C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 		}
 
 		size = PSP_PsmBytes( pg.psm, pg.w * pg.h );
+		if( PSP_SheetInVram( path ) && ( t->data = PSP_VramAlloc( size )))
+		{
+			// written through the uncached mirror: nothing left in the cache
+			t->in_vram = 1;
+			if( fread((void *)((u32)t->data | 0x40000000 ), 1, size, f ) != (size_t)size )
+				goto fail;
+			continue;
+		}
 		t->data = memalign( 16, size );
 		if( !t->data )
 		{
@@ -1446,7 +1511,8 @@ void C2D_SpriteSheetFree( C2D_SpriteSheet sheet )
 	{
 		for( i = 0; i < sheet->num_pages; i++ )
 		{
-			free( sheet->pages[i].data );
+			if( !sheet->pages[i].in_vram )
+				free( sheet->pages[i].data );
 			free( sheet->pages[i].clut );
 		}
 		free( sheet->pages );
