@@ -2,7 +2,7 @@
 
 #include <3ds.h>
 
-#define MAIN_LEVELS_NUM 18
+#define MAIN_LEVELS_NUM 20
 
 enum MainLevelDifficulties {
     MAIN_DIFF_EASY,
