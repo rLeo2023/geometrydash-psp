@@ -137,7 +137,12 @@ void loading_screen_update(float progress) {
     // Top screen, drawn once per eye when 3D is on
     for (int eye = 0; begin_top_eye(eye); eye++) {
         begin_eye_layer(DEPTH_BACKGROUND);
+#ifdef __PSP__
+        // the background's lighter, lower part, as in the main menu
+        draw_background(0, 200);
+#else
         draw_background(0, -30);
+#endif
         end_eye_layer();
 
         begin_eye_layer(DEPTH_UI);
