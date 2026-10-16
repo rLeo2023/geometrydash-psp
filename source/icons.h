@@ -34,7 +34,7 @@ typedef enum {
 #define ROBOT 6
 // (GD has 68: the first ones only, to keep their sheet small; with
 // psp/tools/mkrobots.py's ROBOTS)
-#define ROBOT_COUNT 5
+#define ROBOT_COUNT 25
 #define ICON_COUNT_ROBOT (ROBOT_COUNT + 1)
 #define ICON_KIT_PAGES 7
 #else
