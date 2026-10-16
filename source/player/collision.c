@@ -311,6 +311,55 @@ void setup_dual() {
     }
 }
 
+#ifdef __PSP__
+// a teleport portal touched this step, per player (-1: none)
+static int pending_teleport[2] = { -1, -1 };
+
+// the teleport touched this step (as wiidash): straight to the way out's height
+void apply_pending_teleport(Player *player) {
+    int obj = pending_teleport[state.current_player];
+    pending_teleport[state.current_player] = -1;
+    if (obj < 0) return;
+    int out = teleport_exit(obj);
+    if (out < 0) return;
+
+    float to_y = objects.y[out];
+    if (settingsState.enableDebugBindings)
+        psp_log("teleport: obj %d (%.0f,%.0f rot %.0f) -> %.0f, player %.0f,%.0f gm %d ud %d\n", obj,
+                objects.x[obj], objects.y[obj], objects.rotation[obj], to_y, player->x, player->y,
+                player->gamemode, player->upside_down);
+    {
+        extern float psp_teleport_watch;
+        psp_teleport_watch = 1.f;
+    }
+    player->y = to_y;
+    // as wiidash: no movement counted across the jump (the collisions would
+    // see it pass through everything between)
+    state.old_player.y = to_y;
+    MotionTrail_StopStroke(trail);
+
+    // far off screen: the camera jumps there too
+    if (player->gamemode == GAMEMODE_PLAYER &&
+        fabsf(state.camera_y + SCREEN_HEIGHT_AREA / 2 - to_y) >= SCREEN_HEIGHT_AREA / 2 + 60) {
+        state.camera_y = to_y - SCREEN_HEIGHT_AREA / 2;
+        if (state.camera_y < 0) state.camera_y = 0;
+    }
+
+    UseEffect *e_in = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
+    if (e_in) {
+        e_in->def.colorR = 56 / 255.f;
+        e_in->def.colorG = 200 / 255.f;
+        e_in->def.colorB = 255 / 255.f;
+    }
+    UseEffect *e_out = add_use_effect(objects.x[out], objects.y[out], out, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
+    if (e_out) {
+        e_out->def.colorR = 255 / 255.f;
+        e_out->def.colorG = 255 / 255.f;
+        e_out->def.colorB = 0 / 255.f;
+    }
+}
+#endif
+
 // Handle collision with special objects (orbs, pads, portals)
 void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) {
     switch (objects.id[obj]) {
@@ -792,40 +841,11 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             break;
 #ifdef __PSP__
         case BLUE_TP_PORTAL:
-            // GD 2.0 teleport (as wiidash): straight to the way out's height
+            // GD 2.0 teleport: done once everything else this step touches has
+            // had its turn (levels put a gravity portal right on the way in:
+            // teleported first, it wasn't touched any more)
             if (!GET_ACTIVATED(obj)) {
-                int out = teleport_exit(obj);
-                if (out >= 0) {
-                    float to_y = objects.y[out];
-                    if (settingsState.enableDebugBindings)
-                        psp_log("teleport: obj %d (%.0f,%.0f rot %.0f) -> %.0f, player %.0f,%.0f gm %d\n", obj,
-                                objects.x[obj], objects.y[obj], objects.rotation[obj], to_y, player->x, player->y, player->gamemode);
-                    player->y = to_y;
-                    // as wiidash: no movement counted across the jump (the
-                    // collisions would see it pass through everything between)
-                    state.old_player.y = to_y;
-                    MotionTrail_StopStroke(trail);
-
-                    // far off screen: the camera jumps there too
-                    if (player->gamemode == GAMEMODE_PLAYER &&
-                        fabsf(state.camera_y + SCREEN_HEIGHT_AREA / 2 - to_y) >= SCREEN_HEIGHT_AREA / 2 + 60) {
-                        state.camera_y = to_y - SCREEN_HEIGHT_AREA / 2;
-                        if (state.camera_y < 0) state.camera_y = 0;
-                    }
-
-                    UseEffect *e_in = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
-                    if (e_in) {
-                        e_in->def.colorR = 56 / 255.f;
-                        e_in->def.colorG = 200 / 255.f;
-                        e_in->def.colorB = 255 / 255.f;
-                    }
-                    UseEffect *e_out = add_use_effect(objects.x[out], objects.y[out], out, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
-                    if (e_out) {
-                        e_out->def.colorR = 255 / 255.f;
-                        e_out->def.colorG = 255 / 255.f;
-                        e_out->def.colorB = 0 / 255.f;
-                    }
-                }
+                pending_teleport[state.current_player] = obj;
                 SET_ACTIVATED(obj, true);
             }
             break;
@@ -1278,9 +1298,14 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
                 } else {
                     // Not a brick, die
 #ifdef __PSP__
-                    if (settingsState.enableDebugBindings && !state.noclip)
-                        psp_log("crushed in obj %d (id %d at %.0f,%.0f), player %.0f,%.0f\n", obj, objects.id[obj],
-                                objects.x[obj], objects.y[obj], player->x, player->y);
+                    {
+                        extern bool psp_autoload_test;
+                        static int last_logged = -1;
+                        if (settingsState.enableDebugBindings && (!state.noclip || (psp_autoload_test && obj != last_logged)))
+                            psp_log("crushed in obj %d (id %d at %.0f,%.0f), player %.0f,%.0f gm %d\n", obj, objects.id[obj],
+                                    objects.x[obj], objects.y[obj], player->x, player->y, player->gamemode);
+                        last_logged = obj;
+                    }
 #endif
                     kill_player(DEATH_BLOCK);
                 }
@@ -1365,9 +1390,14 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
             break;
         case HITBOX_HAZARD:
 #ifdef __PSP__
-            if (settingsState.enableDebugBindings && !state.noclip)
-                psp_log("killed by obj %d (id %d at %.0f,%.0f), player %.0f,%.0f\n", obj, objects.id[obj],
-                        objects.x[obj], objects.y[obj], player->x, player->y);
+            {
+                extern bool psp_autoload_test;
+                static int last_logged = -1;
+                if (settingsState.enableDebugBindings && (!state.noclip || (psp_autoload_test && obj != last_logged)))
+                    psp_log("killed by obj %d (id %d at %.0f,%.0f), player %.0f,%.0f gm %d\n", obj, objects.id[obj],
+                            objects.x[obj], objects.y[obj], player->x, player->y, player->gamemode);
+                last_logged = obj;
+            }
 #endif
             kill_player(hitbox->type == COLLISION_CIRCLE ? DEATH_SAW : DEATH_SPIKE);
             break;
@@ -1389,6 +1419,20 @@ void collide_with_obj(Player *player, int obj) {
     float y = objects.y[obj];
     float width = objects.width[obj];
     float height = objects.height[obj];
+
+#ifdef __PSP__
+    // a 2.0 object's hitbox off its center (the teleport's sits 12 to the
+    // front), turned and flipped with it. The game's own table has none
+    if (objects.id[obj] >= 746 && (hitbox->x != 0 || hitbox->y != 0)) {
+        float hx = hitbox->x * OBJ_SCALE(obj) * (objects.flippedH[obj] ? -1 : 1);
+        float hy = hitbox->y * OBJ_SCALE(obj) * (objects.flippedV[obj] ? -1 : 1);
+        float r = DegToRad(objects.rotation[obj]);
+        float c = cosf(r), s = sinf(r);
+        // clockwise, y up
+        x += hx * c + hy * s;
+        y += -hx * s + hy * c;
+    }
+#endif
 
     if (UNLIKELY(hitbox->type == COLLISION_CIRCLE)) {
         if (intersect_rect_circle(

@@ -258,6 +258,7 @@ float triggers_time = 0;
 float delta = 0;
 #ifdef __PSP__
 bool psp_autoload_test; // started from an autoload.gmd (logs what it draws)
+float psp_teleport_watch; // autoload test: seconds left of logging the player after a teleport
 #endif
 unsigned int level_frame = 0;
 unsigned int frame_counter = 0;
@@ -1028,6 +1029,11 @@ void game_loop() {
                 // autoload test: what's on screen and its colors, now and then
                 extern bool psp_autoload_test;
                 static float dump_t;
+                if (psp_autoload_test && psp_teleport_watch > 0) {
+                    psp_teleport_watch -= delta;
+                    psp_log("  after teleport: %.0f,%.1f vel %.0f ground %d ud %d\n", state.player.x, state.player.y,
+                            state.player.vel_y, state.player.on_ground, state.player.upside_down);
+                }
                 dump_t += delta;
                 if (psp_autoload_test && dump_t > 2.f) {
                     dump_t = 0;

@@ -11,16 +11,13 @@ const ChildSprite children_v2_745[] = {
 
 
 const ObjectHitbox hitbox_v2_747[] = {
-    { HITBOX_SPECIAL, 0.00, 0.00, 25.00, 75.00, COLLISION_BOX },
+    { HITBOX_SPECIAL, 12.00, 0.00, 25.00, 90.00, COLLISION_BOX },
 };
 const ChildSprite children_v2_747[] = {
     { 2002, 0.00, -0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 
-const ObjectHitbox hitbox_v2_749[] = {
-    { HITBOX_SPECIAL, 0.00, 0.00, 25.00, 75.00, COLLISION_BOX },
-};
 const ChildSprite children_v2_749[] = {
     { 2004, 0.00, -0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };

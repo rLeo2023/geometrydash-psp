@@ -56,6 +56,10 @@ extern int number_of_collisions_checks;
 #define ROBOT_PORTAL 745
 #define BLUE_TP_PORTAL 747   // GD 2.0 teleport: in...
 #define ORANGE_TP_PORTAL 749 // ... and out (made at load, 54 above the in one)
+#ifdef __PSP__
+// player.c, after a step's collisions: the teleport touched in them, if any
+void apply_pending_teleport(Player *player);
+#endif
 
 #define BLUE_GRAVITY_PORTAL 10
 #define YELLOW_GRAVITY_PORTAL 11
