@@ -99,10 +99,10 @@ static const AnimPose anim_pose_1328[] = {
 };
 
 static const SkelAnim skel_anims[] = {
-    { 918, 38, 16, 2, 5, anim_part_918, anim_pose_918 },
-    { 919, 20, 11, 3, 3, anim_part_919, anim_pose_919 },
-    { 1327, 18, 9, 2, 3, anim_part_1327, anim_pose_1327 },
-    { 1328, 18, 9, 2, 3, anim_part_1328, anim_pose_1328 },
+    { 918, 24, 16, 2, 5, anim_part_918, anim_pose_918 },
+    { 919, 12, 11, 3, 3, anim_part_919, anim_pose_919 },
+    { 1327, 12, 9, 2, 3, anim_part_1327, anim_pose_1327 },
+    { 1328, 12, 9, 2, 3, anim_part_1328, anim_pose_1328 },
 };
 
 /* the player's robot: each part's main color and second color sprites */

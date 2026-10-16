@@ -47,6 +47,10 @@ FIRST_ID, LAST_ID = 746, 1329
 V2_TEXTURE_START = 2000
 PATCH = (745,)          # in the game's table, with a 2.0 sprite (V2_ROW_745)
 SKIP = {914}            # the text object: wiidash's layer is a placeholder
+# wiidash's hitbox over gen2objects' (which had a portal's): the teleports'
+# sits 12 to the front, 90 long. Levels count on it (Deadlocked puts a
+# gravity portal on the way in, to be touched first)
+WII_HITBOX = {747, 749}
 
 CHANNELS = {'BG': 1000, 'GROUND': 1001, 'LINE': 1002, 'THREEDL': 1003, 'OBJ': 1004,
             'P1': 1005, 'P2': 1006, 'LBG': 1007, 'OBJ_BLENDING': 1004, 'G2': 1009,
@@ -286,24 +290,25 @@ FRAME_ANIMS = {
 }
 
 # id -> plist, animation, fps, parts drawn in order: (sprite, color type,
-# default channel, plist part), its hitbox
+# default channel, plist part), its hitbox. wiidash's speeds (38, 18, 20)
+# looked too fast next to GD's: slower here
 SKEL_ANIMS = {
-    918: ('monster1.plist', 'GJBeast01_bite', 38, [
+    918: ('monster1.plist', 'GJBeast01_bite', 24, [
         ('GJBeast01_01_glow_001.png', 'COLOR_GLOW', 'LBG', 1),
         ('GJBeast01_02_glow_001.png', 'COLOR_GLOW', 'LBG', 0),
         ('GJBeast01_01_001.png', 'COLOR_MAIN', 'BLACK', 1),
         ('GJBeast01_03_001.png', 'COLOR_DETAIL', 'WHITE', 1),
         ('GJBeast01_02_001.png', 'COLOR_MAIN', 'BLACK', 0)]),
-    1327: ('monster2.plist', 'GJBeast02_idle01', 18, [
+    1327: ('monster2.plist', 'GJBeast02_idle01', 12, [
         ('GJBeast02_01_glow_001.png', 'COLOR_GLOW', 'LBG', 0),
         ('GJBeast02_01_001.png', 'COLOR_MAIN', 'BLACK', 0),
         ('GJBeast02_02_001.png', 'COLOR_DETAIL', 'WHITE', 1)]),
-    1328: ('monster3.plist', 'GJBeast03_idle01', 18, [
+    1328: ('monster3.plist', 'GJBeast03_idle01', 12, [
         ('GJBeast03_01_glow_001.png', 'COLOR_GLOW', 'LBG', 0),
         ('GJBeast03_01_001.png', 'COLOR_MAIN', 'BLACK', 0),
         ('GJBeast03_02_001.png', 'COLOR_DETAIL', 'WHITE', 1)]),
     # its parts are details with no main: they take the main channel
-    919: ('black_sludge.plist', 'BlackSludge_loop', 20, [
+    919: ('black_sludge.plist', 'BlackSludge_loop', 12, [
         ('dA_blackSludge_01_001.png', 'COLOR_MAIN', 'BLACK', 0),
         ('dA_blackSludge_02_001.png', 'COLOR_MAIN', 'BLACK', 1),
         ('dA_blackSludge_02_001.png', 'COLOR_MAIN', 'BLACK', 2)]),
@@ -476,7 +481,7 @@ def wii_row(oid, w, blocks, sprite, defs, glow_details=False):
             z, int(num(l.get('zlayer_offset'))), color(l)))
 
     hitbox_ref = 'NULL'
-    if ('hitbox', oid) in blocks:
+    if ('hitbox', oid) in blocks and oid not in WII_HITBOX:
         defs += ['const ObjectHitbox hitbox_v2_%d[] = {' % oid, blocks[('hitbox', oid)], '};']
         hitbox_ref = 'hitbox_v2_%d' % oid
     else:

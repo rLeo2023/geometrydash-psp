@@ -862,6 +862,9 @@ void handle_player(Player *player) {
     // The svc calls are for profiling
     u64 start = svcGetSystemTick();
     collide_with_objects(player);
+#ifdef __PSP__
+    apply_pending_teleport(player);
+#endif
     u64 end = svcGetSystemTick();
     u64 ticks = end - start;
     collision_time += ticks / CPU_TICKS_PER_MSEC;

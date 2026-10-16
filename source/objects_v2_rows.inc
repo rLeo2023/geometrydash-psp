@@ -2,7 +2,7 @@
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 746 - */
     { 2003, -1, 0.00, -0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_v2_747, hitbox_v2_747, 0 }, /* 747 portal_15_back_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 748 - */
-    { 2005, -1, 0.00, -0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_v2_749, hitbox_v2_749, 0 }, /* 749 portal_16_back_001.png */
+    { 2005, -1, 0.00, -0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_v2_749, NULL, 0 }, /* 749 portal_16_back_001.png */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 750 - */
     { -1, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL }, /* 751 - */
     { 2007, -1, 0.00, -0.00, 1, -7, 1004, COLOR_TYPE_DETAIL, 0, 1.00, 1, children_v2_752, NULL, 0 }, /* 752 block005_02_color_001.png */
