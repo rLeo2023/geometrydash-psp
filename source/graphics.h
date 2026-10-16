@@ -130,6 +130,10 @@ void draw_background(float x, float y);
 void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_width);
 void update_player_colors();
 void set_player_colors(Color p1, Color p2, Color glow);
+#ifdef __PSP__
+void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
+                    float scale, u32 p1_color, u32 p2_color);
+#endif
 void spawn_icon_at(
     int gamemode,
     int id,

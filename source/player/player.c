@@ -1092,7 +1092,15 @@ void draw_player(Player *player) {
 
     switch (player->gamemode) {
         case GAMEMODE_PLAYER:
-            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x, false, scale, 
+#ifdef __PSP__
+            if (player->robot) {
+                // always upright (the cube's turns are 90 degree steps)
+                spawn_robot_at(calc_x_mirror, calc_y, 0, flip_x, player->upside_down, scale,
+                               primary_color, secondary_color);
+                break;
+            }
+#endif
+            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x, false, scale,
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
