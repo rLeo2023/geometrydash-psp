@@ -124,6 +124,11 @@ void update_object_particles(float dt) {
             if (objects.toggled[obj]) {
                 object_particle[i].ps.emitting = false;
             }
+#ifdef __PSP__
+            // with its object, if a move trigger takes it somewhere
+            object_particle[i].ps.emitterX = objects.x[obj];
+            object_particle[i].ps.emitterY = objects.y[obj] - (objects.id[obj] == SECRET_COIN ? 15 : 0);
+#endif
 
             updateParticleSystem(&object_particle[i].ps, dt);
         }

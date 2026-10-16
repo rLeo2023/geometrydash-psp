@@ -13,11 +13,13 @@ extern int frame_skipped;
 #define STEPS_DT ((1.f + frame_skipped) / STEPS_HZ) // 1/240 seconds per physics step
 #define STEPS_DT_UNMOD (1.f / STEPS_HZ) // 1/240 seconds per physics step
 
-#define P1_TRAIL_LENGTH 10
 #ifdef __PSP__
-// shorter, the copies close behind the icon like the phone game's
-#define P1_TRAIL_DURATION 0.2f
+// a copy every 1/60 s that lives 0.25 s: overlapping, a smear stuck to the
+// icon like the phone game's, not loose copies
+#define P1_TRAIL_LENGTH 20
+#define P1_TRAIL_DURATION 0.25f
 #else
+#define P1_TRAIL_LENGTH 10
 #define P1_TRAIL_DURATION 0.45f
 #endif
 #define P1_TRAIL_END_SCALE 0.8f

@@ -1239,7 +1239,12 @@ void game_loop() {
             }
 
             if (state.noclip) {
+#ifdef __PSP__
+                // the 3DS's bottom edge falls off the PSP's screen
+                draw_text(&bigFont_fontCharset, &bigFont_sheet, 4, 216, 0.5f, 0.5f, 0, true, "Noclip Activated");
+#else
                 draw_text(&bigFont_fontCharset, &bigFont_sheet, 0, 234, 0.5f, 0.5f, 0, true, "Noclip Activated");
+#endif
             }
             C2D_ViewReset();
 
