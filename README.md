@@ -35,11 +35,12 @@ Geometry Dash PSP brings AleFunky's Nintendo 3DS version of Geometry Dash ([GD3D
 
 ### Features
 
-- All the main levels, from Stereo Madness to Theory of Everything 2
+- All the main levels, from Stereo Madness to Theory of Everything 2, plus Geometrical Dominator and Deadlocked
+- **GD 2.0 support** (based on AleFunky's [wiidash](https://github.com/AleFunky)): robot, teleport portals, 2.0 objects, groups and the Move, Alpha, Toggle, Spawn and Pulse triggers
 - Accurate physics, particles, player trails and level coins
 - Practice mode, with auto-checkpoints on by default
-- Custom levels (GD 1.9 objects) loaded from the Memory Stick
-- Icon kit, settings, progress and statistics, all saved on the Memory Stick
+- Custom levels (up to GD 2.0) loaded from the Memory Stick
+- Icon kit (with robots), settings, progress and statistics, all saved on the Memory Stick
 - Every menu redesigned for one 480x272 screen
 - 30 FPS by default, with a **60 FPS Switch** option in the settings
 - Music decoded on the PSP's Media Engine
@@ -110,11 +111,12 @@ Geometry Dash PSP lleva a la PSP la versión de Geometry Dash para Nintendo 3DS 
 
 ### Características
 
-- Todos los niveles principales, de Stereo Madness a Theory of Everything 2
+- Todos los niveles principales, de Stereo Madness a Theory of Everything 2, más Geometrical Dominator y Deadlocked
+- **Soporte de GD 2.0** (basado en [wiidash](https://github.com/AleFunky), de AleFunky): robot, portales de teletransporte, objetos de la 2.0, grupos y los triggers Move, Alpha, Toggle, Spawn y Pulse
 - Física precisa, partículas, estelas del jugador y monedas
 - Modo práctica, con checkpoints automáticos activados por defecto
-- Niveles custom (objetos de GD 1.9) cargados desde la Memory Stick
-- Icon kit, opciones, progreso y estadísticas, todo guardado en la Memory Stick
+- Niveles custom (hasta GD 2.0) cargados desde la Memory Stick
+- Icon kit (con robots), opciones, progreso y estadísticas, todo guardado en la Memory Stick
 - Todos los menús rediseñados para una sola pantalla de 480x272
 - 30 FPS por defecto, con la opción **60 FPS Switch** en los ajustes
 - Música decodificada en el Media Engine de la PSP

@@ -23,6 +23,10 @@
 #include "save/saving.h"
 
 #include "menus/gameplay.h"
+#ifdef __PSP__
+#include "menus/main_menu.h" // in_info_card
+#include "menus/info_card.h"
+#endif
 
 #include "state.h"
 
@@ -448,11 +452,34 @@ void tint_ground(UIElement *e) {
     ui_image_set_tint((UIImage *) e, C2D_Color32(channel.color.r, channel.color.g, channel.color.b, 255));
 }
 
+#ifdef __PSP__
+// the "i" button: the level's stats (as GD's Level Stats)
+static void action_level_info(UIElement *e) {
+    if (IS_SOON(curr_level_id) || in_info_card) return;
+    const LevelData *d = &main_level_data[curr_level_id];
+    char tmp[512];
+    snprintf(tmp, sizeof(tmp),
+        "<#FFFF00>%s</>"
+        "<p><#40E048>Total Attempts</>: %d"
+        "<p><#5AB4FF>Total Jumps</>: %d"
+        "<p><#FF32FF>Normal</>: %d%%"
+        "<p><#FFA05A>Practice</>: %d%%",
+        main_levels[curr_level_id].level_name, d->attempts, d->jumps,
+        d->normal_progress, d->practice_progress);
+    info_card_init_layout("romfs:/menus/level_stats.txt");
+    set_info_content(tmp);
+    in_info_card = true;
+}
+#endif
+
 static UIAction actions[] = {
     {"open_level", action_open_level},
     {"exit", action_exit},
     {"move_right", action_move_right},
-    {"move_left", action_move_left}
+    {"move_left", action_move_left},
+#ifdef __PSP__
+    {"level_info", action_level_info},
+#endif
 };
 
 static UIAction actions_top[] = {
@@ -648,9 +675,14 @@ void level_select_loop() {
 
 #ifdef __PSP__
         soon_refresh();
+        // the stats card takes the buttons while it is open
+        if (!in_info_card) {
 #endif
         ui_screen_update(&default_screen, &touch);
         ui_screen_update(&default_screen_top, &touch);
+#ifdef __PSP__
+        }
+#endif
 #ifdef __PSP__
         // again: the arrows act during the update, and the frame drawn now
         // showed both a level and "Coming Soon!" on the card that came in
@@ -673,6 +705,7 @@ void level_select_loop() {
             ui_screen_draw(&default_screen);
 #ifdef __PSP__
             draw_dots(curr_level_id);
+            if (in_info_card && info_card_loop()) in_info_card = false;
 #endif
 
             change_blending(true);

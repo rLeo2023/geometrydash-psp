@@ -41,7 +41,12 @@ void set_info_content(const char *text) {
 }
 
 void info_card_init() {
-    ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/info_card.txt");
+    info_card_init_layout("romfs:/menus/info_card.txt");
+}
+
+// the same card from another layout (a title of its own, room for more lines)
+void info_card_init_layout(const char *layout) {
+    ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), layout);
     ui_screen_open(&screen, ANIM_ZOOM);
     yes_exit = false;
 }
