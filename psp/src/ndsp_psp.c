@@ -8,6 +8,7 @@ PLAYING -> DONE like on the 3DS, and the callback the game sets (the mp3
 player's "refill now") runs after every mixed block.
 */
 #include <pspkernel.h>
+#include <pspsdk.h>
 #include <pspaudio.h>
 #include <string.h>
 
@@ -153,6 +154,7 @@ static int MixThread( SceSize args, void *argp )
 	int cur = 0;
 
 	(void)args; (void)argp;
+	pspSdkDisableFPUExceptions(); // a real PSP traps on float errors (ctru_psp.c)
 	while( running )
 	{
 		short *out = out_buf[cur];
