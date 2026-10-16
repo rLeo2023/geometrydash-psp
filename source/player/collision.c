@@ -292,7 +292,7 @@ void set_dual_bounds() {
 
 void setup_dual() {
     memcpy(&state.player2, &state.player, sizeof(Player));
-    memset(&state.p1_trail_data[1], 0, sizeof(P1Trail) * P1_TRAIL_DURATION);
+    memset(&state.p1_trail_data[1], 0, sizeof(P1Trail) * P1_TRAIL_LENGTH);
     state.p1_trail_pos[1] = 0;
     state.player2.upside_down = state.player.upside_down ^ 1;
     UseEffect *effect = add_use_effect(player_1->x, player_1->y, USE_EFFECT_OBJ_P1, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));

@@ -980,6 +980,15 @@ void spawn_p1_trail(Player *player, int player_id) {
 #endif
     trail_data->x = player->x;
     trail_data->y = player->y;
+#ifdef __PSP__
+    // ship and ufo: the copy is of the cube riding them, where draw_player puts it
+    if (player->gamemode == GAMEMODE_SHIP || player->gamemode == GAMEMODE_BIRD) {
+        float r = C3D_AngleFromDegrees(player->rotation);
+        float up = ((player->gamemode == GAMEMODE_SHIP) ? 6 : 4) * (player->upside_down ? -1 : 1) * scale;
+        trail_data->x += up * sinf(r);
+        trail_data->y += up * cosf(r);
+    }
+#endif
     trail_data->rot = player->rotation;
     trail_data->opacity = 0.7f;
     trail_data->life = P1_TRAIL_DURATION;
@@ -997,7 +1006,7 @@ void update_p1_trail(Player *player, int player_id) {
     // Every 2/60 s rather than every 3 frames: at 30 fps (the PSP's default)
     // the copies came twice as far apart. Each one where the player was at
     // that moment, between this frame and the last, so they stay evenly spaced
-    #define P1_TRAIL_EVERY (2.f / 60.f)
+    #define P1_TRAIL_EVERY (1.f / 60.f)
     static float since_spawn[2], last_x[2], last_y[2];
     since_spawn[player_id] += delta;
     if (since_spawn[player_id] > 2 * P1_TRAIL_EVERY) since_spawn[player_id] = P1_TRAIL_EVERY;

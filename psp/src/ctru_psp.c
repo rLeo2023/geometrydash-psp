@@ -690,6 +690,8 @@ void hidScanInput( void )
 	if( pad.Buttons & PSP_CTRL_START )    keys |= KEY_START;
 	if( pad.Buttons & PSP_CTRL_SELECT )   keys |= KEY_SELECT;
 	if( pad.Buttons & PSP_CTRL_RTRIGGER ) keys |= KEY_R;
+	// left in the level select and the icon kit, a checkpoint off in practice
+	if( pad.Buttons & PSP_CTRL_LTRIGGER ) keys |= KEY_L;
 	if( pad.Buttons & PSP_CTRL_UP )       keys |= KEY_DUP;
 	if( pad.Buttons & PSP_CTRL_DOWN )     keys |= KEY_DDOWN;
 	if( pad.Buttons & PSP_CTRL_LEFT )     keys |= KEY_DLEFT;
