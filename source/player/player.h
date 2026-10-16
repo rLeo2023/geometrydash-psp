@@ -66,6 +66,11 @@ typedef struct {
 
     bool upside_down;
     bool active;
+#ifdef __PSP__
+    bool robot;         // a copy of the robot, posed as it was
+    u8 robot_anim;
+    float robot_anim_t;
+#endif
 } P1Trail;
 
 typedef struct {
