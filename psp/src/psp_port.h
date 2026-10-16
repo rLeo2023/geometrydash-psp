@@ -62,6 +62,12 @@ bool PSP_ScreenToPsp( int screen, float x, float y, float *px, float *py );
 void PSP_PresentPending( void );
 // the vblank count when the last frame went on screen (59.94 a second)
 u32 PSP_PresentVcount( void );
+// the game's last layer, over everything (the FPS counter): C3D_FrameEnd
+// calls psp_frame_overlay when the game has one, which starts drawing with
+// PSP_OverlayBegin (into whichever of the two screens is shown)
+void psp_frame_overlay( void ) __attribute__(( weak ));
+struct C3D_RenderTarget_tag;
+void PSP_OverlayBegin( struct C3D_RenderTarget_tag *top, struct C3D_RenderTarget_tag *bottom );
 
 // ctru_psp.c: drawn last every frame (the touch cursor)
 void PSP_DrawOverlay( void );

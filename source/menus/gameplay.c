@@ -354,6 +354,11 @@ int gameplay_screen_bot_loop() {
             ui_element_set_scale((UIElement *) coins_full[i], scale);
             ui_image_set_tint(coins_full[i], C2D_Color32f(1, 1, 1, opacity));
 
+#ifdef __PSP__
+            // The touch screen's coin pop: laid over the level on the PSP, it
+            // showed up in the top left corner, as if it were the coin's own
+            coins_circles_spawned[i] = true;
+#endif
             if(coin_anims[i] >= 0.05f){
                 if(!coins_circles_spawned[i]){
                     ui_set_use_effect_col(

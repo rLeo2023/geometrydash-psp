@@ -777,6 +777,18 @@ void C2D_SceneTarget( C3D_RenderTarget *target )
 	C2Di_GetContext()->flags |= C2DiF_DirtyAny;
 }
 
+// psp_port.h: at the end of the frame, straight onto the screen that is shown
+// (no scene change: that would draw the fade and replay the touch screen again)
+void PSP_OverlayBegin( C3D_RenderTarget *top, C3D_RenderTarget *bottom )
+{
+	C2Di_FlushVtxBuf();
+	cur_target = psp_view == PSP_VIEW_BOTTOM ? bottom : top;
+	place = PSP_Place( cur_target );
+	game_scissor = false;
+	PSP_ApplyScissor();
+	C2Di_GetContext()->flags |= C2DiF_DirtyAny;
+}
+
 void C2D_TargetClear( C3D_RenderTarget *target, u32 color )
 {
 	Placement p = PSP_Place( target );
@@ -1143,6 +1155,17 @@ void C3D_FrameEnd( u8 flags )
 			PSP_FadeRect( 0, 0, PSP_SCR_W, PSP_SCR_H );
 	}
 	defer_nops = defer_nverts = 0;
+
+	if( psp_frame_overlay )
+	{
+		C3D_RenderTarget *saved = cur_target;
+		psp_frame_overlay();
+		C2Di_FlushVtxBuf();
+		// back to the game's screen for the next frame, without a scene change
+		cur_target = saved;
+		place = PSP_Place( saved );
+		C2Di_GetContext()->flags |= C2DiF_DirtyAny;
+	}
 
 	PSP_DrawOverlay(); // ctru_psp.c: the touch cursor
 

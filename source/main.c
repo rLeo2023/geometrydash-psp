@@ -1438,6 +1438,31 @@ void load_sfx() {
     load_wav("romfs:/sfx/highscoreGet02.wav", &coin_sound);
 }
 
+#ifdef __PSP__
+// Settings > Graphics > Show FPS: the frames of the last half second, in the
+// top left corner over everything (c2d_psp.c calls this at each frame's end)
+void psp_frame_overlay(void) {
+    static u64 last;
+    static int frames, shown;
+    u64 now = svcGetSystemTick();
+
+    frames++;
+    if (!last) last = now;
+    float ms = (float)(now - last) / CPU_TICKS_PER_MSEC;
+    if (ms >= 500.f) {
+        shown = (int)(frames * 1000.f / ms + 0.5f);
+        frames = 0;
+        last = now;
+    }
+
+    if (!settingsState.showFps) return;
+    PSP_OverlayBegin(top, bot);
+    C2D_ViewReset();
+    change_blending(false);
+    draw_text(&bigFont_fontCharset, &bigFont_sheet, 5, 14, 0.4f, 0.4f, 0, false, "FPS: %d", shown);
+}
+#endif
+
 int main(int argc, char* argv[]) {
     // Init libs
     romfsInit();
