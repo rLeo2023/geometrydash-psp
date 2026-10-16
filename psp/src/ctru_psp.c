@@ -33,7 +33,7 @@ Controls (the 3DS has a touch screen the PSP lacks):
 PSP_MODULE_INFO( "gdpsp", PSP_MODULE_USER, 1, 0 );
 PSP_MAIN_THREAD_ATTR( THREAD_ATTR_USER | THREAD_ATTR_VFPU );
 PSP_MAIN_THREAD_STACK_SIZE_KB( 512 );
-PSP_HEAP_SIZE_KB( -1024 );
+PSP_HEAP_SIZE_KB( -2048 ); // room outside the heap for threads and the firmware modules (avcodec), which real PSPs take from the same memory
 
 /*
 ==============================================================================
