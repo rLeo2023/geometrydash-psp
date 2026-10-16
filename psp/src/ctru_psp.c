@@ -9,6 +9,7 @@ Controls (the 3DS has a touch screen the PSP lacks):
   Analog     moves the cursor when the touch screen is shown, else the circle pad
 */
 #include <pspkernel.h>
+#include <pspsdk.h>
 #include <pspctrl.h>
 #include <pspdisplay.h>
 #include <psppower.h>
@@ -262,9 +263,24 @@ bool aptMainLoop( void )
 static void PSP_InputInit( void );
 static void PSP_MoveOldSaves( void );
 
+/*
+A real PSP's FPU traps on a float division by zero, an invalid operation
+(0/0, sqrt of a negative...) or an overflow, and the game dies on the spot;
+PPSSPP doesn't, and the 3DS's VFP doesn't either, so the game's code does
+them without a care (a volume slider, the pause menu...). Each thread starts
+with them on, so every thread turns them off first
+*/
+static void __attribute__(( constructor )) PSP_FpuQuiet( void )
+{
+	pspSdkDisableFPUExceptions();
+}
+
 Result romfsInit( void )
 {
-	int th = sceKernelCreateThread( "callbacks", PSP_CallbackThread, 0x11, 0xFA0, 0, NULL );
+	int th;
+
+	pspSdkDisableFPUExceptions();
+	th = sceKernelCreateThread( "callbacks", PSP_CallbackThread, 0x11, 0xFA0, 0, NULL );
 	if( th >= 0 )
 		sceKernelStartThread( th, 0, NULL );
 
@@ -326,6 +342,7 @@ static int PSP_ThreadEntry( SceSize args, void *argp )
 {
 	struct PspThread_s *t = *(struct PspThread_s **)argp;
 	(void)args;
+	pspSdkDisableFPUExceptions(); // (see PSP_FpuQuiet)
 	t->func( t->arg );
 	return 0;
 }
