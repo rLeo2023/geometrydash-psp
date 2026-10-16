@@ -45,6 +45,9 @@ static int current_ball_page = 0;
 static int current_ufo_page  = 0;
 static int current_wave_page = 0;
 static int current_trail_page = 0;
+#ifdef __PSP__
+static int current_robot_page = 0;
+#endif
 
 static int last_displayed_gamemode = 0;
 
@@ -54,6 +57,9 @@ int selected_ball = 1;
 int selected_ufo  = 1;
 int selected_wave = 1;
 int selected_trail = 1;
+#ifdef __PSP__
+int selected_robot = 1;
+#endif
 
 int selected_p1 = 0;
 int selected_p2 = 0;
@@ -61,33 +67,49 @@ int selected_glow = 0;
 
 bool player_glow_enabled = false;
 
-static const int gamemode_icon_count[GAMEMODE_COUNT + 1] = {
+static const int gamemode_icon_count[ICON_KIT_PAGES] = {
     ICON_COUNT_PLAYER,
     ICON_COUNT_SHIP,
     ICON_COUNT_PLAYER_BALL,
     ICON_COUNT_BIRD,
     ICON_COUNT_DART,
-    TRAIL_COUNT
+    TRAIL_COUNT,
+#ifdef __PSP__
+    ICON_COUNT_ROBOT,
+#endif
 };
 
-static int *current_pages[GAMEMODE_COUNT + 1] = {
+static int *current_pages[ICON_KIT_PAGES] = {
     &current_cube_page,
     &current_ship_page,
     &current_ball_page,
     &current_ufo_page,
     &current_wave_page,
-    &current_trail_page
+    &current_trail_page,
+#ifdef __PSP__
+    &current_robot_page,
+#endif
 };
 
-static UIButton *gamemode_btns[GAMEMODE_COUNT + 1];
+static UIButton *gamemode_btns[ICON_KIT_PAGES];
 
-int *current_icons[GAMEMODE_COUNT + 1] = {
+// the pages' buttons left to right (L and R go along them)
+#ifdef __PSP__
+static const int page_order[ICON_KIT_PAGES] = { 0, 1, 2, 3, 4, ROBOT, TRAIL };
+#else
+static const int page_order[ICON_KIT_PAGES] = { 0, 1, 2, 3, 4, TRAIL };
+#endif
+
+int *current_icons[ICON_KIT_PAGES] = {
     &selected_cube,
     &selected_ship,
     &selected_ball,
     &selected_ufo,
     &selected_wave,
-    &selected_trail
+    &selected_trail,
+#ifdef __PSP__
+    &selected_robot,
+#endif
 };
 
 int *current_colors[3] = {
@@ -97,13 +119,16 @@ int *current_colors[3] = {
 };
 
 
-static const int button_images[6] = {
+static const int button_images[ICON_KIT_PAGES] = {
     341,
     351,
     325,
     327,
     329,
-    355
+    355,
+#ifdef __PSP__
+    349, // gj_robotBtn_off_001
+#endif
 };
 static int icon_counter = 1;
 
@@ -139,6 +164,9 @@ static void disable_all_icon_buttons() {
     ui_button_set_image((UIButton *) ui_get_element_by_tag(&default_screen, "ufo"),  button_images[3], 0);
     ui_button_set_image((UIButton *) ui_get_element_by_tag(&default_screen, "dart"), button_images[4], 0);
     ui_button_set_image((UIButton *) ui_get_element_by_tag(&default_screen, "trail"), button_images[5], 0);
+#ifdef __PSP__
+    ui_button_set_image((UIButton *) ui_get_element_by_tag(&default_screen, "robot"), button_images[ROBOT], 0);
+#endif
 }
 
 static void set_cube_page(UIElement *e) {
@@ -180,6 +208,16 @@ static void set_wave_page(UIElement *e) {
     ui_button_set_image((UIButton *) e, button_images[4] + 1, 0);
     ui_run_func_on_tag(&default_screen, "icon", set_icon_index); 
 }
+
+#ifdef __PSP__
+static void set_robot_page(UIElement *e) {
+    gamemode_page = ROBOT;
+    last_displayed_gamemode = ROBOT;
+    disable_all_icon_buttons();
+    ui_button_set_image((UIButton *) e, button_images[ROBOT] + 1, 0);
+    ui_run_func_on_tag(&default_screen, "icon", set_icon_index);
+}
+#endif
 
 static void set_trail_page(UIElement *e) {
     gamemode_page = 5;
@@ -230,6 +268,9 @@ static UIAction actions[] = {
     {"action_ufo",  set_ufo_page },
     {"action_dart", set_wave_page },
     {"action_trail", set_trail_page },
+#ifdef __PSP__
+    {"action_robot", set_robot_page },
+#endif
     {"icons_left", move_index_left },
     {"icons_right", move_index_right },
     {"icon_selected", action_icon_selected },
@@ -268,6 +309,9 @@ void icon_kit_loop() {
 
     update_player_colors();
     set_fade_status(FADE_STATUS_IN);
+#ifdef __PSP__
+    robots_sheet_need(true);
+#endif
 
     if (!playing_menu_loop) {
         play_mp3("romfs:/songs/menuLoop.mp3", true, 0);
@@ -280,6 +324,9 @@ void icon_kit_loop() {
     gamemode_btns[3] = (UIButton *) ui_get_element_by_tag(&default_screen, "ufo");
     gamemode_btns[4] = (UIButton *) ui_get_element_by_tag(&default_screen, "dart");
     gamemode_btns[5] = (UIButton *) ui_get_element_by_tag(&default_screen, "trail");
+#ifdef __PSP__
+    gamemode_btns[ROBOT] = (UIButton *) ui_get_element_by_tag(&default_screen, "robot");
+#endif
 
     while (aptMainLoop()) {
         hidScanInput();
@@ -291,13 +338,19 @@ void icon_kit_loop() {
         touch.did_something = false;
         touch.interacted = false;
 
-        for(int i = 0; i < GAMEMODE_COUNT + 1; i++){
-            gamemode_btns[i]->keyBinds = 0;
-            if(i == gamemode_page - 1){
-                gamemode_btns[i]->keyBinds |= KEY_L | KEY_ZL;
-            } else if(i == gamemode_page + 1){
-                gamemode_btns[i]->keyBinds |= KEY_R | KEY_ZR;
-            } 
+        int at = 0;
+        for(int i = 0; i < ICON_KIT_PAGES; i++){
+            if (page_order[i] == gamemode_page) at = i;
+        }
+        for(int i = 0; i < ICON_KIT_PAGES; i++){
+            UIButton *btn = gamemode_btns[page_order[i]];
+            if (!btn) continue;
+            btn->keyBinds = 0;
+            if(i == at - 1){
+                btn->keyBinds |= KEY_L | KEY_ZL;
+            } else if(i == at + 1){
+                btn->keyBinds |= KEY_R | KEY_ZR;
+            }
         }
 
         if (!in_palette_kit) ui_screen_update(&default_screen, &touch);
@@ -341,6 +394,18 @@ void icon_kit_loop() {
                 // one merged screen: the icon up top, over the gamemode row (phone layout)
                 if (psp_menu_merged) { icon_y = 52; icon_scale = 1.4f; }
 #endif
+#ifdef __PSP__
+                if (last_displayed_gamemode == ROBOT) {
+                    // running in place
+                    static float robot_t;
+                    u8 anim = ROBOT_ANIM_RUN;
+                    robot_t += DT;
+                    spawn_robot_at(200, icon_y, 0, 0, 0, icon_scale,
+                        C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255),
+                        C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255),
+                        &anim, robot_t);
+                } else
+#endif
                 spawn_icon_at(
                     last_displayed_gamemode, *current_icons[last_displayed_gamemode], glow_enabled, 200, icon_y, 0, 0, 0, icon_scale,
                     C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255),
@@ -355,6 +420,9 @@ void icon_kit_loop() {
 
         if (exit_flag) {
             cfg_save();
+#ifdef __PSP__
+            robots_sheet_need(false);
+#endif
             game_state = STATE_MAIN_MENU;
             break;
         }

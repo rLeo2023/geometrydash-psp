@@ -28,6 +28,16 @@ typedef enum {
 } IconGamemode;
 
 #define TRAIL 5
+#ifdef __PSP__
+// the icon kit's robot page (after the trails': the robot isn't a gamemode of
+// its own, it's the cube's in robot portals)
+#define ROBOT 6
+#define ROBOT_COUNT 68
+#define ICON_COUNT_ROBOT (ROBOT_COUNT + 1)
+#define ICON_KIT_PAGES 7
+#else
+#define ICON_KIT_PAGES 6
+#endif
 
 #define ICON_COUNT_PLAYER 142
 #define ICON_COUNT_SHIP 51

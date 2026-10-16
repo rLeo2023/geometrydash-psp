@@ -11,6 +11,10 @@
 #include "menus/core/ui_screen.h"
 
 static const u32 white = ABGR8(255, 255, 255, 255);
+#ifdef __PSP__
+// draw_text's color (the text objects' channel and opacity); white otherwise
+u32 draw_text_tint = ABGR8(255, 255, 255, 255);
+#endif
 static char wrap_buffer[4096];
 
 typedef struct {
@@ -446,7 +450,11 @@ void draw_text(const Charset *font, C2D_SpriteSheet *sheet, const float x, const
     float total_height = (line_count * line_height);
 
     C2D_ImageTint tint = { 0 };
+#ifdef __PSP__
+    u32 current_color = draw_text_tint;
+#else
     u32 current_color = white;
+#endif
 
     for (int i = 0; i < size; i++) {
         bool is_image = false;

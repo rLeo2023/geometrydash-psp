@@ -29,6 +29,13 @@ static void ui_icon_draw(UIElement* e, UITransform *transform) {
         C2D_SpriteSetPos(&spr, transform->x, transform->y);
         C2D_SpriteSetScale(&spr, transform->scaleX,  transform->scaleY);
         C2D_DrawSprite(&spr);
+#ifdef __PSP__
+    } else if (icon->gamemode == ROBOT) {
+        // standing: the run's first pose
+        u8 anim = ROBOT_ANIM_RUN;
+        spawn_robot_id_at(icon->index, transform->x, transform->y, 0, 0, 0, transform->scaleX,
+            C2D_Color32(175, 175, 175, 255), C2D_Color32(255, 255, 255, 255), &anim, 0);
+#endif
     } else {
         spawn_icon_at(
             icon->gamemode,

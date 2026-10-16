@@ -141,6 +141,19 @@ enum { ROBOT_ANIM_RUN, ROBOT_ANIM_JUMP_START, ROBOT_ANIM_JUMP, ROBOT_ANIM_FALL_S
 // moves *anim on to its loop)
 void spawn_robot_at(float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
                     float scale, u32 p1_color, u32 p2_color, u8 *anim, float t);
+// the same, robot number id (1 to ROBOT_COUNT; the icon kit's) instead of the
+// selected one
+void spawn_robot_id_at(int id, float x, float y, float deg, unsigned char flip_x, unsigned char flip_y,
+                       float scale, u32 p1_color, u32 p2_color, u8 *anim, float t);
+// the icon kit's robots (robots.psheet: the levels with the robot and the icon
+// kit load it)
+void robots_sheet_need(bool need);
+// GD's text objects: their text comes with the level (level_loading.c), they
+// are drawn over the level's other objects
+#define TEXT_OBJECT 914
+void text_objects_clear(void);
+void text_object_add(int obj, const char *b64, float scale);
+void draw_text_objects(void);
 #endif
 void spawn_icon_at(
     int gamemode,

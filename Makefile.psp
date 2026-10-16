@@ -84,6 +84,11 @@ package: EBOOT.PBP
 			|| [ psp/tools/mkv2sheet.py -nt $(OUT)/romfs/gfx/sprites_v2.psheet ]; }; then \
 		python3 psp/tools/mkv2sheet.py "$(STEAM_RES)" psp/build/gfx2 $(OUT)/romfs/gfx/sprites_v2.psheet "$(WIIDASH)" || exit 1; \
 	fi
+	@# the icon kit's robots (and the one played with), from the player's GD
+	@if [ -d "$(STEAM_RES)/icons" ] && { [ ! -f $(OUT)/romfs/gfx/robots.psheet ] \
+			|| [ psp/tools/mkrobots.py -nt $(OUT)/romfs/gfx/robots.psheet ]; }; then \
+		python3 psp/tools/mkrobots.py "$(STEAM_RES)" psp/build/robots $(OUT)/romfs/gfx/robots.psheet || exit 1; \
+	fi
 	cp -r romfs/main_levels romfs/menus romfs/sfx romfs/songs $(OUT)/romfs/
 	cp psp/menus/*_psp.txt $(OUT)/romfs/menus/
 	@# the official songs after the main levels' (2.0 levels' custom copies use them)
@@ -96,8 +101,8 @@ V2_SONGS = GeometricalDominator.mp3 Deadlocked.mp3 Fingerdash.mp3 Dash.mp3
 # port: its data/ folder); their table and animations (source/objects_v2_*)
 # are made by psp/tools/wii2objects.py. Without it they don't show.
 WIIDASH ?= wiidash
-# The player's own copy of GD (its Resources folder): only the 2.0 levels'
-# official songs come from it now
+# The player's own copy of GD (its Resources folder): the 2.0 levels'
+# official songs and the robots (psp/tools/mkrobots.py) come from it
 STEAM_RES ?= steam-resources/Resources
 
 # ---- the folder PPSSPP runs -----------------------------------------------
