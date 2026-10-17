@@ -45,6 +45,8 @@ static const CreditsEntries credits[] = {
 #ifdef __PSP__
     { "rLeo", "PSP Port" },
     { "Claude", "PSP Port Helper" },
+    { "Zerium", "PSP Testing" },
+    { "Thanks", "to everyone who tested on a real PSP" },
 #endif
 };
 
