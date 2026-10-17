@@ -629,6 +629,8 @@ void game_loop() {
     sync_precise_input(false);
     memset(pi_substep_presses, 0, sizeof(pi_substep_presses));
 #ifdef __PSP__
+    // which level, for a log that ends in a crash
+    psp_log("level: %s\n", level_info.level_name);
     psp_log_memory("level loaded");
 #endif
 
