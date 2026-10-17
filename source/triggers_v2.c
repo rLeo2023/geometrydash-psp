@@ -525,6 +525,20 @@ static void run_spawn(int g) {
     }
 }
 
+// a teleport moves the player without moving him through the level: the moves
+// that follow the player must not take the jump (High Life's monster followed
+// him down the map), and a lock across the jump belongs to the section that
+// ended, so it stops
+void trig2_player_teleported(void) {
+    st.player_x = state.player.x;
+    st.player_y = state.player.y;
+    for (int i = 0; i < MAX_MOVES; i++) {
+        Move *m = &st.moves[i];
+        if (m->active && (m->lock_x || m->lock_y))
+            m->active = false;
+    }
+}
+
 void trig2_update(float dt) {
     float pdx = state.player.x - st.player_x;
     float pdy = state.player.y - st.player_y;

@@ -355,6 +355,8 @@ void apply_pending_teleport(Player *player) {
     // as wiidash: no movement counted across the jump (the collisions would
     // see it pass through everything between)
     state.old_player.y = to_y;
+    // and neither for the moves that follow the player (High Life's monster)
+    if (state.current_player == 0) trig2_player_teleported();
     MotionTrail_StopStroke(trail);
 
     // far off screen: the camera jumps there too

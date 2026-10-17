@@ -24,6 +24,8 @@ bool trig2_color_info(int obj, float *opacity, int *copied, float *h, float *s, 
 
 // main.c, each frame the level runs: moves, fades, spawns, pulses
 void trig2_update(float dt);
+// a teleport: the player's jump is not movement for the moves that follow him
+void trig2_player_teleported(void);
 // around the color channels' own update: channel pulses go on top of the
 // channels' colors and come off again before the next update
 void trig2_unpulse_channels(void);
