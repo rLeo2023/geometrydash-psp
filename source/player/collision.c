@@ -335,6 +335,7 @@ void apply_pending_teleport(Player *player) {
     // a gamemode with a floor and a ceiling (ship, UFO, ball, wave...): they
     // go along by the same whole blocks, or the player stayed held at the
     // old ceiling (High Life's UFO teleports up the map)
+    float old_ground = state.ground_y;
     if (state.ceiling_y < 999999) {
         float shift = roundf((to_y - player->y) / 30.f) * 30.f;
         if (state.dual) {
@@ -353,12 +354,26 @@ void apply_pending_teleport(Player *player) {
     state.old_player.y = to_y;
     MotionTrail_StopStroke(trail);
 
-    // far off screen: the camera jumps there too
-    if (player->gamemode == GAMEMODE_PLAYER &&
-        fabsf(state.camera_y + SCREEN_HEIGHT_AREA / 2 - to_y) >= SCREEN_HEIGHT_AREA / 2 + 60) {
-        state.camera_y = to_y - SCREEN_HEIGHT_AREA / 2;
-        if (state.camera_y < 0) state.camera_y = 0;
+    if (player->gamemode == GAMEMODE_PLAYER && !state.dual) {
+        // a way out outside the player's own margins (140 above, 30 below,
+        // swapped upside down): the camera jumps there too, or the player
+        // comes out at the screen's edge while the view crawls. Inside the
+        // margins the normal camera follows without a jump (as wiidash)
+        float upside_down_offset = player->upside_down ? -30.f : 0;
+        float dy = to_y - state.camera_y;
+        if (dy > 140.f + upside_down_offset || dy < 30.f + upside_down_offset) {
+            state.camera_y = to_y - (SCREEN_HEIGHT_AREA / 2 - LEVEL_Y_OFFSET);
+        }
+    } else if (state.ceiling_y < 999999) {
+        // ship, UFO, ball, wave and dual: the camera sits on the middle of
+        // the floor and the ceiling, so it goes along with them. Without
+        // this it stayed behind and slid back for over a second while the
+        // player sat at the screen's edge
+        state.camera_y += state.ground_y - old_ground;
     }
+    if (state.camera_y < 0) state.camera_y = 0;
+    if (state.camera_y > MAX_LEVEL_HEIGHT - SCREEN_HEIGHT_AREA)
+        state.camera_y = MAX_LEVEL_HEIGHT - SCREEN_HEIGHT_AREA;
 
     UseEffect *e_in = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
     if (e_in) {
