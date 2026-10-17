@@ -971,10 +971,10 @@ int get_object_layers(int id) {
 int obj_edge_fade(float x, int right_edge) {
     if (x < 0 || x > right_edge)
         return 0;
-    else if (x < FADE_WIDTH)
-        return (int)(255.0f * (x / FADE_WIDTH));
-    else if (x > right_edge - FADE_WIDTH)
-        return (int)(255.0f * ((right_edge - x) / FADE_WIDTH));
+    else if (x < FADE_WIDTH_LEFT)
+        return (int)(255.0f * (x / FADE_WIDTH_LEFT));
+    else if (x > right_edge - FADE_WIDTH_RIGHT)
+        return (int)(255.0f * ((right_edge - x) / FADE_WIDTH_RIGHT));
     else
         return 255;
 }
@@ -1139,9 +1139,9 @@ void get_special_fading_vars(int obj, float fade_val, float *calc_x) {
     if (objects.transition_applied[obj] == FADE_DOWN_STATIONARY || objects.transition_applied[obj] == FADE_UP_STATIONARY) {
         if (fade_val < 255) {
             if (*calc_x > (SCREEN_WIDTH / SCALE) / 2) {
-                *calc_x = SCREEN_WIDTH / SCALE - FADE_WIDTH;
+                *calc_x = SCREEN_WIDTH / SCALE - FADE_WIDTH_RIGHT;
             } else {
-                *calc_x = FADE_WIDTH;
+                *calc_x = FADE_WIDTH_LEFT;
             }
         }
     }

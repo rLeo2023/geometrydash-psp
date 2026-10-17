@@ -7,12 +7,15 @@
 #define FADING_OBJ_WIDTH 180
 
 #ifdef __PSP__
-// the objects' fade in and out at the sides: 75 took a seventh of the screen
-// on each side, the level seemed to appear right next to the player; 30 was
-// one block but the fade went by too quickly, 35 is in between
-#define FADE_WIDTH 35
+// the fade at the sides. Behind the player (left) 75 reached past him and
+// blocks went see-through while still on screen: 30 there. At the right edge
+// the level is coming in, far from the player, and the 3DS 75 keeps it from
+// popping in too quickly
+#define FADE_WIDTH_LEFT 30
+#define FADE_WIDTH_RIGHT 75
 #else
-#define FADE_WIDTH 75
+#define FADE_WIDTH_LEFT 75
+#define FADE_WIDTH_RIGHT 75
 #endif
 
 #define BACKGROUND_SCALE 0.9f
