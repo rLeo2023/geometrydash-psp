@@ -391,8 +391,14 @@ float get_fading_obj_fade(int obj, float right_edge, float *glow_out) {
         float distanceFromCenter;
         if (objX <= halfCameraWidth + camX) {
             // Left fade
+#ifdef __PSP__
+            // no fade behind the player (see obj_edge_fade)
+            edgeFactor = 0.014285714f;
+            distanceFromCenter = 0;
+#else
             edgeFactor = 0.014285714f;
             distanceFromCenter = ((halfCameraWidth + camX) - objX);
+#endif
         } else {
             // Right fade
             edgeFactor = 0.02f;
@@ -409,8 +415,14 @@ float get_fading_obj_fade(int obj, float right_edge, float *glow_out) {
 
         if (marginX <= camX + rightFadeBound) {
             // Left fade
+#ifdef __PSP__
+            // (the left edge holds full opacity, see obj_edge_fade)
+            distanceFromFade = 1;
+            fadeWidth = 1;
+#else
             distanceFromFade = (camX + leftFadeBound) - marginX;
             fadeWidth = leftFadeWidth;
+#endif
         } else {
             // Right fade
             distanceFromFade = (marginX - camX) - rightFadeBound;
@@ -971,10 +983,19 @@ int get_object_layers(int id) {
 int obj_edge_fade(float x, int right_edge) {
     if (x < 0 || x > right_edge)
         return 0;
+#ifdef __PSP__
+    // only the right edge fades: what is already behind the player (the left
+    // third of the screen) was going see-through two blocks away from him,
+    // the level seemed to be made of glass. GD keeps it solid until the
+    // screen cuts it
+    else if (x > right_edge - FADE_WIDTH)
+        return (int)(255.0f * ((right_edge - x) / FADE_WIDTH));
+#else
     else if (x < FADE_WIDTH)
         return (int)(255.0f * (x / FADE_WIDTH));
     else if (x > right_edge - FADE_WIDTH)
         return (int)(255.0f * ((right_edge - x) / FADE_WIDTH));
+#endif
     else
         return 255;
 }
