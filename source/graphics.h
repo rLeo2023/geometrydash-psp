@@ -8,9 +8,9 @@
 
 #ifdef __PSP__
 // the objects' fade in and out at the sides: 75 took a seventh of the screen
-// on each side, the level seemed to appear right next to the player; 30 is
-// one block, so the level comes in close to the screen's edge
-#define FADE_WIDTH 30
+// on each side, the level seemed to appear right next to the player; 30 was
+// one block but the fade went by too quickly, 35 is in between
+#define FADE_WIDTH 35
 #else
 #define FADE_WIDTH 75
 #endif
