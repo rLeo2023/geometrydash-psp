@@ -221,6 +221,18 @@ void trig2_parse_object(int obj, char **tokens, int count) {
                 objects.height[obj] *= sc;
             }
         }
+        if ((key == 128 || key == 129) && trig2_obj_scale) {
+            // GD 2.0's object scale (x, y). High Life's blocks and pits use
+            // 1.2, 2, 0.5...; without them the sprite and its children stayed
+            // at 1x and the level looked broken. This port keeps one scale:
+            // the levels use the same x and y here
+            float sc = atof(v);
+            if (sc > 0 && sc != 1.f && trig2_obj_scale[obj] == 1.f) {
+                trig2_obj_scale[obj] = sc;
+                objects.width[obj] *= sc;
+                objects.height[obj] *= sc;
+            }
+        }
     }
 
     // any trigger can be spawn-only (color ones too): keep that
