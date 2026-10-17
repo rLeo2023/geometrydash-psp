@@ -92,14 +92,7 @@ void run_camera() {
             target_y = 0;
         }
         
-        // the band's middle (ship, UFO, ball, wave, dual) moves in whole
-        // blocks on a teleport: follow it quickly, or the player sits at the
-        // screen's edge for the two seconds the 1/40 takes (Deadlocked's ball
-        // at 40%). The cube keeps the 1/40; its margins handle the rest
-        float camera_lerp = 0.025f;
-        if (player->gamemode != GAMEMODE_PLAYER || state.dual)
-            camera_lerp = 0.15f;
-        cam_y += (target_y - cam_y) * camera_lerp;
+        cam_y += (target_y - cam_y) / (10 / 0.25f);
         
         if (cam_y < 0) {
             cam_y = 0;

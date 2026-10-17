@@ -333,9 +333,13 @@ void apply_pending_teleport(Player *player) {
         psp_teleport_watch = 1.f;
     }
     // a gamemode with a floor and a ceiling (ship, UFO, ball, wave...): they
-    // go along by the same whole blocks, or the player stayed held at the
-    // old ceiling (High Life's UFO teleports up the map)
-    if (state.ceiling_y < 999999) {
+    // go along by the same whole blocks, but only when the way out is outside
+    // them. Deadlocked's ball portal leaves a 180..420 band and its teleports
+    // (409->193 and 225->415) land inside it: shifting the band anyway moved
+    // the camera 180 units for nothing, and the view crawled after the player.
+    // High Life's UFO does go above the old ceiling.
+    if (state.ceiling_y < 999999 &&
+        (to_y > state.ceiling_y || to_y < state.ground_y)) {
         float shift = roundf((to_y - player->y) / 30.f) * 30.f;
         if (state.dual) {
             state.dual_portal_y += shift;
