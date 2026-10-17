@@ -337,7 +337,6 @@ void apply_pending_teleport(Player *player) {
     // old ceiling (High Life's UFO teleports up the map)
     if (state.ceiling_y < 999999) {
         float shift = roundf((to_y - player->y) / 30.f) * 30.f;
-        float old_ground = state.ground_y;
         if (state.dual) {
             state.dual_portal_y += shift;
             set_dual_bounds();
@@ -347,16 +346,6 @@ void apply_pending_teleport(Player *player) {
             state.ceiling_y = state.ground_y + height;
             set_intended_ceiling();
         }
-        // the camera sits on the middle of the floor and the ceiling in
-        // these modes, so it goes along with them: without this it slid back
-        // to where the floor was and left the player at the bottom of the
-        // screen (a portal looked like it unfocused the camera)
-        if (player->gamemode != GAMEMODE_PLAYER || state.dual) {
-            state.camera_y += state.ground_y - old_ground;
-            if (state.camera_y < 0) state.camera_y = 0;
-            if (state.camera_y > MAX_LEVEL_HEIGHT - SCREEN_HEIGHT_AREA)
-                state.camera_y = MAX_LEVEL_HEIGHT - SCREEN_HEIGHT_AREA;
-        }
     }
     player->y = to_y;
     // as wiidash: no movement counted across the jump (the collisions would
@@ -364,14 +353,11 @@ void apply_pending_teleport(Player *player) {
     state.old_player.y = to_y;
     MotionTrail_StopStroke(trail);
 
-    // out of the screen: the camera jumps there too, as wiidash. A way out
-    // that is already on screen is left to the camera's own margins, which
-    // follow the player without a jump
+    // far off screen: the camera jumps there too
     if (player->gamemode == GAMEMODE_PLAYER &&
         fabsf(state.camera_y + SCREEN_HEIGHT_AREA / 2 - to_y) >= SCREEN_HEIGHT_AREA / 2 + 60) {
         state.camera_y = to_y - SCREEN_HEIGHT_AREA / 2;
         if (state.camera_y < 0) state.camera_y = 0;
-        state.intermediate_camera_y = state.camera_y;
     }
 
     UseEffect *e_in = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
