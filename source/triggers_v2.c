@@ -130,6 +130,8 @@ static float *orig_x, *orig_y;  // where the level put them (grouped objects)
 static int pulsed[MAX_PULSES];
 static Color pulsed_base[MAX_PULSES];
 static int npulsed;
+// active pulses that target a group (the ones trig2_object_color looks for)
+static int group_pulses;
 
 /* ---- loading -------------------------------------------------------- */
 
@@ -368,6 +370,7 @@ void trig2_reset(void) {
     st.player_x = state.player.x;
     st.player_y = state.player.y;
     npulsed = 0;
+    group_pulses = 0;
     place_objects();
 }
 
@@ -523,6 +526,7 @@ bool trig2_run(int obj) {
                 .h = t->h, .s = t->s, .v = t->v,
                 .fade_in = t->fade_in, .hold = t->hold, .fade_out = t->fade_out,
             };
+            if (t->pulse_target == 1) group_pulses++;
             return true;
     }
     return false;
@@ -598,7 +602,10 @@ void trig2_update(float dt) {
         Pulse *p = &st.pulses[i];
         if (!p->active) continue;
         p->t += dt;
-        if (p->t >= p->fade_in + p->hold + p->fade_out) p->active = false;
+        if (p->t >= p->fade_in + p->hold + p->fade_out) {
+            p->active = false;
+            if (p->target_type == 1 && group_pulses > 0) group_pulses--;
+        }
     }
 }
 
@@ -661,6 +668,10 @@ void trig2_object_color(int obj, int col_type, Color *color, float *opacity) {
         int g = og_data[og_start[obj] + k];
         *opacity *= st.groups[g].alpha;
 
+        // most frames have no group pulses at all; the 64 slots per group
+        // and sprite were checked for nothing
+        if (!group_pulses) continue;
+
         for (int i = 0; i < MAX_PULSES; i++) {
             const Pulse *p = &st.pulses[i];
             if (!p->active || p->target_type != 1 || p->target != g) continue;
@@ -708,6 +719,9 @@ void trig2_restore(const void *snapshot) {
     memcpy(st.moves, s->moves, sizeof(st.moves));
     memcpy(st.spawns, s->spawns, sizeof(st.spawns));
     memcpy(st.pulses, s->pulses, sizeof(st.pulses));
+    group_pulses = 0;
+    for (int i = 0; i < MAX_PULSES; i++)
+        if (st.pulses[i].active && st.pulses[i].target_type == 1) group_pulses++;
     memcpy(st.groups, s->groups, sizeof(Group) * (s->ngroups < MAX_GROUP ? s->ngroups : MAX_GROUP));
     st.player_x = state.player.x;
     st.player_y = state.player.y;

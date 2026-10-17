@@ -100,16 +100,31 @@ void obj_anim_tick(float dt) {
     if (anim_clock > 3600.f) anim_clock -= 3600.f;
 }
 
+// the lookups were linear, once per object and frame: an id's answer never
+// changes, so it is looked up once and kept (NULL too)
+#define ANIM_CACHE_MAX 1400
 static const FrameAnim *frame_anim_of(int id) {
-    for (size_t i = 0; i < sizeof(frame_anims) / sizeof(frame_anims[0]); i++)
-        if (frame_anims[i].id == id) return &frame_anims[i];
-    return NULL;
+    static const FrameAnim *cache[ANIM_CACHE_MAX];
+    static unsigned char done[ANIM_CACHE_MAX];
+    if (id < 0 || id >= ANIM_CACHE_MAX) return NULL;
+    if (!done[id]) {
+        done[id] = 1;
+        for (size_t i = 0; i < sizeof(frame_anims) / sizeof(frame_anims[0]); i++)
+            if (frame_anims[i].id == id) { cache[id] = &frame_anims[i]; break; }
+    }
+    return cache[id];
 }
 
 static const SkelAnim *skel_anim_of(int id) {
-    for (size_t i = 0; i < sizeof(skel_anims) / sizeof(skel_anims[0]); i++)
-        if (skel_anims[i].id == id) return &skel_anims[i];
-    return NULL;
+    static const SkelAnim *cache[ANIM_CACHE_MAX];
+    static unsigned char done[ANIM_CACHE_MAX];
+    if (id < 0 || id >= ANIM_CACHE_MAX) return NULL;
+    if (!done[id]) {
+        done[id] = 1;
+        for (size_t i = 0; i < sizeof(skel_anims) / sizeof(skel_anims[0]); i++)
+            if (skel_anims[i].id == id) { cache[id] = &skel_anims[i]; break; }
+    }
+    return cache[id];
 }
 
 // each object its own phase (wiidash starts each one's clock when it shows)
