@@ -332,6 +332,21 @@ void apply_pending_teleport(Player *player) {
         extern float psp_teleport_watch;
         psp_teleport_watch = 1.f;
     }
+    // a gamemode with a floor and a ceiling (ship, UFO, ball, wave...): they
+    // go along by the same whole blocks, or the player stayed held at the
+    // old ceiling (High Life's UFO teleports up the map)
+    if (state.ceiling_y < 999999) {
+        float shift = roundf((to_y - player->y) / 30.f) * 30.f;
+        if (state.dual) {
+            state.dual_portal_y += shift;
+            set_dual_bounds();
+        } else {
+            float height = state.ceiling_y - state.ground_y;
+            state.ground_y = fmaxf(0, state.ground_y + shift);
+            state.ceiling_y = state.ground_y + height;
+            set_intended_ceiling();
+        }
+    }
     player->y = to_y;
     // as wiidash: no movement counted across the jump (the collisions would
     // see it pass through everything between)

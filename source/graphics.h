@@ -6,7 +6,13 @@
 #define FADING_OBJ_PADDING 45
 #define FADING_OBJ_WIDTH 180
 
+#ifdef __PSP__
+// the objects' fade in and out at the sides: 75 took a seventh of the screen
+// on each side, the level seemed to appear right next to the player
+#define FADE_WIDTH 40
+#else
 #define FADE_WIDTH 75
+#endif
 
 #define BACKGROUND_SCALE 0.9f
 

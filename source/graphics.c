@@ -1533,6 +1533,10 @@ void create_objects() {
             }
 
             int real_opacity = get_obj_opacity(game_object, x) * opacity;
+#ifdef __PSP__
+            // the objects' glow, added over the screen, was much stronger than GD's
+            if (obj->layer == 1) real_opacity = real_opacity * 3 / 5;
+#endif
 
             // Set opacity here
             if (obj->layer == 0) objects.opacity[game_object] = real_opacity / 255.f;
