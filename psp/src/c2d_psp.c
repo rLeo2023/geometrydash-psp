@@ -1225,6 +1225,11 @@ bool C3D_Init( size_t cmdBufSize )
 	PSP_Scissor( 0, 0, PSP_SCR_W, PSP_SCR_H );
 	sceGuEnable( GU_SCISSOR_TEST );
 	sceGuDisable( GU_DEPTH_TEST );
+	// the objects sheet lives where the depth buffer is (PSP_VramAlloc): the
+	// GE still writes Z with the test off unless the mask says no, and on a
+	// real PSP that painted depth over the level's textures (black blocks and
+	// stripes). PPSSPP writes no Z with the test off, so it looked fine there
+	sceGuDepthMask( GU_TRUE );
 	sceGuDisable( GU_CULL_FACE );
 	sceGuShadeModel( GU_SMOOTH );
 	sceGuEnable( GU_BLEND );
