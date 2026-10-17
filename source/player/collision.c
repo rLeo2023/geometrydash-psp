@@ -353,15 +353,12 @@ void apply_pending_teleport(Player *player) {
     state.old_player.y = to_y;
     MotionTrail_StopStroke(trail);
 
-    // the camera eases quickly to the new spot instead of cutting or crawling:
-    // for a cube it is the normal 140/30 margins (a way out inside them leaves
-    // it alone); for ship, UFO, ball, wave and dual it is the middle of the
-    // new floor and ceiling. run_camera uses a faster ease for a moment.
-    state.teleport_camera_timer = 0.3f;
-    if (settingsState.enableDebugBindings)
-        psp_log("  after: player %.0f, ground %.0f ceil %.0f cam %.0f intended %.0f\n",
-                player->y, state.ground_y, state.ceiling_y, state.camera_y,
-                state.camera_intended_y);
+    // far off screen: the camera jumps there too
+    if (player->gamemode == GAMEMODE_PLAYER &&
+        fabsf(state.camera_y + SCREEN_HEIGHT_AREA / 2 - to_y) >= SCREEN_HEIGHT_AREA / 2 + 60) {
+        state.camera_y = to_y - SCREEN_HEIGHT_AREA / 2;
+        if (state.camera_y < 0) state.camera_y = 0;
+    }
 
     UseEffect *e_in = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, get_use_effect_array_ptr(GFX_TOP));
     if (e_in) {
