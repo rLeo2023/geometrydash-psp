@@ -92,7 +92,15 @@ void run_camera() {
             target_y = 0;
         }
         
-        cam_y += (target_y - cam_y) / (10 / 0.25f);
+        // after a teleport the view would crawl to the new spot for seconds;
+        // a quick ease gets it there without the cut of a snap
+        float cam_lerp = 0.25f / 10;
+        if (state.teleport_camera_timer > 0) {
+            cam_lerp = 0.25f;
+            state.teleport_camera_timer -= delta;
+            if (state.teleport_camera_timer < 0) state.teleport_camera_timer = 0;
+        }
+        cam_y += (target_y - cam_y) * cam_lerp;
         
         if (cam_y < 0) {
             cam_y = 0;
@@ -226,6 +234,7 @@ void init_state() {
 
     state.camera_wall_timer = 0;
     state.camera_wall_initial_y = 0;
+    state.teleport_camera_timer = 0;
 
     state.mirroring = false;
     state.original_mirror_factor = 0.f;

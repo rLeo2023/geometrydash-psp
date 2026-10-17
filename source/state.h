@@ -95,7 +95,10 @@ typedef struct {
     float camera_y_middle;
 
     float intermediate_camera_y;
-    
+
+    // after a teleport: the camera eases quickly to the new spot (run_camera)
+    float teleport_camera_timer;
+
     float camera_wall_timer;
     float camera_wall_initial_y;
 
