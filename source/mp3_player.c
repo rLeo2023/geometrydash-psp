@@ -123,7 +123,10 @@ void audio_init() {
 
 void audio_exit() {
     ndspChnReset(MUSIC_CHANNEL);
+    // a song that didn't start (the thread left before audio_init) comes here
+    // too: what the last one left must not be freed twice
     linearFree(audioBuffer);
+    audioBuffer = NULL;
 #ifdef __PSP__
     if (use_me) {
         me_mp3_close();
@@ -133,8 +136,11 @@ void audio_exit() {
         return;
     }
 #endif
-    mpg123_close(mh);
-    mpg123_delete(mh);
+    if (mh) {
+        mpg123_close(mh);
+        mpg123_delete(mh);
+        mh = NULL;
+    }
     mpg123_exit();
 }
 

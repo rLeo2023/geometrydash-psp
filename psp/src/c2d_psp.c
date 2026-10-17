@@ -172,7 +172,8 @@ changes this file makes are needed: texture, blending, scissor, vertices.
 
 ==============================================================================
 */
-enum { OP_TEX, OP_BLEND, OP_SCISSOR, OP_DRAW };
+// OP_SKIP: a texture freed before the end of the frame, the draws with it dropped
+enum { OP_TEX, OP_BLEND, OP_SCISSOR, OP_DRAW, OP_SKIP };
 
 typedef struct {
 	u8 type;
@@ -308,6 +309,7 @@ static void GE_EndDeferred( void )
 static void GE_Replay( void )
 {
 	int i;
+	bool skip = false;
 
 	for( i = 0; i < defer_nops; i++ )
 	{
@@ -318,6 +320,10 @@ static void GE_Replay( void )
 		{
 		case OP_TEX:
 			PSP_SetTexture( op->tex );
+			skip = false;
+			break;
+		case OP_SKIP:
+			skip = true;
 			break;
 		case OP_BLEND:
 			sceGuBlendFunc( op->blend.op, op->blend.s, op->blend.d, op->blend.sf, op->blend.df );
@@ -326,6 +332,8 @@ static void GE_Replay( void )
 			sceGuScissor( op->sc.x0, op->sc.y0, op->sc.x1 - op->sc.x0, op->sc.y1 - op->sc.y0 );
 			break;
 		case OP_DRAW:
+			if( skip )
+				break;
 			v = PSP_GetMemory( op->draw.count * sizeof( PspVertex ));
 			memcpy( v, &defer_verts[op->draw.first], op->draw.count * sizeof( PspVertex ));
 			sceGuDrawArray( op->prim, PSP_VTYPE, op->draw.count, 0, v );
@@ -497,6 +505,143 @@ static void PSP_PutVertex( PspVertex *out, const C2Di_Vertex *v )
 	out->z = 0;
 }
 
+/*
+==============================================================================
+
+Clipping to the screen
+
+The GE takes 2D (through mode) positions as they come, and a real PSP draws a
+primitive with a corner off the drawing area wrong: one sticking out on the
+left or the top (a negative coordinate) came out as streaks of stretched
+texture across the screen. PPSSPP clips them like a PC graphics card, so it
+only showed on the console. What reaches the GE is cut to the screen here,
+texture coordinates and colors with it; what is all off it isn't sent at all
+
+==============================================================================
+*/
+enum { CLIP_ON, CLIP_OFF, CLIP_ACROSS };
+
+static int PSP_ClipWhere( float x0, float y0, float x1, float y1 )
+{
+	if( x1 <= 0 || x0 >= PSP_SCR_W || y1 <= 0 || y0 >= PSP_SCR_H )
+		return CLIP_OFF;
+	if( x0 >= 0 && x1 <= PSP_SCR_W && y0 >= 0 && y1 <= PSP_SCR_H )
+		return CLIP_ON;
+	return CLIP_ACROSS;
+}
+
+static int PSP_ClipWhereTri( const C2Di_Vertex *a, const C2Di_Vertex *b, const C2Di_Vertex *c )
+{
+	float x0 = a->pos[0], x1 = x0, y0 = a->pos[1], y1 = y0;
+
+	if( b->pos[0] < x0 ) x0 = b->pos[0];
+	if( b->pos[0] > x1 ) x1 = b->pos[0];
+	if( c->pos[0] < x0 ) x0 = c->pos[0];
+	if( c->pos[0] > x1 ) x1 = c->pos[0];
+	if( b->pos[1] < y0 ) y0 = b->pos[1];
+	if( b->pos[1] > y1 ) y1 = b->pos[1];
+	if( c->pos[1] < y0 ) y0 = c->pos[1];
+	if( c->pos[1] > y1 ) y1 = c->pos[1];
+	return PSP_ClipWhere( x0, y0, x1, y1 );
+}
+
+// a sprite's two corners (top left, bottom right), cut to the screen
+static void PSP_ClipSprite( PspVertex *a, PspVertex *b )
+{
+	if( a->x < 0 )
+	{
+		a->u += ( b->u - a->u ) * -a->x / ( b->x - a->x );
+		a->x = 0;
+	}
+	if( b->x > PSP_SCR_W )
+	{
+		b->u = a->u + ( b->u - a->u ) * ( PSP_SCR_W - a->x ) / ( b->x - a->x );
+		b->x = PSP_SCR_W;
+	}
+	if( a->y < 0 )
+	{
+		a->v += ( b->v - a->v ) * -a->y / ( b->y - a->y );
+		a->y = 0;
+	}
+	if( b->y > PSP_SCR_H )
+	{
+		b->v = a->v + ( b->v - a->v ) * ( PSP_SCR_H - a->y ) / ( b->y - a->y );
+		b->y = PSP_SCR_H;
+	}
+}
+
+static u32 PSP_LerpColor( u32 a, u32 b, float t )
+{
+	u32 out = 0;
+	int s;
+
+	if( a == b )
+		return a;
+	for( s = 0; s < 32; s += 8 )
+	{
+		int ca = ( a >> s ) & 0xff, cb = ( b >> s ) & 0xff;
+		int c = (int)( ca + ( cb - ca ) * t + 0.5f );
+		out |= (u32)( c & 0xff ) << s;
+	}
+	return out;
+}
+
+// the part of a polygon (n corners) on the screen's side of one of its edges
+// (axis 0 x, 1 y; far: the right or bottom edge)
+static int PSP_ClipEdge( const PspVertex *in, int n, PspVertex *out, int axis, float bound, bool far )
+{
+	int i, m = 0;
+
+	for( i = 0; i < n; i++ )
+	{
+		const PspVertex *a = &in[i], *b = &in[( i + 1 ) % n];
+		float da = ( axis ? a->y : a->x ) - bound;
+		float db = ( axis ? b->y : b->x ) - bound;
+
+		if( far )
+		{
+			da = -da;
+			db = -db;
+		}
+		if( da >= 0 )
+			out[m++] = *a;
+		if(( da >= 0 ) != ( db >= 0 ))
+		{
+			float t = da / ( da - db );
+			PspVertex *v = &out[m++];
+			v->u = a->u + ( b->u - a->u ) * t;
+			v->v = a->v + ( b->v - a->v ) * t;
+			v->color = PSP_LerpColor( a->color, b->color, t );
+			v->x = axis ? a->x + ( b->x - a->x ) * t : bound;
+			v->y = axis ? bound : a->y + ( b->y - a->y ) * t;
+			v->z = 0;
+		}
+	}
+	return m;
+}
+
+// the most a triangle cut by the 4 edges becomes: 7 corners, 5 triangles
+#define CLIP_TRI_MAX 15
+
+// a triangle cut to the screen, as triangles (a fan) into out; their corners
+static int PSP_ClipTriangle( const PspVertex *tri, PspVertex *out )
+{
+	PspVertex a[8], b[8];
+	int n, i, k = 0;
+
+	n = PSP_ClipEdge( tri, 3, a, 0, 0, false );
+	n = PSP_ClipEdge( a, n, b, 0, PSP_SCR_W, true );
+	n = PSP_ClipEdge( b, n, a, 1, 0, false );
+	n = PSP_ClipEdge( a, n, b, 1, PSP_SCR_H, true );
+	for( i = 1; i + 1 < n; i++ )
+	{
+		out[k++] = b[0];
+		out[k++] = b[i];
+		out[k++] = b[i + 1];
+	}
+	return k;
+}
+
 void C2Di_FlushVtxBuf( void )
 {
 	C2Di_Context *ctx = C2Di_GetContext();
@@ -509,6 +654,7 @@ void C2Di_FlushVtxBuf( void )
 	{
 		PspVertex *out;
 		size_t j = i, k;
+		int m = 0;
 
 		if( i + 6 <= n && PSP_IsSprite( ctx, i ))
 		{
@@ -518,22 +664,68 @@ void C2Di_FlushVtxBuf( void )
 			out = GE_DrawBegin(( j - i ) / 3 );
 			for( k = i; out && k < j; k += 6 )
 			{
-				PSP_PutVertex( &out[( k - i ) / 3], &ctx->vtxBuf[ctx->idxBuf[k]] );
-				PSP_PutVertex( &out[( k - i ) / 3 + 1], &ctx->vtxBuf[ctx->idxBuf[k + 5]] );
+				PspVertex s[2];
+				PSP_PutVertex( &s[0], &ctx->vtxBuf[ctx->idxBuf[k]] );
+				PSP_PutVertex( &s[1], &ctx->vtxBuf[ctx->idxBuf[k + 5]] );
+				switch( PSP_ClipWhere( s[0].x, s[0].y, s[1].x, s[1].y ))
+				{
+				case CLIP_OFF:
+					continue;
+				case CLIP_ACROSS:
+					PSP_ClipSprite( &s[0], &s[1] );
+					break;
+				}
+				out[m++] = s[0];
+				out[m++] = s[1];
 			}
-			GE_DrawEnd( GU_SPRITES, out, ( j - i ) / 3 );
+			if( m )
+				GE_DrawEnd( GU_SPRITES, out, m );
 		}
 		else
 		{
+			size_t need = 0;
+
 			do
 				j += 3;
 			while( j < n && !( j + 6 <= n && PSP_IsSprite( ctx, j )));
 			if( j > n )
 				j = n;
-			out = GE_DrawBegin( j - i );
-			for( k = i; out && k < j; k++ )
-				PSP_PutVertex( &out[k - i], &ctx->vtxBuf[ctx->idxBuf[k]] );
-			GE_DrawEnd( GU_TRIANGLES, out, j - i );
+
+			// room for what is left of them first: few go across an edge
+			for( k = i; k + 3 <= j; k += 3 )
+			{
+				const u16 *x = &ctx->idxBuf[k];
+				switch( PSP_ClipWhereTri( &ctx->vtxBuf[x[0]], &ctx->vtxBuf[x[1]], &ctx->vtxBuf[x[2]] ))
+				{
+				case CLIP_ON:     need += 3; break;
+				case CLIP_ACROSS: need += CLIP_TRI_MAX; break;
+				}
+			}
+			out = need ? GE_DrawBegin( need ) : NULL;
+			for( k = i; out && k + 3 <= j; k += 3 )
+			{
+				const u16 *x = &ctx->idxBuf[k];
+				PspVertex t[3];
+
+				switch( PSP_ClipWhereTri( &ctx->vtxBuf[x[0]], &ctx->vtxBuf[x[1]], &ctx->vtxBuf[x[2]] ))
+				{
+				case CLIP_OFF:
+					break;
+				case CLIP_ON:
+					PSP_PutVertex( &out[m++], &ctx->vtxBuf[x[0]] );
+					PSP_PutVertex( &out[m++], &ctx->vtxBuf[x[1]] );
+					PSP_PutVertex( &out[m++], &ctx->vtxBuf[x[2]] );
+					break;
+				default:
+					PSP_PutVertex( &t[0], &ctx->vtxBuf[x[0]] );
+					PSP_PutVertex( &t[1], &ctx->vtxBuf[x[1]] );
+					PSP_PutVertex( &t[2], &ctx->vtxBuf[x[2]] );
+					m += PSP_ClipTriangle( t, &out[m] );
+					break;
+				}
+			}
+			if( m )
+				GE_DrawEnd( GU_TRIANGLES, out, m );
 		}
 		i = j;
 	}
@@ -1223,6 +1415,14 @@ void PSP_DrawRect2D( float x0, float y0, float x1, float y1, u32 color )
 	if( !in_frame )
 		return;
 
+	// on the screen only, as everything else (see "Clipping to the screen")
+	if( x0 < 0 ) x0 = 0;
+	if( y0 < 0 ) y0 = 0;
+	if( x1 > PSP_SCR_W ) x1 = PSP_SCR_W;
+	if( y1 > PSP_SCR_H ) y1 = PSP_SCR_H;
+	if( x1 <= x0 || y1 <= y0 )
+		return;
+
 	C2Di_FlushVtxBuf();
 	PSP_Scissor( 0, 0, PSP_SCR_W, PSP_SCR_H );
 	PSP_SetTexture( NULL );
@@ -1530,6 +1730,28 @@ void C2D_SpriteSheetFree( C2D_SpriteSheet sheet )
 		return;
 	if( frame_pending )
 		sceGuSync( 0, 0 ); // the GE may still be reading these pages
+	if( in_frame )
+	{
+		// in the middle of a frame (the background changing as it is drawn):
+		// the GE draws as the list is written, so what it has so far is
+		// finished first, then the list goes on from its start
+		C2Di_FlushVtxBuf();
+		sceGuFinish();
+		sceGuSync( 0, 0 );
+		PSP_ListStart();
+		ge_tex_valid = false;
+		ge_clut = NULL;
+		C2Di_GetContext()->curTex = NULL;
+		C2Di_GetContext()->flags |= C2DiF_DirtyTex;
+		// the touch screen's draws, kept for the end of the frame, can't
+		// use these pages any more: theirs are dropped
+		for( i = 0; i < (u32)defer_nops; i++ )
+		{
+			GeOp *op = &defer_ops[i];
+			if( op->type == OP_TEX && op->tex && op->tex >= sheet->pages && op->tex < sheet->pages + sheet->num_pages )
+				op->type = OP_SKIP;
+		}
+	}
 	if( sheet->pages )
 	{
 		for( i = 0; i < sheet->num_pages; i++ )
