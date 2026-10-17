@@ -116,7 +116,8 @@ extern LoadedLevelInfo level_info;
 
 extern const char *default_name;
 
-#define BG_COUNT 7
+// GD 2.0 added backgrounds 8-13 (the images are in wiidash, halved here)
+#define BG_COUNT 13
 #define G_COUNT 7
 
 extern ObjectsArray objects;
