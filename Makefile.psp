@@ -38,6 +38,8 @@ EXTRA_TARGETS    = EBOOT.PBP
 PSP_EBOOT_TITLE  = Geometry Dash PSP
 PSP_EBOOT_ICON   = psp/eboot/ICON0.PNG
 PSP_EBOOT_PIC1   = psp/eboot/PIC1.PNG
+# XMB background music (Stay Inside Me, ATRAC3)
+PSP_EBOOT_SND0   = psp/eboot/SND0.AT3
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
