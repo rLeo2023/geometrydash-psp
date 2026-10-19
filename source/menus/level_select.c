@@ -18,6 +18,7 @@
 #include "mp3_player.h"
 #include "graphics.h"
 #include "level_select.h"
+#include "utils/i18n.h"
 
 #include "level/main_levels.h"
 #include "save/saving.h"
@@ -295,16 +296,20 @@ void update_level_top(int level){
     LevelData *data = &main_level_data[level];
 
     char attempts[256];
-    snprintf(attempts, sizeof(attempts), "<#40e348>Total Attempts</>: %d", data->attempts);
-    
+    snprintf(attempts, sizeof(attempts), "%s %d",
+        tr("<#40e348>Total Attempts</>:"), data->attempts);
+
     char jumps[256];
-    snprintf(jumps, sizeof(jumps), "<#60abef>Total Jumps</>: %d", data->jumps);
+    snprintf(jumps, sizeof(jumps), "%s %d",
+        tr("<#60abef>Total Jumps</>:"), data->jumps);
 
     char normal[256];
-    snprintf(normal, sizeof(normal), "<#ff00ff>Normal</>: %d%%", data->normal_progress);
-    
+    snprintf(normal, sizeof(normal), "%s %d%%",
+        tr("<#ff00ff>Normal</>:"), data->normal_progress);
+
     char practice[256];
-    snprintf(practice, sizeof(practice), "<#ffa54b>Practice</>: %d%%", data->practice_progress);
+    snprintf(practice, sizeof(practice), "%s %d%%",
+        tr("<#ffa54b>Practice</>:"), data->practice_progress);
 
     ui_label_set_text(level_card_title_top, main_levels[level].level_name);
     ui_label_set_text((UILabel *) ui_get_element_by_tag(&default_screen_top, "totalattempts"), attempts);
@@ -460,12 +465,15 @@ static void action_level_info(UIElement *e) {
     char tmp[512];
     snprintf(tmp, sizeof(tmp),
         "<#FFFF00>%s</>"
-        "<p><#40E048>Total Attempts</>: %d"
-        "<p><#5AB4FF>Total Jumps</>: %d"
-        "<p><#FF32FF>Normal</>: %d%%"
-        "<p><#FFA05A>Practice</>: %d%%",
-        main_levels[curr_level_id].level_name, d->attempts, d->jumps,
-        d->normal_progress, d->practice_progress);
+        "<p>%s %d"
+        "<p>%s %d"
+        "<p>%s %d%%"
+        "<p>%s %d%%",
+        main_levels[curr_level_id].level_name,
+        tr("<#40e348>Total Attempts</>:"), d->attempts,
+        tr("<#60abef>Total Jumps</>:"), d->jumps,
+        tr("<#ff00ff>Normal</>:"), d->normal_progress,
+        tr("<#ffa54b>Practice</>:"), d->practice_progress);
     info_card_init_layout("romfs:/menus/level_stats.txt");
     set_info_content(tmp);
     in_info_card = true;
