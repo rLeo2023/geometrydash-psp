@@ -38,6 +38,7 @@
 #include "particles/particles.h"
 #include "particles/object_particles.h"
 #include "particles/coin_effect.h"
+#include "particles/key_effect.h"
 
 #include <stdarg.h>
 
@@ -54,6 +55,7 @@
 #include "menus/search_menu.h"
 #include "menus/saved_levels.h"
 #include "menus/loading_screen.h"
+#include "utils/i18n.h"
 #include "menus/level_complete.h"
 #include "menus/online_level_menu.h"
 
@@ -82,6 +84,11 @@ bool playing_menu_loop = false;
 int level_result = 0;
 
 bool cheated = false;
+
+#ifdef __PSP__
+// a loading screen is up: the FPS counter stays off over it
+bool psp_loading_screen = false;
+#endif
 
 float global_volume;
 float music_volume;
@@ -272,6 +279,7 @@ void update_player_effects(float delta) {
         updateParticleSystem(&drag_particles[i], delta);
         updateParticleSystem(&drag_particles_2[i], delta);
         updateParticleSystem(&ship_fire_particles[i], delta);
+        updateParticleSystem(&robot_fire_particles[i], delta);
         updateParticleSystem(&ship_secondary_particles[i], delta);
         updateParticleSystem(&secondary_particles[i], delta);
         updateParticleSystem(&burst_particles[i], delta);
@@ -296,6 +304,9 @@ void allocate_particles() {
 
     initParticleSystem(&ship_fire_particles[0], &drag_effect);
     initParticleSystem(&ship_fire_particles[1], &drag_effect);
+
+    initParticleSystem(&robot_fire_particles[0], &burst_effect2);
+    initParticleSystem(&robot_fire_particles[1], &burst_effect2);
 
     initParticleSystem(&secondary_particles[0], &drag_effect);
     initParticleSystem(&secondary_particles[1], &drag_effect);
@@ -331,6 +342,7 @@ void free_particles() {
         freeParticleData(&drag_particles[i].data);
         freeParticleData(&drag_particles_2[i].data);
         freeParticleData(&ship_fire_particles[i].data);
+        freeParticleData(&robot_fire_particles[i].data);
         freeParticleData(&secondary_particles[i].data);
         freeParticleData(&ship_secondary_particles[i].data);
         freeParticleData(&burst_particles[i].data);
@@ -374,6 +386,9 @@ void init_particles(Color p1_color, Color p2_color) {
 
     burst_particles[0].depth = 0.5f;
     burst_particles[1].depth = 0.5f;
+
+    robot_fire_particles[0].depth = 0.5f;
+    robot_fire_particles[1].depth = 0.5f;
 
     land_particles[0].depth = 0.35f;
     land_particles[1].depth = 0.35f;
@@ -566,6 +581,9 @@ void game_loop() {
     dump_leaks();
 #endif
 
+#ifdef __PSP__
+    psp_loading_screen = true;
+#endif
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
     C2D_Fade(0);
@@ -573,13 +591,16 @@ void game_loop() {
         begin_eye_layer(DEPTH_UI);
 #ifdef __PSP__
         // the PSP cuts 8 lines off the top screen's bottom (480x272)
-        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 14, SCREEN_HEIGHT - 22, 0.5f, 0.5f, 1.0f, true, "Loading...");
+        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 14, SCREEN_HEIGHT - 22, 0.5f, 0.5f, 1.0f, true, "%s", tr("Loading..."));
 #else
-        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, 0.5f, 0.5f, 1.0f, true, "Loading...");
+        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, 0.5f, 0.5f, 1.0f, true, "%s", tr("Loading..."));
 #endif
         end_eye_layer();
     }
     C3D_FrameEnd(0);
+#ifdef __PSP__
+    psp_loading_screen = false;
+#endif
     
     char *path;
 
@@ -721,6 +742,7 @@ void game_loop() {
             drag_particles_2[i].stationary = true;
             drag_particles_2[i].emitting = false;
             ship_fire_particles[i].emitting = false;
+            robot_fire_particles[i].emitting = false;
             secondary_particles[i].emitting = false;
             ship_secondary_particles[i].emitting = false;
             burst_particles[i].emitting = false;
@@ -975,6 +997,7 @@ void game_loop() {
             handle_new_best_popup(delta);
 
             update_collect_effect(delta);
+            update_key_effect(delta);
 
             float calc_x_speed_particles = SCREEN_WIDTH_AREA;
             float calc_y_speed_particles = (SCREEN_HEIGHT_AREA / 2);
@@ -1457,7 +1480,7 @@ void psp_frame_overlay(void) {
         last = now;
     }
 
-    if (!settingsState.showFps) return;
+    if (!settingsState.showFps || psp_loading_screen) return;
     PSP_OverlayBegin(top, bot);
     C2D_ViewReset();
     change_blending(false);

@@ -112,6 +112,10 @@ extern int level_result;
 
 extern bool cheated;
 
+#ifdef __PSP__
+extern bool psp_loading_screen;
+#endif
+
 extern bool game_paused;
 
 extern bool in_level_complete;

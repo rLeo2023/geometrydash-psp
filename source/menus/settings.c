@@ -21,6 +21,7 @@
 #include "utils/json_config.h"
 #include "utils/precise_input.h"
 #include "utils/utils.h"
+#include "utils/i18n.h"
 
 static bool yes_exit = false;
 
@@ -40,13 +41,18 @@ bool request_list_reload = false;
 void wide_setting(bool checked);
 void stereo_setting(bool checked);
 void practiceMusicSync_setting(bool checked);
+void language_english_setting(bool checked);
+void language_spanish_setting(bool checked);
+void language_italian_setting(bool checked);
+void language_portuguese_setting(bool checked);
 
 const char *category_names[] = {
     "Graphics",
     "Input",
     "Misc",
     "Gameplay",
-    "Cosmetic"
+    "Cosmetic",
+    "Language"
 };
 
 // Conditions
@@ -362,11 +368,69 @@ Setting settings[] = {
         .id = "noWaveTrailBehind",
         .label = "No wave trail behind",
         .additionalInfo = "Disables player trail for the wave.",
-        .page = PAGE_COSMETIC, 
+        .page = PAGE_COSMETIC,
 
         .defaultValue = false,
         .var = &settingsState.noWaveTrailBehind,
         .key = CONFIG_COSMETIC_PATH "noWaveTrailBehind"
+    },
+    {
+        .id = "languageEnglish",
+        .label = "English (default)",
+        .additionalInfo = NULL,
+        .page = PAGE_LANGUAGE,
+
+        .defaultValue = true,
+        .var = &settingsState.langEnglish,
+        .key = CONFIG_VALUES "languageEnglish",
+
+        .onChanged = language_english_setting
+    },
+    {
+        .id = "languageSpanish",
+        .label = "Espanol",
+        .additionalInfo = NULL,
+        .page = PAGE_LANGUAGE,
+
+        .defaultValue = false,
+        .var = &settingsState.langSpanish,
+        .key = CONFIG_VALUES "languageSpanish",
+
+        .onChanged = language_spanish_setting
+    },
+    {
+        .id = "languageItalian",
+        .label = "Italiano",
+        .additionalInfo = NULL,
+        .page = PAGE_LANGUAGE,
+
+        .defaultValue = false,
+        .var = &settingsState.langItalian,
+        .key = CONFIG_VALUES "languageItalian",
+
+        .onChanged = language_italian_setting
+    },
+    {
+        .id = "languagePortuguese",
+        .label = "Portugues",
+        .additionalInfo = NULL,
+        .page = PAGE_LANGUAGE,
+
+        .defaultValue = false,
+        .var = &settingsState.langPortuguese,
+        .key = CONFIG_VALUES "languagePortuguese",
+
+        .onChanged = language_portuguese_setting
+    },
+    {
+        .id = "noclipAccuracy",
+        .label = "Noclip accuracy",
+        .additionalInfo = "Shows your noclip accuracy when completing a level with noclip.",
+        .page = PAGE_MISC,
+
+        .defaultValue = true,
+        .var = &settingsState.noclipAccuracy,
+        .key = CONFIG_MISC_PATH "noclipAccuracy"
     },
 };
 
@@ -427,6 +491,52 @@ void stereo_setting(bool checked) {
     }
 
     turn_off_setting("wideEnabled", &settingsState.wideEnabled);
+}
+
+// One language at a time: checking one unchecks the rest. The active one
+// can't be unchecked, the only way is to check another.
+static void language_setting(bool checked, int lang) {
+    static const char *ids[] = {
+        "languageEnglish", "languageSpanish", "languageItalian", "languagePortuguese"
+    };
+    static bool *vars[] = {
+        &settingsState.langEnglish, &settingsState.langSpanish,
+        &settingsState.langItalian, &settingsState.langPortuguese
+    };
+
+    if (!checked) {
+        UICheckBox *own = get_setting_checkbox_by_id(ids[lang]);
+        if (own) ui_set_checkbox_checked(own, true);
+        *vars[lang] = true;
+        return;
+    }
+
+    for (int i = 0; i < 4; i++)
+        if (i != lang) turn_off_setting(ids[i], vars[i]);
+    *vars[lang] = true;
+
+    i18n_set_language(lang);
+    cfg_save();
+
+    // the sidebar and the title change language, the list is rebuilt below
+    i18n_localize_screen(&screen);
+    request_list_reload = true;
+}
+
+void language_english_setting(bool checked) {
+    language_setting(checked, LANG_ENGLISH);
+}
+
+void language_spanish_setting(bool checked) {
+    language_setting(checked, LANG_SPANISH);
+}
+
+void language_italian_setting(bool checked) {
+    language_setting(checked, LANG_ITALIAN);
+}
+
+void language_portuguese_setting(bool checked) {
+    language_setting(checked, LANG_PORTUGUESE);
 }
 
 void practiceMusicSync_setting(bool checked) {
@@ -498,7 +608,7 @@ void create_setting(Setting *setting, int id) {
             UILabel *name = ui_create_label(&screen.ctx);
             if (name) {
                 name->base.w = list->base.w - 60;
-                ui_label_set_text(name, setting->label);
+                ui_label_set_text(name, tr(setting->label));
                 ui_element_set_position((UIElement *) name, -list_width + 28, 0);
                 ui_element_set_scale((UIElement *) name, 0.38f);
 
@@ -510,7 +620,7 @@ void create_setting(Setting *setting, int id) {
                 if (info) {
                     // Store the text pointer in the user data
                     InfoButtonData *data = malloc(sizeof(*data));
-                    data->text = setting->additionalInfo;
+                    data->text = tr(setting->additionalInfo);
                     ui_element_set_userdata((UIElement *) info, data);
 
                     ui_element_set_position((UIElement *) info, list_width -+ 13, 0);
@@ -530,7 +640,7 @@ void create_setting(Setting *setting, int id) {
 
 void load_category(SettingPage page) {
     ui_list_reset(list);
-    ui_label_set_text(category_name, category_names[page]);
+    ui_label_set_text(category_name, tr(category_names[page]));
     ui_run_func_on_tag(&screen, "category", set_button_style);
 
     int count = 0;

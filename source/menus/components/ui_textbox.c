@@ -16,7 +16,7 @@ static void ui_textbox_update(UIElement* e, UIInput* touch, UITransform *transfo
     UITextbox *textbox = (UITextbox *) e;
 
     bool inside = ui_element_basic_bound_check(e, touch, transform);
-    
+
     // Mask background elements
     if (inside) {
         touch->did_something = true;
@@ -32,7 +32,7 @@ static void ui_textbox_draw(UIElement* e, UITransform *transform) {
     UITextbox *textbox = (UITextbox *) e;
 
     draw_9_slice(textbox->atlas, transform->x, transform->y, transform->scaleX, transform->scaleY, e->w, e->h, textbox->border, C2D_Color32(0, 0, 0, 127));
-    
+
     // Get text length in pixels
     float length = get_text_length(&bigFont_fontCharset, 1.f, false, textbox->text);
 
@@ -65,7 +65,7 @@ UITextbox *ui_create_textbox(const UIContext *ctx) {
     e->base.update = ui_textbox_update;
     e->base.draw = ui_textbox_draw;
     e->base.destroy = ui_textbox_destroy;
-    
+
     ui_element_apply_default_properties(&e->base, ctx);
 
     e->atlas = C2D_SpriteSheetGetImage(window_sheet, TEXTBOX_STYLE);
@@ -84,7 +84,7 @@ UIElement *ui_create_textbox_from_props(const UIContext *ctx, const UIPropertyLi
     if (textbox->base.h == 0) {
         textbox->base.h = 30;
     }
-    
+
     textbox->character_limit = ui_prop_int(props, "limit", 16);
 
     strncpy(textbox->title, ui_prop_string(props, "title", "Enter text:"), sizeof(textbox->title) - 1);

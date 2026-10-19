@@ -2,6 +2,7 @@
 #include <citro2d.h>
 
 #include "level_complete.h"
+#include "utils/i18n.h"
 
 #include "menus/core/common_setters.h"
 #include "menus/core/ui_element.h"
@@ -223,7 +224,12 @@ static void run_rewards_animation(float delta){
 
         ui_element_set_scale((UIElement *) coin, scale_value * 0.88f);
 
-        ui_image_set_tint(coin, C2D_Color32f(1, 1, 1, opacity_value));
+        if (level_has_unverified_coins())
+            ui_image_set_tint(coin,
+                C2D_Color32(USER_COIN_UNRATED_R, USER_COIN_UNRATED_G, USER_COIN_UNRATED_B,
+                            (u8)(opacity_value * 255.f)));
+        else
+            ui_image_set_tint(coin, C2D_Color32f(1, 1, 1, opacity_value));
     } else{
         if(showStars) {
             UIImage* star = (UIImage *) ui_get_element_by_tag(&screen_top, "star");
@@ -416,11 +422,19 @@ void level_complete_init() {
                                     cheat_names[i]);
                 }
             }
-            snprintf(tmp, sizeof(tmp), "Safe mode - %s", enabled_cheats);
+            if (settingsState.noclipAccuracy && cheats_used[CHEAT_NOCLIP] && noclip_total_steps > 0) {
+                float accuracy = 100.f * (1.f - (float) noclip_unsafe_steps / (float) noclip_total_steps);
+                if (accuracy < 0.f) accuracy = 0.f;
+
+                snprintf(tmp, sizeof(tmp), "%s - %s<p>%s %.2f%%",
+                    tr("Safe mode"), enabled_cheats, tr("Noclip Accuracy:"), accuracy);
+            } else {
+                snprintf(tmp, sizeof(tmp), "%s - %s", tr("Safe mode"), enabled_cheats);
+            }
             text = tmp;
         }
-        
-        ui_label_set_text(completion_text, text);
+
+        ui_label_set_text(completion_text, tr(text));
     } else {
         ui_run_func_on_tag(&screen_top, "funnytext", ui_disable_element);
 
@@ -437,7 +451,10 @@ void level_complete_init() {
             if(alreadyCollectedCoin){
                 coin->base.enabled = true;
                 coin->base.opacity = 1.f;
-                
+
+                if (level_has_unverified_coins())
+                    ui_image_set_tint(coin, USER_COIN_UNRATED_TINT);
+
                 ui_element_set_scale((UIElement *) coin, 0.88f);
             }
         }

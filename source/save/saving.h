@@ -1,7 +1,10 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 #include "level/main_levels.h"
+
+uint64_t fnv1a64(const char* str);
 
 #define DATA_ATTEMPTS "attempts"
 #define DATA_JUMPS "jumps"
@@ -28,6 +31,7 @@ extern LevelData main_level_data[MAIN_LEVELS_NUM];
 
 extern int total_stars;
 extern int total_coins;
+extern int total_user_coins;
 extern int total_attempts;
 extern int total_jumps;
 extern int total_demons;

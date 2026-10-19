@@ -95,6 +95,7 @@ typedef struct {
 
 void cache_all_sprites();
 void free_cached_sprites();
+bool get_sprite_from_texture(int tex, C2D_Sprite *out);
 void get_fade_vars(int obj, float x, int *fade_x, int *fade_y, float *fade_scale);
 int obj_edge_fade(float x, int right_edge);
 void get_special_fading_vars(int obj, float fade_val, float *calc_x);

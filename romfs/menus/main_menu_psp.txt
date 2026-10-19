@@ -2,12 +2,21 @@
 # screen's half, laid centered over the top screen (40 + x, y)
 @merge 40 0 1
 
-button x=160 y=118 id=1 sheet=1 scale=0.85 action="level_select" keyBinds="A,START"
-button x=68 y=126 id=79 scale=0.85 action="icon_kit" keyBinds="X"
-button x=252 y=126 id=2 sheet=1 scale=0.85 action="creator_menu" keyBinds="Y"
+button x=160 y=120 id=1 sheet=1 scale=0.75 action="level_select" keyBinds="A,START"
+button x=78 y=127 id=79 scale=0.75 action="icon_kit" keyBinds="X"
+button x=242 y=127 id=2 sheet=1 scale=0.75 action="creator_menu" keyBinds="Y"
 
-button x=188 y=206 id=12 sheet=1 scale=0.85 text="" action="statistics"
-button x=132 y=206 id=11 sheet=1 scale=0.85 text="" action="settings"
+button x=184 y=208 id=12 sheet=1 scale=0.75 text="" action="statistics"
+button x=136 y=208 id=11 sheet=1 scale=0.75 text="" action="settings"
 
-# the logo on the ground, bottom left (drawn after the ground, unlike the top screen)
-image x=12 y=214 id=4 sheet=1 sx=0.55 sy=0.55
+# the player's profile, bottom left, above the rLeo logo: the name on top,
+# the user picture under it (replaced from the profile sheet at load). Both
+# share the logo's x so the column lines up (-4 in the layout is drawn over
+# the top screen's x = 40)
+label x=-4 y=152 text="" scale=0.4 align=CENTER parseTags=false font=2 tag="player_name"
+button x=-4 y=176 id=1 sheet=1 scale=0.55 action="profile" tag="profile_button"
+
+# the logo on the ground, in the bottom left corner (drawn after the ground,
+# unlike the top screen). Its text is in the middle of the picture, so the
+# picture itself starts off screen
+image x=-4 y=216 id=4 sheet=1 sx=0.55 sy=0.55

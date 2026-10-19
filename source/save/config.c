@@ -16,6 +16,7 @@
 
 #include "save/saving.h"
 #include "utils/json_config.h"
+#include "utils/i18n.h"
 
 Config cfg;
 
@@ -122,7 +123,19 @@ void cfg_init() {
     sound_volume = config_get_float(&cfg, CONFIG_VALUES "sound_volume", 1);
 
     load_user_config(&cfg);
-    
+
+    // exactly one of the language boxes; anything odd falls back to English
+    int lang = LANG_ENGLISH;
+    if (settingsState.langSpanish) lang = LANG_SPANISH;
+    else if (settingsState.langItalian) lang = LANG_ITALIAN;
+    else if (settingsState.langPortuguese) lang = LANG_PORTUGUESE;
+
+    settingsState.langEnglish = (lang == LANG_ENGLISH);
+    settingsState.langSpanish = (lang == LANG_SPANISH);
+    settingsState.langItalian = (lang == LANG_ITALIAN);
+    settingsState.langPortuguese = (lang == LANG_PORTUGUESE);
+    i18n_set_language(lang);
+
     selected_cube = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "cube", 1);
     selected_ship = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ship", 1);
     selected_ball = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ball", 1);

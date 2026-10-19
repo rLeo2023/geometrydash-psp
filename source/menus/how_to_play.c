@@ -4,6 +4,7 @@
 #include "menus/core/ui_screen.h"
 #include "main_menu.h"
 #include "menus/components/ui_button.h"
+#include "utils/i18n.h"
 
 static bool yes_exit = false;
 
@@ -85,7 +86,7 @@ int how_to_play_loop() {
         return true;
     }
 
-    if (current_page == 7) ui_button_set_text((UIButton *)next_button, "Exit");
+    if (current_page == 7) ui_button_set_text((UIButton *)next_button, tr("Exit"));
 
     UIInput touch;
     touchPosition touchPos;

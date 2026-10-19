@@ -132,6 +132,9 @@ void loading_screen_update(float progress) {
     touch.interacted = false;
 
     ui_screen_update(&default_screen_top, &touch);
+#ifdef __PSP__
+    psp_loading_screen = true;
+#endif
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
     
     // Top screen, drawn once per eye when 3D is on
@@ -162,4 +165,7 @@ void loading_screen_update(float progress) {
     ui_screen_draw(&default_screen);
     C2D_ViewReset();
     C3D_FrameEnd(0);
+#ifdef __PSP__
+    psp_loading_screen = false;
+#endif
 }

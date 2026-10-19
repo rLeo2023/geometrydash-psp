@@ -8,6 +8,7 @@
 #include "menus/components/ui_label.h"
 #include "menus/components/ui_progress_bar.h"
 #include "menus/components/ui_darken.h"
+#include "utils/i18n.h"
 
 #include "main.h"
 #include "main_menu.h"
@@ -119,6 +120,13 @@ int settings_hub_loop() {
     touch.did_something = false;
     touch.interacted = false;
     if (!in_settings && !in_credits && !in_how_to_play && !in_songs) ui_screen_update(&screen, &touch);
+
+    // the options may have changed the language while this hub stayed loaded
+    static int hub_language = -1;
+    if (hub_language != language) {
+        hub_language = language;
+        i18n_localize_screen(&screen);
+    }
 
     ui_screen_draw(&screen);
 

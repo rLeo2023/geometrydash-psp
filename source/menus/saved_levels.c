@@ -12,6 +12,7 @@
 #include "mp3_player.h"
 #include "graphics.h"
 #include "utils/folders.h"
+#include "utils/i18n.h"
 
 
 static bool exit_flag = false;
@@ -241,7 +242,7 @@ void saved_levels_loop() {
                 UIWindowButton *button = ui_create_window_button(&default_screen.ctx);
                 if (button) {
                     ui_window_button_set_style(button, 5);
-                    ui_button_set_text((UIButton *) button, "View");
+                    ui_button_set_text((UIButton *) button, tr("View"));
 
                     button->base.textScale = 0.48f;
 

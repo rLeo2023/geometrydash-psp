@@ -7,7 +7,8 @@ typedef enum {
     PAGE_INPUT,
     PAGE_MISC,
     PAGE_GAMEPLAY,
-    PAGE_COSMETIC
+    PAGE_COSMETIC,
+    PAGE_LANGUAGE
 } SettingPage;
 
 typedef struct {
@@ -52,16 +53,22 @@ typedef struct {
     bool practiceMusicSync;
     bool autoCheckpoints;
     bool quickCheckpoints;
+    bool langEnglish; // exactly one of these four is on
+    bool langSpanish;
+    bool langItalian;
+    bool langPortuguese;
+    bool noclipAccuracy;
 #ifdef __PSP__
     bool fps60; // off: 30 fps, every other vblank
     bool showFps;
+    char player_name[32]; // the profile's name, saved in the config
 #endif
 } SettingState;
 
 #ifdef __PSP__
-extern Setting settings[27];
+extern Setting settings[32];
 #else
-extern Setting settings[25];
+extern Setting settings[30];
 #endif
 extern SettingState settingsState;
 

@@ -90,6 +90,7 @@ extern const ParticleDefinition explode_effect;
 extern const ParticleDefinition coin_effect;
 extern const ParticleDefinition coin_pickup_effect;
 extern const ParticleDefinition burst_effect;
+extern const ParticleDefinition burst_effect2;
 extern const ParticleDefinition boost_01_effect;
 extern const ParticleDefinition boost_02_effect;
 extern const ParticleDefinition boost_03_effect;

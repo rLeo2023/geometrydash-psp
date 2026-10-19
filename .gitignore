@@ -109,3 +109,6 @@ __pycache__/
 steam-resources
 # AleFunky's Wii port (2.0 objects' sprites and table come from it)
 wiidash
+
+# GD3DS 2.0, kept for reference
+gd3ds-2.0/

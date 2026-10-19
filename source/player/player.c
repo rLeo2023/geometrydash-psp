@@ -34,6 +34,7 @@ MotionTrail wave_trail_p2;
 ParticleSystem drag_particles[2];
 ParticleSystem drag_particles_2[2];
 ParticleSystem ship_fire_particles[2];
+ParticleSystem robot_fire_particles[2];
 ParticleSystem ship_secondary_particles[2];
 ParticleSystem secondary_particles[2];
 ParticleSystem burst_particles[2];
@@ -168,15 +169,18 @@ void cube_gamemode(Player *player) {
             }
         }
 
-        // the fire under its feet while it rises (wiidash: ROBOT_JUMP_PARTICLES),
-        // the ship's fire
+        // the fire under its feet while it rises: GD's burstEffect2, small
+        // red-to-yellow squares (not the ship's trail)
         bool rising = player->robot_boost > 0 && state.input.holdJump && !player->on_ground;
-        ParticleSystem *fire = &ship_fire_particles[state.current_player];
-        fire->emitterX = player->x - player->width / 2 + 5 * (player->mini ? 0.6f : 1.f);
-        fire->emitterY = fabsf(gravBottom(player)) + (player->upside_down ? -2 : 2);
-        fire->emitting = rising;
-        fire->gravityFlipped = player->upside_down;
-        fire->scale = (player->mini ? 0.6f : 1.0f);
+
+        ParticleSystem *robot_fire = &robot_fire_particles[state.current_player];
+        robot_fire->emitterX = player->x - 4;
+        robot_fire->emitterY = fabsf(gravBottom(player));
+        robot_fire->emitting = rising;
+        robot_fire->scale = (player->mini ? 0.6f : 1.0f);
+
+        // and no ship fire left over from a ship portal
+        ship_fire_particles[state.current_player].emitting = false;
 
         // its animation (wiidash's): running on the ground; off it without
         // a jump (a pad, an orb, an edge), up or down
@@ -819,6 +823,8 @@ float handle_player_time = 0;
 void handle_player(Player *player) {
     if (get_fade_status()) return;
 
+    noclip_would_die = false;
+
     u64 start_player = svcGetSystemTick();
     if (state.input.holdJump) {
         if (player->buffering_state == BUFFER_NONE) {
@@ -869,7 +875,10 @@ void handle_player(Player *player) {
     u64 ticks = end - start;
     collision_time += ticks / CPU_TICKS_PER_MSEC;
     
-    if (state.noclip) state.dead = false;
+    if (state.noclip) {
+        if (state.dead) noclip_would_die = true;
+        state.dead = false;
+    }
     
     if (state.dead) return;
 
@@ -900,7 +909,10 @@ void handle_player(Player *player) {
     ticks = end - start;
     player_time += ticks / CPU_TICKS_PER_MSEC;
     
-    if (state.noclip) state.dead = false;
+    if (state.noclip) {
+        if (state.dead) noclip_would_die = true;
+        state.dead = false;
+    }
     
     // Run dual ball being repelled when touching
     do_ball_reflection();
@@ -913,6 +925,13 @@ void handle_player(Player *player) {
     // Add player hitboxes to hitbox trail
     if (state.hitbox_display == 2) add_new_hitbox(player);
     handle_player_time += ticks / CPU_TICKS_PER_MSEC;
+
+    // noclip accuracy: this step and whether noclip had to save the player
+    if (state.noclip) {
+        noclip_total_steps++;
+        if (noclip_would_die) noclip_unsafe_steps++;
+    }
+    noclip_would_die = false;
 }
 
 void anim_player_to_wall(Player *player) {

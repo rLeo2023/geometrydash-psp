@@ -5,6 +5,7 @@
 
 #include "menus/core/ui_element.h"
 #include "menus/core/ui_screen.h"
+#include "utils/i18n.h"
 #include "math_helpers.h"
 #include "menus/components/ui_list.h"
 #include "menus/components/ui_image.h"
@@ -25,7 +26,14 @@
 #include "first_boot_disclaimer.h"
 #ifdef __PSP__
 #include "quit_game.h"
+#include "profile.h"
+#include "menus/components/ui_button.h"
+#include "menus/components/ui_label.h"
+#include "save/config.h"
+#include <string.h>
 static bool in_quit_game = false;
+static bool in_profile = false;
+static UILabel *profile_name_label = NULL;
 #endif
 #include "info_card.h"
 #include "state.h"
@@ -96,6 +104,14 @@ void action_open_credits(UIElement* e) {
     in_credits = true;
     credits_init();
 }
+
+#ifdef __PSP__
+void action_open_profile(UIElement* e) {
+    (void)e;
+    in_profile = true;
+    profile_init();
+}
+#endif
 
 void action_open_info_card_text(const char *text) {
     info_card_init();
@@ -186,6 +202,9 @@ static UIAction actions[] = {
     { "statistics", action_open_statistics },
     { "icon_kit", action_open_icon_kit },
     { "credits", action_open_credits },
+#ifdef __PSP__
+    { "profile", action_open_profile },
+#endif
 };
 
 static UIAction actions_top[] = {
@@ -316,9 +335,40 @@ static void handle_players() {
 void main_menu_loop() {
     exit_flag = false;
     new_state = 0;
+    static int menu_language = -1;
     ui_load_screen(&default_screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/main_menu.txt");
     ui_load_screen(&default_screen_top, actions_top, sizeof(actions_top) / sizeof(actions_top[0]), "romfs:/menus/main_menu_top.txt");
-    
+
+#ifdef __PSP__
+    // the player's name (kept in the config) and the profile button's picture
+    {
+        const char *stored_name = config_get_string(&cfg, "playerName", "Player");
+        if (stored_name) {
+            strncpy(settingsState.player_name, stored_name, sizeof(settingsState.player_name) - 1);
+            settingsState.player_name[sizeof(settingsState.player_name) - 1] = 0;
+        }
+
+        profile_name_label = (UILabel *) ui_get_element_by_tag(&default_screen, "player_name");
+        if (profile_name_label) {
+            ui_label_set_text(profile_name_label, settingsState.player_name);
+            // small, and long names shrink to stay on the screen
+            float width = get_text_length(fonts[0].charset, 1.f, false, settingsState.player_name);
+            float name_scale = width > 0.f ? 72.f / width : 0.4f;
+            if (name_scale > 0.4f) name_scale = 0.4f;
+            ui_element_set_scale((UIElement *) profile_name_label, name_scale);
+        }
+
+        UIButton *profile_button = (UIButton *) ui_get_element_by_tag(&default_screen, "profile_button");
+        C2D_SpriteSheet sheet = profile_assets();
+        if (profile_button && sheet) {
+            C2D_SpriteFromSheet(&profile_button->image.sprite, sheet, 0);
+            C3D_TexSetFilter(profile_button->image.sprite.image.tex, GPU_LINEAR, GPU_LINEAR);
+            profile_button->base.w = profile_button->image.sprite.image.subtex->width;
+            profile_button->base.h = profile_button->image.sprite.image.subtex->height;
+        }
+    }
+#endif
+
     main_menu_color_index = 0;
     u32 color = default_lvl_colors[main_menu_color_index % NUM_MENU_COLORS];
     main_menu_color_index++;
@@ -376,11 +426,18 @@ void main_menu_loop() {
         hidScanInput();
         u32 kDown = hidKeysDown();
 
+        // the options may have changed it while this menu stayed loaded
+        if (menu_language != language) {
+            menu_language = language;
+            i18n_localize_screen(&default_screen);
+            i18n_localize_screen(&default_screen_top);
+        }
+
 #ifdef __PSP__
         // circle asks first (the phone game's "Quit Game"); select did quit
         // right away
         if ((kDown & KEY_B) && !in_quit_game && !in_settings_hub && !in_first_boot_disclaimer
-            && !in_statistics && !in_songs && !in_credits && !in_info_card) {
+            && !in_statistics && !in_songs && !in_credits && !in_info_card && !in_profile) {
             in_quit_game = true;
             quit_game_init();
         }
@@ -458,7 +515,7 @@ void main_menu_loop() {
 
         bool in_menu = in_settings_hub || in_first_boot_disclaimer || in_statistics || in_songs || in_credits || in_info_card;
 #ifdef __PSP__
-        in_menu = in_menu || in_quit_game;
+        in_menu = in_menu || in_quit_game || in_profile;
 #endif
 
         // Ded
@@ -607,6 +664,23 @@ void main_menu_loop() {
                 }
             }
 
+#ifdef __PSP__
+            if (in_profile) {
+                int returned = profile_loop();
+                if (returned) {
+                    in_profile = false;
+                    if (profile_name_label) {
+                        ui_label_set_text(profile_name_label, settingsState.player_name);
+                        float width = get_text_length(fonts[0].charset, 1.f, false,
+                            settingsState.player_name);
+                        float name_scale = width > 0.f ? 72.f / width : 0.4f;
+                        if (name_scale > 0.4f) name_scale = 0.4f;
+                        ui_element_set_scale((UIElement *) profile_name_label, name_scale);
+                    }
+                }
+            }
+#endif
+
             if (in_first_boot_disclaimer) {
                 int returned = first_boot_disclaimer_loop();
                 if (returned) {
@@ -647,8 +721,12 @@ void main_menu_loop() {
             break;
         }
     }
+#ifdef __PSP__
+    profile_assets_free();
+#endif
+
     C2D_TargetClear(bot, C2D_Color32(0, 0, 0, 255));
-    
+
     ui_unload_screen(&default_screen);
     ui_unload_screen(&default_screen_top);
 }

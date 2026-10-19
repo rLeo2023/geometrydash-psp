@@ -9,6 +9,20 @@
 
 #define MIRROR_DURATION 0.4f
 
+// user coins: silver for a level that isn't rated (or whose coins aren't
+// verified), gold once it is. GD's colors
+#define USER_COIN_UNRATED_R 255
+#define USER_COIN_UNRATED_G 175
+#define USER_COIN_UNRATED_B 75
+#define USER_COIN_UNRATED_TINT C2D_Color32(USER_COIN_UNRATED_R, USER_COIN_UNRATED_G, USER_COIN_UNRATED_B, 255)
+
+#define USER_COIN_UNRATED_EMPTY_R 165
+#define USER_COIN_UNRATED_EMPTY_G 113
+#define USER_COIN_UNRATED_EMPTY_B 48
+#define USER_COIN_UNRATED_EMPTY_TINT C2D_Color32(USER_COIN_UNRATED_EMPTY_R, USER_COIN_UNRATED_EMPTY_G, USER_COIN_UNRATED_EMPTY_B, 255)
+
+bool level_has_unverified_coins(void);
+
 typedef struct {
     float x;
     float y;
@@ -172,6 +186,12 @@ typedef struct {
 #define CEILING_INVUL_TIME 0.15f
 
 extern GameState state;
+
+// Noclip accuracy: physics steps of the attempt, and the steps in which a
+// death was suppressed by noclip. Reset on every attempt.
+extern unsigned int noclip_total_steps;
+extern unsigned int noclip_unsafe_steps;
+extern bool noclip_would_die;
 
 void set_intended_ceiling();
 void set_gamemode(Player *player, int gamemode);

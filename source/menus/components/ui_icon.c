@@ -6,6 +6,7 @@
 #include "menus/core/ui_screen.h"
 #include "menus/core/ui_props.h"
 #include "graphics.h"
+#include "color_channels.h"
 
 #include "menus/icon_kit.h"
 
@@ -21,6 +22,11 @@ static void ui_icon_draw(UIElement* e, UITransform *transform) {
 
     if (icon->gamemode == GAMEMODE_SHIP) transform->y -= 4;
 
+    u32 color1 = icon->player_color ? C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255)
+                                    : C2D_Color32(175, 175, 175, 255);
+    u32 color2 = icon->player_color ? C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255)
+                                    : C2D_Color32(255, 255, 255, 255);
+
     if (icon->gamemode == TRAIL) {
         C2D_Sprite spr = { 0 };
         C2D_SpriteFromSheet(&spr, ui_2_sheet, FIRST_TRAIL_ID + icon->index);
@@ -34,7 +40,7 @@ static void ui_icon_draw(UIElement* e, UITransform *transform) {
         // standing: the run's first pose
         u8 anim = ROBOT_ANIM_RUN;
         spawn_robot_id_at(icon->index, transform->x, transform->y, 0, 0, 0, transform->scaleX,
-            C2D_Color32(175, 175, 175, 255), C2D_Color32(255, 255, 255, 255), &anim, 0);
+            color1, color2, &anim, 0);
 #endif
     } else {
         spawn_icon_at(
@@ -46,8 +52,8 @@ static void ui_icon_draw(UIElement* e, UITransform *transform) {
             0,
             0,
             transform->scaleX,
-            C2D_Color32(175, 175, 175, 255),
-            C2D_Color32(255, 255, 255, 255),
+            color1,
+            color2,
             0
         );
     }

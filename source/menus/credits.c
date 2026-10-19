@@ -18,6 +18,7 @@
 #include "main_menu.h"
 #include "level_select.h"
 #include "credits.h"
+#include "utils/i18n.h"
 
 static bool yes_exit = false;
 
@@ -82,7 +83,7 @@ void credits_init() {
                 UILabel *name = ui_create_label(&screen.ctx);
                 if (name) {
                     name->base.w = list->base.w - 12;
-                    ui_label_set_text(name, contributor);
+                    ui_label_set_text(name, tr(contributor));
                     ui_element_set_position((UIElement *) name, -list_width + 3, 0);
                     ui_element_set_scale((UIElement *) name, 0.5f);
                     
@@ -95,7 +96,7 @@ void credits_init() {
                 UILabel *description = ui_create_label(&screen.ctx);
                 if (description) {
                     char text[256];
-                    snprintf(text, sizeof(text) - 1, "- %s", contribution);
+                    snprintf(text, sizeof(text) - 1, "- %s", tr(contribution));
                     ui_label_set_text(description, text);
                     ui_element_set_position((UIElement *) description, -list_width + 8 + get_text_length(&bigFont_fontCharset, 0.5f, false, contributor), -1);
                     ui_element_set_scale((UIElement *) description, 0.7f);

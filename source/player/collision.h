@@ -71,6 +71,7 @@ void apply_pending_teleport(Player *player);
 #define MINI_PORTAL 101
 
 #define SECRET_COIN 142
+#define KEY_OBJ 1275
 
 #define SLOW_SPEED_PORTAL 200
 #define NORMAL_SPEED_PORTAL 201

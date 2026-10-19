@@ -16,6 +16,7 @@
 #include "fonts/chatFont.h"
 
 #include "state.h"
+#include "utils/i18n.h"
 
 static bool yes_exit = false;
 
@@ -111,18 +112,18 @@ static void set_name_creator(char *gmd) {
         snprintf(level_info.level_name, sizeof(level_info.level_name), "%s", name);
         free(name);
     } else {
-        snprintf(level_info.level_name, sizeof(level_info.level_name), "%s", default_name);
+        snprintf(level_info.level_name, sizeof(level_info.level_name), "%s", tr(default_name));
     }
 
     char tmp[512];
     char *creator = extract_gmd_key((const char *) gmd, "k5", "s");
     if (creator) {
-        snprintf(tmp, sizeof(tmp), "By %s", creator);
+        snprintf(tmp, sizeof(tmp), "%s %s", tr("By"), creator);
         ui_label_set_text(creator_name, tmp);
         snprintf(level_info.creator_name, sizeof(level_info.creator_name), "%s", creator);
         free(creator);
     } else {
-        snprintf(level_info.creator_name, sizeof(level_info.creator_name), "%s", default_name);
+        snprintf(level_info.creator_name, sizeof(level_info.creator_name), "%s", tr(default_name));
     }
 
     // Load data
@@ -255,12 +256,13 @@ static void set_song_id(char *gmd) {
 
     if (custom_song_id > 0) {
         if (check_song(custom_song_id)) {
-            snprintf(tmp, sizeof(tmp), "Using song: %d.mp3", custom_song_id);
+            snprintf(tmp, sizeof(tmp), "%s %d.mp3", tr("Using song:"), custom_song_id);
         } else {
-            snprintf(tmp, sizeof(tmp), "Using song: %d.mp3 (NOT FOUND)", custom_song_id);
+            snprintf(tmp, sizeof(tmp), "%s %d.mp3 %s", tr("Using song:"), custom_song_id,
+                tr("(NOT FOUND)"));
         }
     } else {
-        char *song_name = "Unknown";
+        char *song_name = (char *) tr("Unknown");
 #ifdef __PSP__
         extern const char *official_song_name(int id);
         if (official_song_name(song_id)) song_name = (char *)official_song_name(song_id);
@@ -269,7 +271,7 @@ static void set_song_id(char *gmd) {
             song_name = main_levels[song_id].level_name;
         }
 #endif
-        snprintf(tmp, sizeof(tmp), "Using song: %s", song_name);
+        snprintf(tmp, sizeof(tmp), "%s %s", tr("Using song:"), song_name);
     }
 
     ui_label_set_text(song_label, tmp);

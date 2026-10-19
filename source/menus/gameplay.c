@@ -117,14 +117,15 @@ void pause_game() {
         ui_run_func_on_tag(&default_screen_top, "coin_1", ui_enable_element);
         ui_run_func_on_tag(&default_screen_top, "coin_2", ui_enable_element);
         ui_run_func_on_tag(&default_screen_top, "coin_3", ui_enable_element);
-        ui_run_func_on_tag(&default_screen, "coin_1", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_2", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_3", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_1_full", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_2_full", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_3_full", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_circle", ui_disable_element);
     }
+    // the HUD's coins make way for the pause menu (user coins too)
+    ui_run_func_on_tag(&default_screen, "coin_1", ui_disable_element);
+    ui_run_func_on_tag(&default_screen, "coin_2", ui_disable_element);
+    ui_run_func_on_tag(&default_screen, "coin_3", ui_disable_element);
+    ui_run_func_on_tag(&default_screen, "coin_1_full", ui_disable_element);
+    ui_run_func_on_tag(&default_screen, "coin_2_full", ui_disable_element);
+    ui_run_func_on_tag(&default_screen, "coin_3_full", ui_disable_element);
+    ui_run_func_on_tag(&default_screen, "coin_circle", ui_disable_element);
     ui_run_func_on_tag(&default_screen_top, "pause_menu", ui_enable_element);
     ui_run_func_on_tag(&default_screen, "paused", ui_enable_element);
     ui_run_func_on_tag(&default_screen, "not_paused", ui_disable_element);
@@ -264,13 +265,6 @@ void gameplay_screen_init() {
     ui_progress_bar_set_tint(normal_progress, C2D_Color32(0, 255, 0, 255));
     ui_progress_bar_set_tint(practice_progress, C2D_Color32(0, 255, 255, 255));
 
-    // hide coins if level is a custom level
-    if(state.custom_level == true){
-        ui_run_func_on_tag(&default_screen, "coin_1", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_2", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_3", ui_disable_element);
-    }
-    
     // Hide pause menu
     ui_run_func_on_tag(&default_screen_top, "coin_1", ui_disable_element);
     ui_run_func_on_tag(&default_screen_top, "coin_2", ui_disable_element);
@@ -286,7 +280,28 @@ void gameplay_screen_init() {
     coins_full[0] = (UIImage *) ui_get_element_by_tag(&default_screen, "coin_1_full");
     coins_full[1] = (UIImage *) ui_get_element_by_tag(&default_screen, "coin_2_full");
     coins_full[2] = (UIImage *) ui_get_element_by_tag(&default_screen, "coin_3_full");
-    
+
+    // a custom level's coins are user coins: the small user coin, orange
+    // until the level (and its coins) are rated
+    if (state.custom_level) {
+        bool unrated = level_has_unverified_coins();
+        UIImage *slots[3] = { coin_1, coin_2, coin_3 };
+
+        for (int i = 0; i < 3; i++) {
+            if (slots[i]) {
+                ui_image_set_image(slots[i], 417, 0);
+                ui_element_set_scale((UIElement *)slots[i], 0.325f);
+                ui_image_set_tint(slots[i], unrated ? USER_COIN_UNRATED_EMPTY_TINT
+                                                    : C2D_Color32(165, 165, 165, 255));
+            }
+            if (coins_full[i]) {
+                ui_image_set_image(coins_full[i], 417, 0);
+                ui_element_set_scale((UIElement *)coins_full[i], 0.325f);
+                if (unrated) ui_image_set_tint(coins_full[i], USER_COIN_UNRATED_TINT);
+            }
+        }
+    }
+
     reset_coins();
 
     coin_1_top = (UIImage *) ui_get_element_by_tag(&default_screen_top, "coin_1");
@@ -347,12 +362,18 @@ int gameplay_screen_bot_loop() {
 
     for(int i = 0; i < 3; i++){
         if(coins_got[i] && !game_paused){
-            float scale = easeValue(BOUNCE_OUT, 2.f, 0.65f, coin_anims[i], 0.35f, 1.f);
+            float target_scale = state.custom_level ? 0.325f : 0.65f;
+            float scale = easeValue(BOUNCE_OUT, 2.f, target_scale, coin_anims[i], 0.35f, 1.f);
             float opacity = easeValue(EASE_LINEAR, 0.f, 1.f, coin_anims[i], 0.1f, 1.f);
 
             coins_full[i]->base.enabled = true;
             ui_element_set_scale((UIElement *) coins_full[i], scale);
-            ui_image_set_tint(coins_full[i], C2D_Color32f(1, 1, 1, opacity));
+            if (level_has_unverified_coins())
+                ui_image_set_tint(coins_full[i],
+                    C2D_Color32(USER_COIN_UNRATED_R, USER_COIN_UNRATED_G, USER_COIN_UNRATED_B,
+                                (u8)(opacity * 255.f)));
+            else
+                ui_image_set_tint(coins_full[i], C2D_Color32f(1, 1, 1, opacity));
 
 #ifdef __PSP__
             // The touch screen's coin pop: laid over the level on the PSP, it

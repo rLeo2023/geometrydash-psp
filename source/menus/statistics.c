@@ -10,6 +10,7 @@
 #include "menus/components/ui_label.h"
 
 #include "save/saving.h"
+#include "utils/i18n.h"
 
 static bool yes_exit = false;
 static bool exiting = false;
@@ -33,6 +34,7 @@ static const StatisticEntries stats[] = {
     { "Completed Ext. Levels", &completed_external_levels },
     { "Completed Demon Levels", &total_demons },
     { "Collected Secret Coins", &total_coins },
+    { "Collected User Coins", &total_user_coins },
     { "Players Destroyed", &players_destroyed }
 };
 
@@ -67,7 +69,7 @@ void statistics_init() {
                 // Stat name
                 UILabel *stat = ui_create_label(&screen.ctx);
                 if (stat) {
-                    ui_label_set_text(stat, name);
+                    ui_label_set_text(stat, tr(name));
                     ui_element_set_position((UIElement *) stat, -list_width + 6, 1);
                     ui_element_set_scale((UIElement *) stat, 0.54f);
                     

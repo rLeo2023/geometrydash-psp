@@ -23,6 +23,15 @@
 
 GameState state;
 
+bool level_has_unverified_coins(void) {
+    // the port's custom levels are .gmd files: never rated by the servers
+    return state.custom_level;
+}
+
+unsigned int noclip_total_steps = 0;
+unsigned int noclip_unsafe_steps = 0;
+bool noclip_would_die = false;
+
 void run_camera() {
     Player *player = &state.player;
     state.old_camera_x = state.camera_x;
@@ -363,7 +372,11 @@ void init_trails(int trail) {
 
 void init_variables() {
     level_frame = 0;
-   
+
+    noclip_total_steps = 0;
+    noclip_unsafe_steps = 0;
+    noclip_would_die = false;
+
     init_trails(selected_trail);
     init_wave_trails();
 
@@ -602,23 +615,21 @@ void clear_respawn_effect() {
 }
 
 bool is_coin_collected(int obj) {
-    if (state.custom_level) return false;
-
     if (objects.id[obj] != SECRET_COIN) return false;
 
-    LevelData *level_data = &main_level_data[curr_level_id];
+    LevelData *data = state.custom_level ? &level_data : &main_level_data[curr_level_id];
 
     switch (objects.coin_id[obj]) {
         case 0:
-            if (level_data->coin1) 
+            if (data->coin1)
                 return true;
             break;
         case 1:
-            if (level_data->coin2) 
+            if (data->coin2)
                 return true;
             break;
         case 2:
-            if (level_data->coin3) 
+            if (data->coin3)
                 return true;
             break;
     }

@@ -6,6 +6,7 @@
 #include "math_helpers.h"
 #include "color_channels.h"
 #include <stdlib.h>
+#include <math.h>
 #include "mp3_player.h"
 #include "icons.h"
 #include "menus/icon_kit.h"
@@ -20,6 +21,7 @@
 #include "particles/object_particles.h"
 #include "particles/circles.h"
 #include "particles/coin_effect.h"
+#include "particles/key_effect.h"
 
 #include "menus/settings.h"
 #include "menus/gameplay.h"
@@ -186,6 +188,30 @@ static C2D_SpriteSheet *get_sprite_sheet(int index, int *rel_index) {
     // Return spritesheet 2 (portals)
     *rel_index = index - SPRITESHEET2_START;
     return &spriteSheet2;
+}
+
+// A texture number to a ready-to-place sprite (the key effect draws its own,
+// outside a level object). False if its sheet is not loaded.
+bool get_sprite_from_texture(int tex, C2D_Sprite *out) {
+    if (!out) return false;
+
+    int rel;
+    C2D_SpriteSheet *sheet = get_sprite_sheet(tex, &rel);
+    if (!sheet || !*sheet) return false;
+
+    C2D_Sprite none = { 0 };
+    *out = none;
+    C2D_SpriteFromSheet(out, *sheet, rel);
+    C2D_SpriteSetCenter(out, 0.5f, 0.5f);
+    return true;
+}
+
+// GD 2.0's key bobs up and down while it waits to be taken
+#define KEY_FLOAT_AMP 1.5f
+#define KEY_FLOAT_PERIOD 0.8f
+static inline float key_float_offset(int obj) {
+    float phase = objects.x[obj] * 0.05f;
+    return KEY_FLOAT_AMP * sinf(6.2831853f * (key_float_time / KEY_FLOAT_PERIOD) + phase);
 }
 
 Color get_color_abgr8(u32 color) {
@@ -536,7 +562,8 @@ int get_obj_random_layer(int obj, int id) {
             return tex + (objects.random[obj] & 0b11);
         
         case SECRET_COIN:
-            return get_coin_texture(tex + (is_coin_collected(obj) ? 12 : 0), 26);
+            // a custom level's coins are user coins: the secretCoin_2 frames
+            return get_coin_texture(tex + (state.custom_level ? (is_coin_collected(obj) ? 8 : 4) : (is_coin_collected(obj) ? 12 : 0)), 26);
     }
     return -1;
 }
@@ -1525,6 +1552,16 @@ void create_objects() {
                 col = channels[get_col_channel_index(col_channel)];
             }
 
+#ifdef __PSP__
+            // a user coin whose level isn't rated (or whose coins aren't
+            // verified) is drawn orange, not white
+            if (level_has_unverified_coins() && objects.id[obj->obj] == SECRET_COIN) {
+                col.color.r = USER_COIN_UNRATED_R;
+                col.color.g = USER_COIN_UNRATED_G;
+                col.color.b = USER_COIN_UNRATED_B;
+            }
+#endif
+
             int game_object = obj->obj;
             float x = ((objects.x[game_object] - state.camera_x));
 
@@ -1566,6 +1603,7 @@ void draw_player_effects() {
     for (int i = 0; i < 2; i++) {
         drawParticleSystem(&drag_particles[i], 0, 0, 1.f);
         drawParticleSystem(&ship_fire_particles[i], 0, 0, 1.f);
+        drawParticleSystem(&robot_fire_particles[i], 0, 0, 1.f);
         drawParticleSystem(&ship_secondary_particles[i], 0, 0, 1.f);
         drawParticleSystem(&secondary_particles[i], 0, 0, 1.f);
         drawParticleSystem(&burst_particles[i], 0, 0, 1.f);
@@ -1592,6 +1630,7 @@ void draw_player_graphics() {
     change_blending(false);
     
     draw_collect_effect();
+    draw_key_effect();
 
     change_blending(true);
     draw_use_effects(get_use_effect_array_ptr(GFX_TOP));
@@ -1651,7 +1690,14 @@ void draw_objects() {
             if ((obj->tint.corners[0].color >> 24) == 0) continue;
 #endif
 
-            C2D_DrawSpriteTinted(&obj->spr, &obj->tint);
+            if (objects.id[obj->obj] == KEY_OBJ) {
+                // the key bobs (new sprite: the cached one stays put)
+                C2D_Sprite spr = obj->spr;
+                C2D_SpriteMove(&spr, 0.0f, key_float_offset(obj->obj));
+                C2D_DrawSpriteTinted(&spr, &obj->tint);
+            } else {
+                C2D_DrawSpriteTinted(&obj->spr, &obj->tint);
+            }
         } else {
 #ifdef __PSP__
             // the texts at the player's layer: over what is behind it

@@ -20,6 +20,7 @@ LevelData main_level_data[MAIN_LEVELS_NUM];
 
 int total_stars = 0;
 int total_coins = 0;
+int total_user_coins = 0;
 int total_attempts = 0;
 int total_jumps = 0;
 int total_demons = 0;
@@ -147,6 +148,7 @@ int is_main_level(const char *filename) {
 void calculate_stats() {
     total_stars = 0;
     total_coins = 0;
+    total_user_coins = 0;
     total_attempts = 0;
     total_jumps = 0;
     total_demons = 0;
@@ -198,6 +200,11 @@ void calculate_stats() {
             if (data->normal_progress == 100) {
                 completed_external_levels++;
                 total_stars += data->stars;
+
+                // the custom levels' coins are the user coins here
+                total_user_coins += data->coin1;
+                total_user_coins += data->coin2;
+                total_user_coins += data->coin3;
 
                 // Check for demon
                 if (data->stars == 10) {

@@ -23,6 +23,7 @@
 #include "menus/components/ui_slider.h"
 #include "menus/components/ui_palette_icons.h"
 #include "menus/components/ui_rectangle.h"
+#include "utils/i18n.h"
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -1059,6 +1060,8 @@ void ui_load_screen(UIScreen* screen,
     }
     
     fclose(f);
+
+    i18n_localize_screen(screen);
 }
 
 void ui_unload_screen(UIScreen *screen) {

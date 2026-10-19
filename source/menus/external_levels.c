@@ -14,6 +14,7 @@
 #include "menus/components/ui_rectangle.h"
 #include "fonts/bigFont.h"
 #include "main.h"
+#include "utils/i18n.h"
 #include "easing.h"
 #include "color_channels.h"
 #include "mp3_player.h"
@@ -236,6 +237,9 @@ static void show_error_message() {
 }
 
 void external_levels_loop() {
+#ifdef __PSP__
+    psp_loading_screen = true;
+#endif
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
     C2D_SceneBegin(bot);
     C2D_TargetClear(bot, C2D_Color32(0, 0, 0, 255));
@@ -244,13 +248,16 @@ void external_levels_loop() {
         begin_eye_layer(DEPTH_UI);
 #ifdef __PSP__
         // the PSP cuts 8 lines off the top screen's bottom (480x272)
-        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 14, SCREEN_HEIGHT - 22, 0.5f, 0.5f, 1.0f, true, "Loading...");
+        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 14, SCREEN_HEIGHT - 22, 0.5f, 0.5f, 1.0f, true, "%s", tr("Loading..."));
 #else
-        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, 0.5f, 0.5f, 1.0f, true, "Loading...");
+        draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, 0.5f, 0.5f, 1.0f, true, "%s", tr("Loading..."));
 #endif
         end_eye_layer();
     }
     C3D_FrameEnd(0);
+#ifdef __PSP__
+    psp_loading_screen = false;
+#endif
 
     external_start_level = false;
     exit_flag = false;

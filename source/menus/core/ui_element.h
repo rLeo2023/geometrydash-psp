@@ -183,6 +183,7 @@ typedef struct {
     int index;
 
     bool isSelected;
+    bool player_color; // the profile's row: the player's colors, not gray
 } UIIcon;
 
 typedef struct {
