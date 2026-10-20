@@ -1667,7 +1667,8 @@ static void draw_robot_boost_fire(Player *player) {
         SCREEN_HEIGHT - (gravBottom(player) - state.camera_y));
     float s = player->mini ? 0.6f : 1.f;
     C2D_SpriteSetScale(&spr, s, s * (player->upside_down ? -1.f : 1.f));
-    C2D_SpriteSetRotation(&spr, 0);
+    // slanted back, like GD's (mirrored with the level)
+    C2D_SpriteSetRotation(&spr, C3D_AngleFromDegrees(30.f * state.mirror_mult));
     C2D_DrawSprite(&spr);
 }
 #endif

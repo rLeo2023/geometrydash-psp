@@ -343,7 +343,7 @@ static const Translation translations[] = {
     { "Show hitboxes", "Mostrar hitboxes", "Mostra hitbox", "Mostrar hitboxes" },
     { "Enable hitbox trail", "Estela de hitboxes", "Scia hitbox", "Rastro de hitboxes" },
     { "Show hitboxes<p>on death", "Hitboxes<p>al morir", "Hitbox<p>alla morte", "Hitboxes<p>ao morrer" },
-    { "Do not", "No hacer", "Non fare", "Nao fazer" },
+    { "Do not", "No lo hagas...", "Non fare", "Nao fazer" },
     { "Practice music sync", "Musica en practica", "Musica in pratica", "Musica na pratica" },
     { "Show progress bar", "Barra de progreso", "Barra di progresso", "Barra de progresso" },
     { "Show level percentage", "Porcentaje del nivel", "Percentuale livello", "Porcentagem do nivel" },
