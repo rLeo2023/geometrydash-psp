@@ -91,6 +91,10 @@ void init_col_channels() {
     channels[ground].color.r = 40;
     channels[ground].color.g = 125;
     channels[ground].color.b = 255;
+
+    // until a level or a trigger says otherwise, it follows the ground
+    int ground2 = get_col_channel_index(CHANNEL_GROUND_2);
+    channels[ground2].color = channels[ground].color;
        
     int line = get_col_channel_index(CHANNEL_LINE);
     channels[line].color.r = 255;
@@ -369,6 +373,10 @@ void run_trigger(int obj) {
             
         case THREEDL_TRIGGER: // 3DL
             upload_to_buffer(obj, CHANNEL_3DL);
+            break;
+
+        case 900: // the 2.0 grounds' second layer, a color trigger of its own
+            upload_to_buffer(obj, CHANNEL_GROUND_2);
             break;
 
         case ENABLE_TRAIL:

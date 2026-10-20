@@ -118,7 +118,9 @@ extern const char *default_name;
 
 // GD 2.0 added backgrounds 8-13 (the images are in wiidash, halved here)
 #define BG_COUNT 13
-#define G_COUNT 7
+// grounds 8-11 come in two layers: the top strip (ground_0N) and the fill
+// under it (ground_0N_2), already here, just never used
+#define G_COUNT 11
 
 extern ObjectsArray objects;
 

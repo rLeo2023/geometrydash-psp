@@ -55,6 +55,10 @@ C2D_SpriteSheet groundSheet;
 C2D_SpriteSheet iconSheet;
 C2D_SpriteSheet trailSheet;
 C2D_SpriteSheet particleSheet;
+#ifdef __PSP__
+// gfx/fx/boost.t3s: GD's fireBoost_001.png, the flame under the robot's feet
+C2D_SpriteSheet boostSheet;
+#endif
 
 static SortItem buf_a[MAX_SPRITES];
 static SortItem buf_b[MAX_SPRITES];
@@ -1287,6 +1291,9 @@ void draw_background(float x, float y) {
     }
 }
 
+// a ground's sprites in grounds.t3s: the 2.0 ones take two (the fill after it)
+const int ground_indexes[G_COUNT] = { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14 };
+
 void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_width) {
 #ifdef __PSP__
     // the pause menu merged over the level: the touch screen's ground stays out
@@ -1299,19 +1306,57 @@ void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_
     Color col = channels[get_col_channel_index(CHANNEL_GROUND)].color;
     C2D_PlainImageTint(&tint, C2D_Color32(col.r, col.g, col.b, 255), 1.f);
 
+    int sheet_id = ground_indexes[level_info.ground_id];
+    // the 2.0 grounds (8-11) are two layers: the strip at the line and the
+    // fill under it, each with its own color channel
+    bool has_l2 = level_info.ground_id >= 7;
+
+    C2D_Sprite ground = { 0 };
+    C2D_SpriteFromSheet(&ground, groundSheet, sheet_id);
+    C3D_TexSetFilter(ground.image.tex, GPU_LINEAR, GPU_LINEAR);
+
     if (is_ceiling) y += GROUND_SIZE;
+
+    // the strip's bottom sits at the ground line: its top does not, so it
+    // is shifted down by what it is shorter than a whole ground
+    float g_y = y;
+    if (has_l2) {
+        if (!is_ceiling) {
+            g_y -= GROUND_SIZE - ground.image.subtex->height - 1;
+        } else {
+            g_y -= 1;
+        }
+    }
 
     // First draw the ground
     float calc_x = 0 - positive_fmodf(cam_x, GROUND_SIZE);
     float calc_y = SCREEN_HEIGHT - ((y - cam_y));
+    float ground_calc_y = SCREEN_HEIGHT - ((g_y - cam_y));
 
     for (float i = -GROUND_SIZE; i < (screen_width / SCALE) + GROUND_SIZE; i += GROUND_SIZE) {
-        C2D_Sprite ground = { 0 };
-        C2D_SpriteFromSheet(&ground, groundSheet, level_info.ground_id + 1);
-        C3D_TexSetFilter(ground.image.tex, GPU_LINEAR, GPU_LINEAR);
-        C2D_SpriteSetPos(&ground, calc_x + i, calc_y);
+        C2D_SpriteSetPos(&ground, calc_x + i, ground_calc_y);
         C2D_SpriteSetScale(&ground, 1.f, mult);
         C2D_DrawSpriteTinted(&ground, &tint);
+    }
+
+    if (has_l2) {
+        col = channels[get_col_channel_index(CHANNEL_GROUND_2)].color;
+        C2D_PlainImageTint(&tint, C2D_Color32(col.r, col.g, col.b, 255), 1.f);
+
+        C2D_Sprite ground2 = { 0 };
+        C2D_SpriteFromSheet(&ground2, groundSheet, sheet_id + 1);
+        C3D_TexSetFilter(ground2.image.tex, GPU_LINEAR, GPU_LINEAR);
+
+        float g2_y = y;
+        if (is_ceiling) g2_y -= GROUND_SIZE - ground2.image.subtex->height;
+
+        ground_calc_y = SCREEN_HEIGHT - ((g2_y - cam_y));
+
+        for (float i = -GROUND_SIZE; i < (screen_width / SCALE) + GROUND_SIZE; i += GROUND_SIZE) {
+            C2D_SpriteSetPos(&ground2, calc_x + i, ground_calc_y);
+            C2D_SpriteSetScale(&ground2, 1.f, mult);
+            C2D_DrawSpriteTinted(&ground2, &tint);
+        }
     }
 
     C2D_PlainImageTint(&tint, C2D_Color32(0, 0, 0, 100), 1.f);
@@ -1604,8 +1649,35 @@ void create_objects() {
     }
 }
 
+#ifdef __PSP__
+// the flame under the robot's feet while it rises: GD's fireBoost_001.png,
+// which the 3DS build never had (there the burst's squares stand in for it)
+static void draw_robot_boost_fire(Player *player) {
+    if (!boostSheet || !player->robot) return;
+    if (!(player->robot_boost > 0 && state.input.holdJump && !player->on_ground)) return;
+
+    C2D_Sprite spr = { 0 };
+    C2D_SpriteFromSheet(&spr, boostSheet, 0);
+    C3D_TexSetFilter(spr.image.tex, GPU_LINEAR, GPU_LINEAR);
+    // hanging from the feet (4 to the left, like the particles' emitter),
+    // flipped with the gravity
+    C2D_SpriteSetCenter(&spr, 0.5f, 0.f);
+    C2D_SpriteSetPos(&spr,
+        get_mirror_x(player->x - 4.f - state.camera_x, state.mirror_factor),
+        SCREEN_HEIGHT - (gravBottom(player) - state.camera_y));
+    float s = player->mini ? 0.6f : 1.f;
+    C2D_SpriteSetScale(&spr, s, s * (player->upside_down ? -1.f : 1.f));
+    C2D_SpriteSetRotation(&spr, 0);
+    C2D_DrawSprite(&spr);
+}
+#endif
+
 void draw_player_effects() {
     change_blending(true);
+#ifdef __PSP__
+    draw_robot_boost_fire(&state.player);
+    if (state.dual) draw_robot_boost_fire(&state.player2);
+#endif
     for (int i = 0; i < 2; i++) {
         drawParticleSystem(&drag_particles[i], 0, 0, 1.f);
         drawParticleSystem(&ship_fire_particles[i], 0, 0, 1.f);

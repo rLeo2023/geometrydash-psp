@@ -1404,9 +1404,19 @@ int parse_string(const char *levelString) {
 }
 
 void set_color_channels() {
+#ifdef __PSP__
+    bool has_ground_2 = false;
+#endif
+
     for (int i = 0; i < channelCount; i++) {
         GDColorChannel colorChannel = colorChannels[i];
+#ifdef __PSP__
+        // 2.0's ids: 1009 is the grounds' second layer, 1010-1012 the
+        // black/white/lighter ones (this game numbers those elsewhere)
+        int id = v2_channel(colorChannel.channelID);
+#else
         int id = colorChannel.channelID;
+#endif
 
         switch (id) {
             case CHANNEL_P1:
@@ -1415,8 +1425,10 @@ void set_color_channels() {
 
             default:
 #ifdef __PSP__
-                // every channel up to 999 (2.0 levels use them all), not just 1-4
-                if (id > 0 && id < CHANNEL_P1) {
+                // every channel a 2.0 level can set: 1-999, and the 1000+
+                // ones too (P1/P2 aside: those come from the profile)
+                if (id > 0 && id < COL_CHANNEL_LAST) {
+                    if (id == CHANNEL_GROUND_2) has_ground_2 = true;
 #else
                 if (!(id > COL_4 && id < CHANNEL_BG) && id < CHANNEL_P1) {
 #endif
@@ -1453,6 +1465,17 @@ void set_color_channels() {
                 }
         }
     }
+
+#ifdef __PSP__
+    // a level that colors only the ground still needs the second layer's: its
+    // top strip would be the default blue
+    if (!has_ground_2) {
+        int g1 = get_col_channel_index(CHANNEL_GROUND);
+        int g2 = get_col_channel_index(CHANNEL_GROUND_2);
+        channels[g2].color = channels[g1].color;
+        channels[g2].alpha = channels[g1].alpha;
+    }
+#endif
 }
 
 const char *default_name = "Unknown";

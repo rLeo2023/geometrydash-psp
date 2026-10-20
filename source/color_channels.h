@@ -27,6 +27,8 @@ enum ColorChannelIDs {
     CHANNEL_P2,
     CHANNEL_LBG,
     CHANNEL_LBG_NOLERP,
+    // the 2.0 grounds' second layer (the fill under the top strip)
+    CHANNEL_GROUND_2,
     CHANNEL_OBJ_BLENDING,
     CHANNEL_YELLOW_GLOW,
     CHANNEL_BLUE_GLOW,
@@ -34,7 +36,7 @@ enum ColorChannelIDs {
     CHANNEL_WHITE,
     CHANNEL_INVISIBLE_GLOW,
 #ifdef __PSP__
-    // GD 2.0's 1010 black, 1011 white and 1012 lighter (1009-1012 are taken
+    // GD 2.0's 1010 black, 1011 white and 1012 lighter (1010-1012 are taken
     // here by glows: v2_channel() moves them)
     CHANNEL_V2_BLACK,
     CHANNEL_V2_WHITE,
@@ -129,7 +131,7 @@ extern Color glow_color;
 #ifdef __PSP__
 // a channel id as GD 2.0 numbers them -> this game's
 #define v2_channel(c) ( \
-    (c) == 1009 ? CHANNEL_GROUND :  /* ground 2: there's one ground here */ \
+    (c) == 1009 ? CHANNEL_GROUND_2 :  /* the 2.0 grounds' fill */ \
     (c) == 1010 ? CHANNEL_V2_BLACK : \
     (c) == 1011 ? CHANNEL_V2_WHITE : \
     (c) == 1012 ? CHANNEL_V2_LIGHTER : (c))

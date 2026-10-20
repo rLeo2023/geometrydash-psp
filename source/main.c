@@ -1429,6 +1429,11 @@ void game_assets_init() {
     particleSheet = C2D_SpriteSheetLoad("romfs:/gfx/particles.t3x");
     if (!particleSheet) svcBreak(USERBREAK_PANIC);
 
+#ifdef __PSP__
+    boostSheet = C2D_SpriteSheetLoad("romfs:/gfx/boost.t3x");
+    if (!boostSheet) svcBreak(USERBREAK_PANIC);
+#endif
+
     initParticleSystem(&touch_drag_particles, &touch_drag_effect);
     touch_drag_particles.relativeStationary = true;
 
@@ -1663,6 +1668,9 @@ int main(int argc, char* argv[]) {
     C2D_SpriteSheetFree(iconSheet);
     C2D_SpriteSheetFree(trailSheet);
     C2D_SpriteSheetFree(particleSheet);
+#ifdef __PSP__
+    C2D_SpriteSheetFree(boostSheet);
+#endif
     C2D_SpriteSheetFree(ui_sheet);
     C2D_SpriteSheetFree(ui_2_sheet);
     C2D_SpriteSheetFree(groundSheet);
