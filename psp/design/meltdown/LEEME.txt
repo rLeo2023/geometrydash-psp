@@ -1,0 +1,76 @@
+Textura del boton "Meltdown" (menu creador)
+===========================================
+
+Donde va
+--------
+Reemplaza el boton Search de la fila, en psp/menus/creator_menu_psp.txt:
+
+  button x=287 y=128 id=25 sheet=1 scale=0.72 action="search"
+
+Es el sprite 25 de gfx/ui/ui_2/ui_2.t3x, o sea GJ_searchbtn_gray.png.
+Se dibuja a 105x105 y se escala 0.72 (75,6 px en la pantalla del 3DS; en el
+PSP, en el menu de una pantalla, x1.2 = unos 91 px).
+
+El archivo que hay que entregar
+-------------------------------
+  psp/gfx/ui/ui_2/GJ_searchbtn_gray.png     (105x105, RGBA)
+
+Esa carpeta es un override: mkatlas.py la usa en lugar de gfx/ui/ui_2/, asi
+el arte de 3DS del repo no se toca. Si preferis que lo agregue como sprite
+nuevo con otro numero, decime: es un PNG mas al final del .t3s.
+
+Medidas exactas del dibujo actual
+---------------------------------
+  - Cuadrado del boton: 93x93, en (6,6) de los 105.
+  - Sombra: se desvanece hasta (104,104) (1 px arriba/izquierda, 6 abajo/derecha).
+  - Radio de las esquinas: ~14 px.
+  - Degradado gris: arriba mas claro, abajo mas oscuro.
+  - Texto: "SEARCH" ocupa el tercio de abajo, ~14 px de alto.
+
+Para disenar
+------------
+  boton_105_actual.png   el boton actual, tamano real (105x105)
+  boton_210_actual.png   el mismo, 2x (210x210) para dibujar comodo
+  boton_210_guia.png     el 2x con las guias encima
+  boton_210_lienzo.png   lienzo transparente con las guias
+
+Guias del 210 (2x):
+  - Magenta: el cuadrado del boton (186x186 en 12,12). Mantene el fondo
+    (degradado + esquinas) dentro de esto, asi los cuatro botones de la fila
+    quedan iguales.
+  - Verde: el area segura del dibujo (140x140 en 35,35). El icono y el texto
+    van aca adentro.
+  - Cian: el centro y el eje.
+
+Si dibujas en 210, dejame el PNG asi y lo bajo a 105 con Lanczos (a 75 px de
+dibujo final no se nota), o avisame y pongo scale=0.36 en el layout.
+
+El dibujo
+---------
+El de Search es: lupa arriba + "SEARCH" abajo. Para Meltdown, con el mismo
+esquema, algo que se lea a 75 px de dibujo final:
+  - arriba: el icono (llama, o el cubo con llamas), dentro de 70x70.
+  - abajo: "MELTDOWN" no entra legible: 8 letras a la altura de "SEARCH"
+    pedirian ~104 px de ancho y el boton tiene 93. O va a ~11 px de alto, o
+    en dos lineas, o mas corto ("MELT").
+  Sugerencia: llama grande centrada, sin texto.
+
+Iconos de Meltdown (los del cubo que se elige)
+==============================================
+Tres PNG por icono, RGBA, todos centrados:
+  player_XX_001.png        30x30     el cuerpo del cubo
+  player_XX_2_001.png      variable   el detalle (ojos, boca), se dibuja
+                                      encima con el offset de source/icons.c
+  player_XX_glow_001.png   32x32     el halo de color, va detras
+
+Mira los existentes en gfx/icons/ (player_01_001.png, player_01_2_001.png,
+player_01_glow_001.png) para el encuadre. Pasame los tres y yo agrego la
+entrada en source/icons.c con el offset del detalle; decime tambien en que
+pagina va (ICONS_PER_PAGE 21) y si es de cubos o de otra forma.
+
+Logros
+======
+Viables y sin servidor: son locales, se guardan en el save y se muestran en
+una pantalla propia (ya estan GJ_achBtn_001.png, GJ_achImage_001.png y
+achievementGlow_001.png en gfx/ui/ui.t3s). GD 2.0 no tenia logros (son de
+2.1), asi que seria un agregado nuestro, no una copia.
