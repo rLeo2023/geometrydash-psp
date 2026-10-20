@@ -57,6 +57,8 @@ void psp_log_memory( const char *when );
 void PSP_DrawRect2D( float x0, float y0, float x1, float y1, u32 color );
 bool PSP_FullScreenRect( float *x, float *y, float *w, float *h );
 bool PSP_ScreenToPsp( int screen, float x, float y, float *px, float *py );
+// the part of a 3DS screen the PSP screen shows, in that screen's coordinates
+bool PSP_ScreenRect( int screen, float *x, float *y, float *w, float *h );
 // shows the last frame if it is still waiting for the next one to begin
 // (before anything slow, like loading: else it shows only after that)
 void PSP_PresentPending( void );

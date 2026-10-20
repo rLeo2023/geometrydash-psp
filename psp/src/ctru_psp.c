@@ -641,6 +641,32 @@ static bool PSP_Navigate( int dx, int dy )
 	return found;
 }
 
+// the cursor lives in the 3DS screen's coordinates, but it is the PSP screen
+// the player sees: in the views that fill it with the top screen the ends of
+// it are cut, and the cursor used to keep going past the bottom edge
+static void psp_clamp_cursor( void )
+{
+	float x0, y0, w, h;
+	int screen = psp_view == PSP_VIEW_MERGED ? GFX_TOP : GFX_BOTTOM;
+
+	if( PSP_ScreenRect( screen, &x0, &y0, &w, &h ))
+	{
+		const float m = 6.0f; // the cross's half, so it stays whole
+		if( cursor_x < x0 + m ) cursor_x = x0 + m;
+		if( cursor_y < y0 + m ) cursor_y = y0 + m;
+		if( cursor_x > x0 + w - m ) cursor_x = x0 + w - m;
+		if( cursor_y > y0 + h - m ) cursor_y = y0 + h - m;
+	}
+	else
+	{
+		float cursor_w = psp_view == PSP_VIEW_MERGED ? GSP_SCREEN_HEIGHT_TOP : TOUCH_W;
+		if( cursor_x < 0 ) cursor_x = 0;
+		if( cursor_y < 0 ) cursor_y = 0;
+		if( cursor_x > cursor_w - 1 ) cursor_x = cursor_w - 1;
+		if( cursor_y > TOUCH_H - 1 ) cursor_y = TOUCH_H - 1;
+	}
+}
+
 void hidScanInput( void )
 {
 	SceCtrlData pad;
@@ -651,7 +677,6 @@ void hidScanInput( void )
 	u32 tentry[2] = { 0 };
 	static int last_state = -1;
 	static bool last_merged, last_paused, last_complete;
-	float cursor_w;
 
 	sceCtrlPeekBufferPositive( &pad, 1 );
 
@@ -708,13 +733,9 @@ void hidScanInput( void )
 	{
 		// the cursor, faster the further the stick goes; merged, it moves
 		// over the top screen and touches the touch screen laid on it
-		cursor_w = psp_view == PSP_VIEW_MERGED ? GSP_SCREEN_HEIGHT_TOP : TOUCH_W;
 		cursor_x += ax * fabsf( ax ) * 6.0f;
 		cursor_y += ay * fabsf( ay ) * 6.0f;
-		if( cursor_x < 0 ) cursor_x = 0;
-		if( cursor_y < 0 ) cursor_y = 0;
-		if( cursor_x > cursor_w - 1 ) cursor_x = cursor_w - 1;
-		if( cursor_y > TOUCH_H - 1 ) cursor_y = TOUCH_H - 1;
+		psp_clamp_cursor();
 		if( ax || ay )
 			cursor_used = true;
 
@@ -802,6 +823,9 @@ void hidScanInput( void )
 				}
 			}
 		}
+
+		// the d-pad may have jumped to a button near an edge
+		psp_clamp_cursor();
 
 		if( pad.Buttons & PSP_CTRL_CROSS )
 		{

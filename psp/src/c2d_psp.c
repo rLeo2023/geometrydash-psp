@@ -1453,6 +1453,23 @@ bool PSP_ScreenToPsp( int screen, float x, float y, float *px, float *py )
 	return true;
 }
 
+// what of a 3DS screen the PSP screen shows, in that screen's own coordinates:
+// the top one is taller than the PSP screen when it fills it, and its ends
+// are cut (ctru_psp.c keeps the touch cursor inside this)
+bool PSP_ScreenRect( int screen, float *x, float *y, float *w, float *h )
+{
+	C3D_RenderTarget t = { screen, 0, screen == GFX_TOP ? 400 : 320, 240, 0, false };
+	Placement p = PSP_Place( &t );
+
+	if( !p.visible )
+		return false;
+	*x = -p.ox / p.sx;
+	*y = -p.oy / p.sy;
+	*w = PSP_SCR_W / p.sx;
+	*h = PSP_SCR_H / p.sy;
+	return true;
+}
+
 static int PSP_BlendFactor( GPU_BLENDFACTOR f, bool src, unsigned *fix )
 {
 	switch( f )
