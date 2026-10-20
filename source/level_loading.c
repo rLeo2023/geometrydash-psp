@@ -972,10 +972,6 @@ bool obj_has_detail(const GameObject *obj) {
     return false;
 }
 
-bool is_valid_object(int id) {
-    return id >= 1 && id < GAME_OBJECT_COUNT;
-}
-
 #ifdef __PSP__
 // GD 2.0 teleport portals: the level saves only the way in (747) and how far
 // above it the way out is (54); the 749 is made at load, as GD (and wiidash)

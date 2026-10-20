@@ -137,7 +137,11 @@ Section *get_or_create_section(int x, int y);
 bool obj_has_main(const GameObject *obj);
 bool obj_has_detail(const GameObject *obj);
 
-bool is_valid_object(int id);
+// called for every object on screen, every frame, and by the collisions at
+// 240 Hz: a call across files cost more than the two compares it does
+static inline bool is_valid_object(int id) {
+    return id >= 1 && id < GAME_OBJECT_COUNT;
+}
 
 #ifdef __PSP__
 // a teleport portal's (747) way out, the 749 made for it at load (-1: none)

@@ -416,6 +416,47 @@ int compare_triggers(const void *a, const void *b) {
 int triggers_buffer[TRIGGER_BUFFER_SIZE];
 int trigger_count;
 
+// run_trigger() only does something for these: the touch-triggered ones, the
+// 2.0 triggers (trig_of), the 1.9 fades and the trail switches. Everything
+// else (blocks, spikes, decoration) was buffered, sorted and dispatched every
+// frame for nothing: in a dense level that is most of the level, every frame
+static inline bool is_trigger_object(int obj) {
+    if (objects.touch_triggered[obj]) return true;
+#ifdef __PSP__
+    if (trig2_is_trigger(obj)) return true;
+#endif
+    switch (objects.id[obj]) {
+        case TRIGGER_FADE_NONE:
+        case TRIGGER_FADE_UP:
+        case TRIGGER_FADE_DOWN:
+        case TRIGGER_FADE_RIGHT:
+        case TRIGGER_FADE_LEFT:
+        case TRIGGER_FADE_SCALE_IN:
+        case TRIGGER_FADE_SCALE_OUT:
+        case TRIGGER_FADE_INWARDS:
+        case TRIGGER_FADE_OUTWARDS:
+        case TRIGGER_FADE_LEFT_SEMICIRCLE:
+        case TRIGGER_FADE_RIGHT_SEMICIRCLE:
+        case ENABLE_TRAIL:
+        case DISABLE_TRAIL:
+        // the color triggers (the 2.0 build also marks them with trig_of)
+        case BG_TRIGGER:
+        case GROUND_TRIGGER:
+        case LINE_TRIGGER:
+        case V2_0_LINE_TRIGGER:
+        case OBJ_TRIGGER:
+        case OBJ_2_TRIGGER:
+        case COL2_TRIGGER:
+        case COL3_TRIGGER:
+        case COL4_TRIGGER:
+        case THREEDL_TRIGGER:
+        case COL_TRIGGER:
+        case 900:
+            return true;
+    }
+    return false;
+}
+
 void handle_triggers() {
     trigger_count = 0;
     int cam_sx = (int)((state.player.x) / SECTION_SIZE);
@@ -429,6 +470,9 @@ void handle_triggers() {
             Section *sec = get_section(sec_x, sec_y);
             for (int i = 0; i < sec->object_count; i++) {
                 int obj = sec->objects[i];
+
+                // the cheap test first: most of the level is not a trigger
+                if (!is_trigger_object(obj)) continue;
 
 #ifdef __PSP__
                 // a group turned off has its triggers off too; some run

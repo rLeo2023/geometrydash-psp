@@ -472,6 +472,13 @@ bool trig2_color_info(int obj, float *opacity, int *copied, float *h, float *s, 
     return true;
 }
 
+// has_params covers the color triggers too, which run_trigger handles before
+// it ever gets here: their trig is made at load either way
+bool trig2_is_trigger(int obj) {
+    if (!trig_of || obj < 0 || obj >= nobjs) return false;
+    return trig_of[obj] >= 0 || has_params(objects.id[obj]);
+}
+
 bool trig2_spawn_only(int obj) {
     return trig_of && trig_of[obj] >= 0 && trigs[trig_of[obj]].spawn_only;
 }

@@ -686,9 +686,15 @@ void spawn_object_at(
 
     float rad = C3D_AngleFromDegrees(adjust_angle(deg, 0, state.mirror_mult < 0));
 #ifdef __PSP__
-    // every object on screen, every frame: one VFPU instruction
+    // every object on screen, every frame: one VFPU instruction, and most
+    // blocks are not turned at all
     float cos_r, sin_r;
-    psp_sincosf(rad, &sin_r, &cos_r);
+    if (rad == 0.f) {
+        cos_r = 1.f;
+        sin_r = 0.f;
+    } else {
+        psp_sincosf(rad, &sin_r, &cos_r);
+    }
 #else
     float cos_r = cosf(rad);
     float sin_r = sinf(rad);
