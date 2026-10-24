@@ -114,21 +114,15 @@ void pause_game() {
     game_paused = true;
     if (song_loaded || state.practice_mode) pause_playback_mp3();
     if (!state.custom_level){
-        ui_run_func_on_tag(&default_screen_top, "coin_1", ui_enable_element);
-        ui_run_func_on_tag(&default_screen_top, "coin_2", ui_enable_element);
-        ui_run_func_on_tag(&default_screen_top, "coin_3", ui_enable_element);
+        const char *top_coins[] = { "coin_1", "coin_2", "coin_3" };
+        ui_run_func_on_tags(&default_screen_top, top_coins, 3, ui_enable_element);
     }
     // the HUD's coins make way for the pause menu (user coins too)
-    ui_run_func_on_tag(&default_screen, "coin_1", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "coin_2", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "coin_3", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "coin_1_full", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "coin_2_full", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "coin_3_full", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "coin_circle", ui_disable_element);
-    ui_run_func_on_tag(&default_screen_top, "pause_menu", ui_enable_element);
-    ui_run_func_on_tag(&default_screen, "paused", ui_enable_element);
-    ui_run_func_on_tag(&default_screen, "not_paused", ui_disable_element);
+    const char *disable_tags[] = { "coin_1", "coin_2", "coin_3", "coin_1_full", "coin_2_full", "coin_3_full", "coin_circle", "not_paused" };
+    ui_run_func_on_tags(&default_screen, disable_tags, 8, ui_disable_element);
+    const char *enable_tags[] = { "pause_menu", "paused" };
+    ui_run_func_on_tags(&default_screen_top, enable_tags, 2, ui_enable_element);
+    ui_run_func_on_tags(&default_screen, enable_tags, 2, ui_enable_element);
     in_settings = false;
 }
 
@@ -141,23 +135,23 @@ void unpause_game() {
         unpause_playback_mp3();
     }
     if (!state.custom_level){
-        ui_run_func_on_tag(&default_screen_top, "coin_1", ui_disable_element);
-        ui_run_func_on_tag(&default_screen_top, "coin_2", ui_disable_element);
-        ui_run_func_on_tag(&default_screen_top, "coin_3", ui_disable_element);
-        ui_run_func_on_tag(&default_screen, "coin_1", ui_enable_element);
-        ui_run_func_on_tag(&default_screen, "coin_2", ui_enable_element);
-        ui_run_func_on_tag(&default_screen, "coin_3", ui_enable_element);
+        const char *top_coins[] = { "coin_1", "coin_2", "coin_3" };
+        ui_run_func_on_tags(&default_screen_top, top_coins, 3, ui_disable_element);
+        const char *main_coins[] = { "coin_1", "coin_2", "coin_3", "coin_circle" };
+        ui_run_func_on_tags(&default_screen, main_coins, 4, ui_enable_element);
         for(int i = 0; i < 3; i++){
             reset_coin((state.custom_level ? &level_data : &main_level_data[curr_level_id]), i);
         }
-        ui_run_func_on_tag(&default_screen, "coin_circle", ui_enable_element);
     }
-    ui_run_func_on_tag(&default_screen_top, "pause_menu", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "paused", ui_disable_element);
-    ui_run_func_on_tag(&default_screen, "not_paused", ui_enable_element);
+    const char *disable_tags[] = { "pause_menu", "paused" };
+    ui_run_func_on_tags(&default_screen_top, disable_tags, 2, ui_disable_element);
+    ui_run_func_on_tags(&default_screen, disable_tags, 2, ui_disable_element);
+    const char *enable_tags[] = { "not_paused" };
+    ui_run_func_on_tags(&default_screen, enable_tags, 1, ui_enable_element);
     
     if (!state.practice_mode) {
-        ui_run_func_on_tag(&default_screen, "practice_buttons", ui_disable_element);
+        const char *practice_tags[] = { "practice_buttons" };
+        ui_run_func_on_tags(&default_screen, practice_tags, 1, ui_disable_element);
     }
     in_settings = false;
 }
@@ -292,12 +286,12 @@ void gameplay_screen_init() {
                 ui_image_set_image(slots[i], 417, 0);
                 ui_element_set_scale((UIElement *)slots[i], 0.325f);
                 ui_image_set_tint(slots[i], unrated ? USER_COIN_UNRATED_EMPTY_TINT
-                                                    : C2D_Color32(165, 165, 165, 255));
+                                                    : state.mappack_level ? C2D_Color32(130, 130, 130, 255) : C2D_Color32(165, 165, 165, 255));
             }
             if (coins_full[i]) {
                 ui_image_set_image(coins_full[i], 417, 0);
                 ui_element_set_scale((UIElement *)coins_full[i], 0.325f);
-                if (unrated) ui_image_set_tint(coins_full[i], USER_COIN_UNRATED_TINT);
+                if (unrated) ui_image_set_tint(coins_full[i], USER_COIN_UNRATED_TINT);                else if (state.mappack_level) ui_image_set_tint(coins_full[i], C2D_Color32(192, 192, 192, 255));
             }
         }
     }
@@ -373,7 +367,7 @@ int gameplay_screen_bot_loop() {
                     C2D_Color32(USER_COIN_UNRATED_R, USER_COIN_UNRATED_G, USER_COIN_UNRATED_B,
                                 (u8)(opacity * 255.f)));
             else
-                ui_image_set_tint(coins_full[i], C2D_Color32f(1, 1, 1, opacity));
+                if (state.mappack_level) ui_image_set_tint(coins_full[i], C2D_Color32(192, 192, 192, (u8)(opacity * 255.f))); else ui_image_set_tint(coins_full[i], C2D_Color32f(1, 1, 1, opacity));
 
 #ifdef __PSP__
             // The touch screen's coin pop: laid over the level on the PSP, it

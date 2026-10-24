@@ -202,6 +202,10 @@ static void run_rewards_animation(float delta){
     }
 
     LevelData *level_data_sel = (state.custom_level ? &level_data : &main_level_data[curr_level_id]);
+    psp_log("lc_anim: current=%d,%d,%d saved=%d,%d,%d custom=%d phase=%d\n",
+        state.current_data.coin1, state.current_data.coin2, state.current_data.coin3,
+        level_data_sel->coin1, level_data_sel->coin2, level_data_sel->coin3,
+        state.custom_level, rewardAnimPhase);
     UIImage *rewardCenter = NULL;
 
     float scale_value = easeValue(BOUNCE_OUT, 3.f, 1.f, rewardAnimTime, 0.35f, 1.f);
@@ -250,6 +254,9 @@ static void run_rewards_animation(float delta){
             ui_image_set_tint(star, C2D_Color32f(1, 1, 1, opacity_value));
             star_text->base.opacity = opacity_value;
         } else {
+            // no star to show: the animation is over (left at phase 3, it
+            // would ask for the star back every frame)
+            rewardAnimPhase = 4;
             return;
         }
     }
@@ -290,15 +297,29 @@ static void run_end_animation(float delta) {
 
 #define COMPLETION_TEXT_MAX_WIDTH 250.f
 
+void level_complete_preload() {
+    // load the two screens ahead of time so the first completion doesn't
+    // pay the ~35 ms parse (the previous stutter). Safe to call repeatedly.
+    if (screen_top.elements == NULL) {
+        ui_load_screen(&screen_top, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_complete_top.txt");
+    }
+    if (screen.elements == NULL) {
+        ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_complete.txt");
+    }
+}
+
 void level_complete_init() {
     init = true;
     in_level_complete = true;
     
-    ui_unload_screen(&screen);
-    ui_unload_screen(&screen_top);
-    
-    ui_load_screen(&screen_top, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_complete_top.txt");
-    ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_complete.txt");
+    // cache: load the two screens only once; reusing them avoids a ~33 ms
+    // parse on every level completion (the previous stutter).
+    if (screen_top.elements == NULL) {
+        ui_load_screen(&screen_top, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_complete_top.txt");
+    }
+    if (screen.elements == NULL) {
+        ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_complete.txt");
+    }
 
     state.current_data.time_end = svcGetSystemTick() / (CPU_TICKS_PER_MSEC * 1000);
 
@@ -370,10 +391,19 @@ void level_complete_init() {
 
     showStars = stars > 0 && level_data_sel->normal_progress < 100;
 
-    if(state.custom_level == true || state.practice_mode || cheated) {
+    // a custom level shows the coin animation when at least one coin was
+    // newly collected this run; otherwise (replay, or no coins) the funny
+    // text is shown instead, so the two never overlap
+    bool custom_has_new_coin = state.custom_level &&
+        ((state.current_data.coin1 && !level_data_sel->coin1) ||
+         (state.current_data.coin2 && !level_data_sel->coin2) ||
+         (state.current_data.coin3 && !level_data_sel->coin3));
+
+    if ((state.custom_level && !custom_has_new_coin) || state.practice_mode || cheated) {
         ui_run_func_on_tag(&screen_top, "coin1", ui_disable_element);
         ui_run_func_on_tag(&screen_top, "coin2", ui_disable_element);
         ui_run_func_on_tag(&screen_top, "coin3", ui_disable_element);
+        ui_enable_element((UIElement *) completion_text);
     
         int start_index = 0;
 
@@ -454,6 +484,8 @@ void level_complete_init() {
 
                 if (level_has_unverified_coins())
                     ui_image_set_tint(coin, USER_COIN_UNRATED_TINT);
+                else if (state.mappack_level)
+                    ui_image_set_tint(coin, C2D_Color32(192, 192, 192, 255));
 
                 ui_element_set_scale((UIElement *) coin, 0.88f);
             }
@@ -513,11 +545,7 @@ int level_complete_loop(float delta) {
 
 void level_complete_destroy() {
     init = false;
-#ifdef __PSP__
-    // its PSP layout keeps the one screen view on while loaded
-    ui_unload_screen(&screen);
-    ui_unload_screen(&screen_top);
-#endif
+    // keep the cached screens in memory for the next completion
 }
 
 void draw_level_complete() {
