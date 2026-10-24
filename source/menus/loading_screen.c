@@ -41,7 +41,7 @@ char *splash_texts[] = {
     "Free and Open Source!",
     "2.0 Coming never!",
 #ifdef __PSP__
-    "Wiidash walked so GDPSP could run!",
+    "GD3DS walked so GDPSP could run!",
 #else
     "Wiidash walked so GD3DS could run!",
 #endif

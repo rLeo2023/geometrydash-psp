@@ -6,6 +6,10 @@
 
 #include <stdint.h>
 #include "level/main_levels.h"
+#ifdef __PSP__
+#include "menus/level_select.h"
+#include "../psp/src/psp_port.h"
+#endif
 
 #include <stdio.h>
 #include <dirent.h>
@@ -128,6 +132,24 @@ void save_level_progress() {
     config_save(&curr_level_config);
 }
 
+// A level's save, read into out and left alone: the level being played keeps
+// its own (the selector's Extras cards show each level's progress)
+void peek_level_progress(const char *filename, LevelData *out) {
+    char tmp[512];
+    Config config = { 0 };
+
+    mkdir(DATA_FOLDER, 0777);
+
+    snprintf(tmp, sizeof(tmp), "%s%016llX.d", DATA_FOLDER, fnv1a64(filename));
+
+    config_load(&config, tmp);
+
+    init_default(&config);
+    init_values(&config, out);
+
+    config_free(&config);
+}
+
 void free_level_progress() {
     config_free(&curr_level_config);
 }
@@ -144,6 +166,23 @@ int is_main_level(const char *filename) {
     }
     return 0;
 }
+
+#ifdef __PSP__
+// the Extras level a save file belongs to, or -1 (they are not the user's)
+static int extras_level_of_save(const char *filename) {
+    int count = extras_levels_count();
+    for (int i = 0; i < count; i++) {
+        char key[512];
+        char tmp[17];
+
+        extras_level_save_key(i, key, sizeof(key));
+        snprintf(tmp, sizeof(tmp), "%016llX", fnv1a64(key));
+
+        if (strncmp(filename, tmp, 16) == 0) return i;
+    }
+    return -1;
+}
+#endif
 
 void calculate_stats() {
     total_stars = 0;
@@ -199,16 +238,30 @@ void calculate_stats() {
 
             if (data->normal_progress == 100) {
                 completed_external_levels++;
-                total_stars += data->stars;
 
-                // the custom levels' coins are the user coins here
-                total_user_coins += data->coin1;
-                total_user_coins += data->coin2;
-                total_user_coins += data->coin3;
+#ifdef __PSP__
+                // the Extras levels are GD's own: gold coins, and the stars
+                // from their definition (a save may predate them)
+                int extras = extras_level_of_save(entry->d_name);
+                if (extras >= 0) {
+                    total_stars += extras_levels_stars(extras);
+                    total_coins += data->coin1;
+                    total_coins += data->coin2;
+                    total_coins += data->coin3;
+                } else
+#endif
+                {
+                    total_stars += data->stars;
 
-                // Check for demon
-                if (data->stars == 10) {
-                    total_demons++;
+                    // the custom levels' coins are the user coins here
+                    total_user_coins += data->coin1;
+                    total_user_coins += data->coin2;
+                    total_user_coins += data->coin3;
+
+                    // Check for demon
+                    if (data->stars == 10) {
+                        total_demons++;
+                    }
                 }
             }
 

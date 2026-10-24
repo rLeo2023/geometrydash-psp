@@ -11,6 +11,9 @@ typedef struct {
 } FileOrFolder;
 
 FileOrFolder *load_folder(char *dir, int *count);
+// which folder load_folder reads: the custom levels by default, the map packs
+// while the Extras screen has them open
+void set_folder_base(const char *base);
 void go_back_directory(char *path);
 char *strip_filename(char *path);
 void strip_extension(char *path);

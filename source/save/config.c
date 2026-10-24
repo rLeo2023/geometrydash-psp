@@ -110,6 +110,12 @@ void cfg_init() {
     mkdir(CONFIG_ROOT, 0777);
     mkdir(USER_LEVELS_DIR, 0777);
     mkdir(USER_SONGS_DIR, 0777);
+#ifdef __PSP__
+    // GD's own extra levels (Extras): the folder is there to drop them in
+    mkdir(EXTRA_LEVELS_DIR, 0777);
+    // the map packs' own folder (a separate download)
+    mkdir(MAPPACKS_DIR, 0777);
+#endif
 
     config_load(&cfg, CONFIG_FILE);
 

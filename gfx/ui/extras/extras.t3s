@@ -1,0 +1,4 @@
+--atlas --border transparent -f rgba8888 -z auto
+extras_logo.png
+extras_meltdown.png
+extras_mappacks.png

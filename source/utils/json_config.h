@@ -26,6 +26,14 @@
 #define USER_SONGS_NAME "saved_songs"
 #define USER_SONGS_DIR CONFIG_ROOT USER_SONGS_NAME
 
+// GD's own extra levels (the Meltdown ones): only the Extras section lists them
+#define EXTRA_LEVELS_NAME "extra_levels"
+#define EXTRA_LEVELS_DIR CONFIG_ROOT EXTRA_LEVELS_NAME
+
+// the map packs: a download of their own, one folder per pack
+#define MAPPACKS_NAME "mappacks"
+#define MAPPACKS_DIR CONFIG_ROOT MAPPACKS_NAME
+
 typedef struct {
     struct json_object* root;
     char path[256];

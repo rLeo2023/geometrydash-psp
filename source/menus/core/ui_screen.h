@@ -87,6 +87,7 @@ extern C2D_SpriteSheet goldFont_sheet;
 extern C2D_SpriteSheet window_sheet;
 extern C2D_SpriteSheet bg_gradient_sheet;
 extern C2D_SpriteSheet bar_sheet;
+extern C2D_SpriteSheet extras_sheet;
 
 extern UIScreen default_screen;
 extern UIScreen default_screen_top;
@@ -113,6 +114,8 @@ void ui_screen_update(UIScreen* screen, UIInput* touch);
 void ui_screen_draw(UIScreen* screen);
 UIElement *ui_get_element_by_tag(UIScreen *screen, const char *tag);
 void ui_run_func_on_tag(UIScreen *screen, const char *tag, void (*func)(UIElement *e));
+// batched version: one tree walk for several tags (avoids O(tags * elements))
+void ui_run_func_on_tags(UIScreen *screen, const char **tags, int ntags, void (*func)(UIElement *e));
 
 void ui_set_pos_on_tag(UIScreen *screen, float x, float y, const char *tag);
 

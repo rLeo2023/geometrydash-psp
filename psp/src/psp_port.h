@@ -51,6 +51,8 @@ extern int psp_slider_nudge;
 
 // a log file next to the EBOOT (psp_log.txt) and the PSPLINK console
 void psp_log( const char *fmt, ... );
+extern int psp_main_thread;
+extern int psp_debug_logging;
 void psp_log_memory( const char *when );
 
 // c2d_psp.c
@@ -62,6 +64,26 @@ bool PSP_ScreenRect( int screen, float *x, float *y, float *w, float *h );
 // shows the last frame if it is still waiting for the next one to begin
 // (before anything slow, like loading: else it shows only after that)
 void PSP_PresentPending( void );
+// the same, from the game's loop, before it reads the pad: C3D_FrameBegin
+// then draws the frame without waiting again
+void PSP_PresentFrame( void );
+// microseconds the last present spent waiting for the vblank (and before it,
+// for the GE to finish the frame before)
+extern u32 psp_frame_wait_us;
+// microseconds the last present spent waiting for the GE to finish the
+// frame before (the rest of the wait is the vblank)
+extern u32 psp_ge_sync_us;
+// how many vblanks this frame is paced to (1 = 60 fps, 2 = 30 fps): what a
+// frame is expected to take, for the log to tell a hitch from the 30 fps cap
+int PSP_FrameVblanks( void );
+// microseconds the wave trail took to update and to draw this frame
+extern u32 psp_wave_update_us;
+extern u32 psp_wave_draw_us;
+// draw calls, texture changes and blending changes the last frame asked the
+// GE for (in the 2 s line of the log)
+extern u32 psp_draw_calls;
+extern u32 psp_tex_changes;
+extern u32 psp_blend_changes;
 // the vblank count when the last frame went on screen (59.94 a second)
 u32 PSP_PresentVcount( void );
 // the game's last layer, over everything (the FPS counter): C3D_FrameEnd

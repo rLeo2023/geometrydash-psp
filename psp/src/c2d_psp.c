@@ -71,6 +71,26 @@ static Placement place;
 static u32 fade_color;
 static int tint_mode = C2D_TintMult;
 
+/*
+The view and the target's placement folded into one affine: the four vertices
+of a sprite went through both, one multiply and one add each (in software,
+there is no FPU on the PSP), and they only change when the view or the target
+does. Kept here, the vertices go straight to the screen
+*/
+static float comb_a, comb_b, comb_tx, comb_c, comb_d, comb_ty;
+static bool comb_dirty = true;
+
+static inline void PSP_CombUpdate( void )
+{
+	comb_a = view.a * place.sx;
+	comb_b = view.b * place.sx;
+	comb_tx = place.ox + view.tx * place.sx;
+	comb_c = view.c * place.sy;
+	comb_d = view.d * place.sy;
+	comb_ty = place.oy + view.ty * place.sy;
+	comb_dirty = false;
+}
+
 // the game's scissor, in the target's own coordinates
 static bool game_scissor;
 static int sc_x0, sc_y0, sc_x1, sc_y1;
@@ -198,6 +218,12 @@ static PspVertex defer_verts[DEFER_VERTS];
 static int defer_nverts;
 static bool deferring;
 
+// what the frame asked the GE for, in the log: a draw call is a flush of the
+// batch, a texture change reloads the page (and its palette)
+u32 psp_draw_calls;
+u32 psp_tex_changes;
+u32 psp_blend_changes;
+
 // the blending the game asked for last, to put back after a deferred scene
 static struct { int op, s, d; unsigned sf, df; } cur_blend = { GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0 };
 
@@ -231,6 +257,7 @@ static void GE_Blend( int o, int s, int d, unsigned sf, unsigned df )
 
 	if( !deferring )
 	{
+		psp_blend_changes++;
 		sceGuBlendFunc( o, s, d, sf, df );
 		return;
 	}
@@ -281,6 +308,7 @@ static void GE_DrawEnd( int prim, PspVertex *v, int n )
 		return;
 	if( !deferring )
 	{
+		psp_draw_calls++;
 		sceGuDrawArray( prim, PSP_VTYPE, n, 0, v );
 		return;
 	}
@@ -442,6 +470,7 @@ static void PSP_SetTexture( C3D_Tex *tex )
 		return;
 	ge_tex = tex;
 	ge_tex_valid = true;
+	psp_tex_changes++;
 
 	if( !tex )
 	{
@@ -824,14 +853,18 @@ void C2Di_AppendVtx( float x, float y, float z, float u, float v, float ptx, flo
 {
 	C2Di_Context *ctx = C2Di_GetContext();
 	C2Di_Vertex *vtx = &ctx->vtxBuf[ctx->vtxBufPos++];
-	float vx = view.a * x + view.b * y + view.tx;
-	float vy = view.c * x + view.d * y + view.ty;
+	float vx, vy;
+
+	if( comb_dirty )
+		PSP_CombUpdate();
+	vx = comb_a * x + comb_b * y + comb_tx;
+	vy = comb_c * x + comb_d * y + comb_ty;
 
 	(void)z;
 	(void)ptx;
 
-	vtx->pos[0] = place.ox + vx * place.sx;
-	vtx->pos[1] = place.oy + vy * place.sy;
+	vtx->pos[0] = vx;
+	vtx->pos[1] = vy;
 	vtx->pos[2] = 0;
 
 	if( PSP_ModeTextured( ctx->flags ) && ctx->curTex )
@@ -860,12 +893,57 @@ void C2Di_AppendVtx( float x, float y, float z, float u, float v, float ptx, flo
 	vtx->color = color;
 }
 
+/*
+The vertex of a sprite that came out axis aligned, on the screen already, with
+its texture coordinates in texels: what C2Di_CalcQuad + C2Di_AppendVtx work
+out per vertex is worked out once for the four here, which is most of a
+level's sprites (blocks, spikes, the deco: no rotation, no turned view)
+*/
+static inline void C2Di_PutVtx( float px, float py, float tu, float tv, float pty, u32 color )
+{
+	C2Di_Context *ctx = C2Di_GetContext();
+	C2Di_Vertex *vtx = &ctx->vtxBuf[ctx->vtxBufPos++];
+
+	vtx->pos[0] = px;
+	vtx->pos[1] = py;
+	vtx->pos[2] = 0;
+
+	if( PSP_ModeTextured( ctx->flags ) && ctx->curTex )
+	{
+		vtx->texcoord[0] = tu;
+		vtx->texcoord[1] = tv;
+
+		if( pty < 1.0f )
+		{
+			u32 r = color & 0xff, g = ( color >> 8 ) & 0xff, b = ( color >> 16 ) & 0xff;
+			float k = pty < 0.0f ? 0.0f : pty;
+			r = (u32)( 255.0f - ( 255.0f - r ) * k );
+			g = (u32)( 255.0f - ( 255.0f - g ) * k );
+			b = (u32)( 255.0f - ( 255.0f - b ) * k );
+			color = ( color & 0xff000000 ) | r | ( g << 8 ) | ( b << 16 );
+		}
+	}
+	else
+	{
+		vtx->texcoord[0] = vtx->texcoord[1] = 0;
+	}
+
+	vtx->ptcoord[0] = 0;
+	vtx->ptcoord[1] = pty;
+	vtx->color = color;
+}
+
 // room for a primitive, flushing what is there if it doesn't fit
 static bool PSP_Reserve( unsigned idx, unsigned vtx )
 {
 	C2Di_Context *ctx = C2Di_GetContext();
 
 	if( !( ctx->flags & C2DiF_Active ))
+		return false;
+	// nothing of a screen that isn't shown is drawn (the level's touch screen
+	// half on the PSP, say): the flush would drop it anyway, so the whole
+	// sprite can be skipped here, before it costs anything
+	if( !place.visible )
 		return false;
 	if( !C2Di_CheckBufSpace( ctx, idx, vtx ))
 		C2Di_FlushVtxBuf();
@@ -954,6 +1032,7 @@ void C2D_SceneTarget( C3D_RenderTarget *target )
 
 	cur_target = target;
 	place = PSP_Place( target );
+	comb_dirty = true;
 	game_scissor = false;
 
 	if( in_frame )
@@ -976,6 +1055,7 @@ void PSP_OverlayBegin( C3D_RenderTarget *top, C3D_RenderTarget *bottom )
 	C2Di_FlushVtxBuf();
 	cur_target = psp_view == PSP_VIEW_BOTTOM ? bottom : top;
 	place = PSP_Place( cur_target );
+	comb_dirty = true;
 	game_scissor = false;
 	PSP_ApplyScissor();
 	C2Di_GetContext()->flags |= C2DiF_DirtyAny;
@@ -1034,6 +1114,7 @@ void C2D_ViewReset( void )
 	C2Di_FlushVtxBuf();
 	view.a = view.d = 1;
 	view.b = view.c = view.tx = view.ty = 0;
+	comb_dirty = true;
 }
 
 void C2D_ViewSave( C3D_Mtx *m )
@@ -1049,6 +1130,7 @@ void C2D_ViewRestore( const C3D_Mtx *m )
 {
 	view.a = m->r[0].x; view.b = m->r[0].y; view.tx = m->r[0].w;
 	view.c = m->r[1].x; view.d = m->r[1].y; view.ty = m->r[1].w;
+	comb_dirty = true;
 }
 
 // all of them apply on the right, as citro2d's: the new one acts first
@@ -1056,12 +1138,14 @@ void C2D_ViewTranslate( float x, float y )
 {
 	view.tx += view.a * x + view.b * y;
 	view.ty += view.c * x + view.d * y;
+	comb_dirty = true;
 }
 
 void C2D_ViewScale( float x, float y )
 {
 	view.a *= x; view.c *= x;
 	view.b *= y; view.d *= y;
+	comb_dirty = true;
 }
 
 void C2D_ViewRotate( float r )
@@ -1073,6 +1157,7 @@ void C2D_ViewRotate( float r )
 	view.b = -o.a * s + o.b * c;
 	view.c = o.c * c + o.d * s;
 	view.d = -o.c * s + o.d * c;
+	comb_dirty = true;
 }
 
 void C2D_ViewShear( float x, float y )
@@ -1083,6 +1168,7 @@ void C2D_ViewShear( float x, float y )
 	view.b = o.a * x + o.b;
 	view.c = o.c + o.d * y;
 	view.d = o.c * x + o.d;
+	comb_dirty = true;
 }
 
 /* ---- drawing ------------------------------------------------------- */
@@ -1125,10 +1211,31 @@ bool C2D_DrawImage( C2D_Image img, const C2D_DrawParams *params, const C2D_Image
 	}
 
 	C2Di_AppendQuad();
-	C2Di_AppendVtx( quad.topLeft[0],  quad.topLeft[1],  params->depth, tl[0], tl[1], 0, tint[0].blend, tint[0].color );
-	C2Di_AppendVtx( quad.topRight[0], quad.topRight[1], params->depth, tr[0], tr[1], 0, tint[1].blend, tint[1].color );
-	C2Di_AppendVtx( quad.botLeft[0],  quad.botLeft[1],  params->depth, bl[0], bl[1], 0, tint[2].blend, tint[2].color );
-	C2Di_AppendVtx( quad.botRight[0], quad.botRight[1], params->depth, br[0], br[1], 0, tint[3].blend, tint[3].color );
+
+	if( comb_dirty )
+		PSP_CombUpdate();
+	if( params->angle == 0.0f && comb_b == 0.0f && comb_c == 0.0f )
+	{
+		// axis aligned in both spaces: two x, two y
+		float x0 = comb_a * quad.topLeft[0] + comb_tx;
+		float x1 = comb_a * quad.topRight[0] + comb_tx;
+		float y0 = comb_d * quad.topLeft[1] + comb_ty;
+		float y1 = comb_d * quad.botLeft[1] + comb_ty;
+		float tw = ( PSP_ModeTextured( ctx->flags ) && ctx->curTex ) ? ctx->curTex->width : 1.0f;
+		float th = ( PSP_ModeTextured( ctx->flags ) && ctx->curTex ) ? ctx->curTex->height : 1.0f;
+
+		C2Di_PutVtx( x0, y0, tl[0] * tw, ( 1.0f - tl[1] ) * th, tint[0].blend, tint[0].color );
+		C2Di_PutVtx( x1, y0, tr[0] * tw, ( 1.0f - tr[1] ) * th, tint[1].blend, tint[1].color );
+		C2Di_PutVtx( x0, y1, bl[0] * tw, ( 1.0f - bl[1] ) * th, tint[2].blend, tint[2].color );
+		C2Di_PutVtx( x1, y1, br[0] * tw, ( 1.0f - br[1] ) * th, tint[3].blend, tint[3].color );
+	}
+	else
+	{
+		C2Di_AppendVtx( quad.topLeft[0],  quad.topLeft[1],  params->depth, tl[0], tl[1], 0, tint[0].blend, tint[0].color );
+		C2Di_AppendVtx( quad.topRight[0], quad.topRight[1], params->depth, tr[0], tr[1], 0, tint[1].blend, tint[1].color );
+		C2Di_AppendVtx( quad.botLeft[0],  quad.botLeft[1],  params->depth, bl[0], bl[1], 0, tint[2].blend, tint[2].color );
+		C2Di_AppendVtx( quad.botRight[0], quad.botRight[1], params->depth, br[0], br[1], 0, tint[3].blend, tint[3].color );
+	}
 	return true;
 }
 
@@ -1259,6 +1366,12 @@ for the other. The list is free again once the GE is done with it.
 static bool frame_pending;
 static SceUID render_thread;
 static u32 last_vcount;
+u32 psp_ge_sync_us;
+u32 psp_frame_wait_us;
+u32 psp_wave_update_us;
+u32 psp_wave_draw_us;
+// the game presented already this frame: C3D_FrameBegin() has nothing to show
+static bool presented_early;
 
 /*
 Vblanks per frame: 2 (30 fps) while a level is being played, unless the
@@ -1266,7 +1379,7 @@ Vblanks per frame: 2 (30 fps) while a level is being played, unless the
 and the pause and level complete windows don't (a fixed 1/60 per frame), so
 those stay at 60 or they would animate at half speed.
 */
-static int PSP_FrameVblanks( void )
+int PSP_FrameVblanks( void )
 {
 	if( settingsState.fps60 )
 		return 1;
@@ -1277,13 +1390,18 @@ static int PSP_FrameVblanks( void )
 
 void PSP_PresentPending( void )
 {
-	u32 target;
+	u32 target, t0;
 
 	// only the thread that draws (the music thread opens files too)
 	if( !frame_pending || sceKernelGetThreadId() != render_thread )
+	{
+		psp_frame_wait_us = 0;
 		return;
+	}
 	frame_pending = false;
+	t0 = sceKernelGetSystemTimeLow();
 	sceGuSync( 0, 0 );
+	psp_ge_sync_us = sceKernelGetSystemTimeLow() - t0;
 
 	// at least one vblank, more until the frame's time is up
 	target = last_vcount + PSP_FrameVblanks();
@@ -1292,6 +1410,19 @@ void PSP_PresentPending( void )
 	while(( s32 )( sceDisplayGetVcount() - target ) < 0 );
 	sceGuSwapBuffers();
 	last_vcount = sceDisplayGetVcount();
+	psp_frame_wait_us = sceKernelGetSystemTimeLow() - t0;
+}
+
+/*
+The game's loop presents here, at the top, and only then reads the pad and
+runs the frame: the picture goes up on the vblank with the input that arrived
+up to that same vblank, instead of one vblank older. C3D_FrameBegin() has
+nothing left to show after it.
+*/
+void PSP_PresentFrame( void )
+{
+	PSP_PresentPending();
+	presented_early = true;
 }
 
 u32 PSP_PresentVcount( void )
@@ -1303,11 +1434,20 @@ bool C3D_FrameBegin( u8 flags )
 {
 	(void)flags;
 
-	PSP_PresentPending();
+	if( presented_early )
+		presented_early = false;
+	else
+	{
+		psp_frame_wait_us = 0;
+		PSP_PresentPending();
+	}
 	PSP_ListStart();
 	in_frame = true;
 	ge_tex_valid = false;
 	ge_clut = NULL;
+	psp_draw_calls = 0;
+	psp_tex_changes = 0;
+	psp_blend_changes = 0;
 
 	// the PSP screen around the 3DS ones
 	PSP_Scissor( 0, 0, PSP_SCR_W, PSP_SCR_H );
@@ -1318,6 +1458,7 @@ bool C3D_FrameBegin( u8 flags )
 	defer_nops = defer_nverts = 0;
 	sceGuBlendFunc( cur_blend.op, cur_blend.s, cur_blend.d, cur_blend.sf, cur_blend.df );
 	place = PSP_Place( cur_target );
+	comb_dirty = true;
 	if( psp_view == PSP_VIEW_MERGED && cur_target && cur_target->screen == GFX_BOTTOM )
 		GE_BeginDeferred();
 	PSP_ApplyScissor();
@@ -1336,7 +1477,8 @@ void C3D_FrameEnd( u8 flags )
 	// the most the buffers have held, in the log when it grows (to size them)
 	{
 		static int peak_ops, peak_verts;
-		if( defer_nops > peak_ops + peak_ops / 8 || defer_nverts > peak_verts + peak_verts / 8 )
+		// throttled: only log when it grows by a chunk, not every 12 %
+		if( defer_nops > peak_ops + 64 || defer_nverts > peak_verts + 256 )
 		{
 			if( defer_nops > peak_ops ) peak_ops = defer_nops;
 			if( defer_nverts > peak_verts ) peak_verts = defer_nverts;
@@ -1361,6 +1503,7 @@ void C3D_FrameEnd( u8 flags )
 		// back to the game's screen for the next frame, without a scene change
 		cur_target = saved;
 		place = PSP_Place( saved );
+	comb_dirty = true;
 		C2Di_GetContext()->flags |= C2DiF_DirtyAny;
 	}
 
@@ -1369,7 +1512,8 @@ void C3D_FrameEnd( u8 flags )
 	{
 		static int peak_list;
 		int used = sceGuCheckList();
-		if( used > peak_list + peak_list / 8 )
+		// throttled: only log when it grows by 32 KB, not every 12 %
+		if( used > peak_list + 32 * 1024 )
 		{
 			peak_list = used;
 			psp_log( "peak: display list %d KB\n", used / 1024 );
@@ -1646,6 +1790,7 @@ C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 	C2D_SpriteSheet sheet;
 	char magic[4];
 	u32 i;
+	u32 t0 = sceKernelGetSystemTimeLow();
 
 	// the game asks for the 3DS name: romfs:/gfx/x.t3x -> romfs:/gfx/x.psheet
 	snprintf( path, sizeof( path ), "%s", filename );
@@ -1659,11 +1804,20 @@ C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 	}
 
 	sheet = calloc( 1, sizeof( *sheet ));
+	if( !sheet )
+	{
+		psp_log( "C2D_SpriteSheetLoad: %s: no room for the sheet\n", path );
+		fclose( f );
+		return NULL;
+	}
 	if( fread( magic, 1, 4, f ) != 4 || memcmp( magic, "PSH1", 4 )
 		|| fread( &sheet->num_images, 4, 1, f ) != 1 || fread( &sheet->num_pages, 4, 1, f ) != 1 )
 		goto fail;
 
+
 	sheet->pages = calloc( sheet->num_pages, sizeof( C3D_Tex ));
+	if( !sheet->pages )
+		goto fail;
 	for( i = 0; i < sheet->num_pages; i++ )
 	{
 		PsheetPage pg;
@@ -1694,20 +1848,24 @@ C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 			t->in_vram = 1;
 			if( fread((void *)((u32)t->data | 0x40000000 ), 1, size, f ) != (size_t)size )
 				goto fail;
-			continue;
 		}
-		t->data = memalign( 16, size );
-		if( !t->data )
+		else
 		{
-			psp_log( "C2D_SpriteSheetLoad: %s: out of memory (%d KB)\n", path, size / 1024 );
-			goto fail;
+			t->data = memalign( 16, size );
+			if( !t->data )
+			{
+				psp_log( "C2D_SpriteSheetLoad: %s: out of memory (%d KB)\n", path, size / 1024 );
+				goto fail;
+			}
+			if( fread( t->data, 1, size, f ) != (size_t)size )
+				goto fail;
 		}
-		if( fread( t->data, 1, size, f ) != (size_t)size )
-			goto fail;
 	}
 
 	sheet->subtex = calloc( sheet->num_images, sizeof( Tex3DS_SubTexture ));
 	sheet->page_of = calloc( sheet->num_images, sizeof( u16 ));
+	if( !sheet->subtex || !sheet->page_of )
+		goto fail;
 	for( i = 0; i < sheet->num_images; i++ )
 	{
 		PsheetImage im;
@@ -1732,7 +1890,8 @@ C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 	return sheet;
 
 fail:
-	psp_log( "C2D_SpriteSheetLoad: %s is broken\n", path );
+	psp_log( "C2D_SpriteSheetLoad: %s is broken, %u ms\n", path,
+		(unsigned)(( sceKernelGetSystemTimeLow() - t0 ) / 1000 ));
 	fclose( f );
 	C2D_SpriteSheetFree( sheet );
 	return NULL;

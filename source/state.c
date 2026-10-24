@@ -24,8 +24,10 @@
 GameState state;
 
 bool level_has_unverified_coins(void) {
-    // the port's custom levels are .gmd files: never rated by the servers
-    return state.custom_level;
+    // the port's custom levels are .gmd files: never rated by the servers.
+    // The Extras ones are GD's own, and they keep their gold coins and stars;
+    // the map packs are GD's own too (a download), so theirs are verified
+    return state.custom_level && !state.extras_level && !state.mappack_level;
 }
 
 unsigned int noclip_total_steps = 0;

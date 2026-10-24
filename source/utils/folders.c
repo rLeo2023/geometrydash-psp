@@ -11,6 +11,14 @@
 FileOrFolder sd_level_paths[MAX_SD_LEVELS];
 int sd_level_count = 0;
 
+// the folder the browser reads: the custom levels by default, the map packs
+// when the Extras screen opens them
+static const char *folder_base = USER_LEVELS_DIR;
+
+void set_folder_base(const char *base) {
+    folder_base = base ? base : USER_LEVELS_DIR;
+}
+
 char current_level_name[255];
 
 char current_directory[256];
@@ -34,9 +42,9 @@ FileOrFolder *load_folder(char *dir, int *count) {
     char directory[256];
 
     if (dir && strlen(dir) > 0) {
-        snprintf(directory, sizeof(directory), "%s/%s", USER_LEVELS_DIR, dir);
+        snprintf(directory, sizeof(directory), "%s/%s", folder_base, dir);
     } else {
-        strncpy(directory, USER_LEVELS_DIR, sizeof(directory));
+        strncpy(directory, folder_base, sizeof(directory));
     }
 
     strncpy(current_directory, directory, sizeof(current_directory));

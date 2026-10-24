@@ -41,6 +41,9 @@ extern int players_destroyed;
 
 void save_level_progress();
 void load_level_progress(char *filename);
+// reads a level's save without touching the level being played (the selector's
+// Extras cards)
+void peek_level_progress(const char *filename, LevelData *out);
 void free_level_progress();
 
 void load_main_level_progress();

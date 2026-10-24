@@ -1,0 +1,9 @@
+# PSP: the Extras screen's top half: the gradient, the corners and the logo
+bggradient tag="gradient_top"
+
+image x=200 y=46 id=0 sheet=10 scale=0.5
+
+image x=36 y=35 id=178 sy=-1.0
+image x=36 y=205 id=178
+image x=364 y=205 id=178 sx=-1.0
+image x=364 y=35 id=178 sx=-1.0 sy=-1.0

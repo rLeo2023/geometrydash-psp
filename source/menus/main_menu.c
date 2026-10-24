@@ -76,6 +76,7 @@ static float bg_scroll = 0;
 
 void action_open_level_select(UIElement* e) {
     curr_level_id = 0;
+    level_select_extras = false;
     new_state = STATE_LEVEL_SELECT;
     set_fade_status(FADE_STATUS_OUT);
 }
@@ -333,6 +334,8 @@ static void handle_players() {
 }
 
 void main_menu_loop() {
+#ifdef __PSP__
+#endif
     exit_flag = false;
     new_state = 0;
     static int menu_language = -1;
@@ -395,7 +398,7 @@ void main_menu_loop() {
     set_fade_status(FADE_STATUS_IN);
 
     if (!playing_menu_loop) {
-        play_mp3("romfs:/songs/menuLoop.mp3", true, 0);
+                play_mp3("romfs:/songs/menuLoop.mp3", true, 0);
         playing_menu_loop = true;
     }
 

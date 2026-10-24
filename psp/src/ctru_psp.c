@@ -18,6 +18,7 @@ Controls (the 3DS has a touch screen the PSP lacks):
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <3ds.h>
 #include <string.h>
 #include <malloc.h>
 #include <errno.h>
@@ -26,7 +27,6 @@ Controls (the 3DS has a touch screen the PSP lacks):
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include <3ds.h>
 #include <citro2d.h>
 #include "psp_port.h"
 #include "main.h" // game_state
@@ -43,10 +43,15 @@ Log
 
 ==============================================================================
 */
+int psp_main_thread = 0;
+int psp_debug_logging = 1;
 void psp_log( const char *fmt, ... )
 {
 	static FILE *f;
 	va_list args;
+
+	if( !psp_debug_logging )
+		return;
 
 	if( !f )
 	{
@@ -62,10 +67,6 @@ void psp_log( const char *fmt, ... )
 		vfprintf( f, fmt, args );
 		fflush( f );
 	}
-	va_end( args );
-
-	va_start( args, fmt );
-	vprintf( fmt, args );
 	va_end( args );
 }
 
@@ -84,14 +85,9 @@ void *__real_memalign( size_t align, size_t size );
 
 static void PSP_AllocFailed( const char *what, size_t size, void *caller )
 {
-	static int reported;
-	if( reported++ < 20 )
-	{
-		psp_log( "%s(%u) failed (from %p) at %u ms\n", what, (unsigned)size, caller,
-			(unsigned)( sceKernelGetSystemTimeWide() / 1000 ));
-		if( reported == 1 )
-			psp_log_memory( "at the first failure" );
-	}
+	// intentionally silent: psp_log is not thread-safe and may be called from
+	// the audio thread here. Failures are rare; the game will svcBreak on NULL.
+	(void)what; (void)size; (void)caller;
 }
 
 // big blocks go to the log too, with who asked
@@ -101,7 +97,7 @@ void *__wrap_malloc( size_t size )
 {
 	void *p = __real_malloc( size );
 	if( !p && size ) PSP_AllocFailed( "malloc", size, __builtin_return_address( 0 ));
-	else if( size >= PSP_BIG_ALLOC ) psp_log( "malloc(%u KB) from %p\n", (unsigned)( size >> 10 ), __builtin_return_address( 0 ));
+
 	return p;
 }
 
@@ -109,7 +105,7 @@ void *__wrap_calloc( size_t n, size_t size )
 {
 	void *p = __real_calloc( n, size );
 	if( !p && n && size ) PSP_AllocFailed( "calloc", n * size, __builtin_return_address( 0 ));
-	else if( n * size >= PSP_BIG_ALLOC ) psp_log( "calloc(%u KB) from %p\n", (unsigned)(( n * size ) >> 10 ), __builtin_return_address( 0 ));
+
 	return p;
 }
 
@@ -117,7 +113,7 @@ void *__wrap_realloc( void *old, size_t size )
 {
 	void *p = __real_realloc( old, size );
 	if( !p && size ) PSP_AllocFailed( "realloc", size, __builtin_return_address( 0 ));
-	else if( size >= PSP_BIG_ALLOC ) psp_log( "realloc(%u KB) from %p\n", (unsigned)( size >> 10 ), __builtin_return_address( 0 ));
+
 	return p;
 }
 
@@ -285,7 +281,13 @@ Result romfsInit( void )
 		sceKernelStartThread( th, 0, NULL );
 
 	PSP_InputInit();
-	psp_log( "gdpsp: started\n" );
+	// which build and which firmware, first line of the log: a report of "it
+	// doesn't start" is only worth something if we know what it ran
+	{
+		extern const char *psp_build_id; // psp/src/build_id.c, written per build
+		psp_log( "gdpsp: started, built %s, firmware %08X\n",
+			psp_build_id, (unsigned)sceKernelDevkitVersion());
+	}
 	PSP_MoveOldSaves(); // before the game reads its saves
 	return 0;
 }

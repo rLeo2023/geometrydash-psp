@@ -8,7 +8,8 @@ image x=36 y=205 id=178
 image x=364 y=205 id=178 sx=-1.0
 image x=364 y=35 id=178 sx=-1.0 sy=-1.0
 
-image x=200 y=26 id=10 sheet=1 scale=0.55
+image x=200 y=26 id=10 sheet=1 scale=0.55 tag="title"
+label x=200 y=26 font=0 scale=0.8 text="Map packs" align=CENTER tag="mappacks_title"
 
 window x=200 y=160 w=240 h=100 style=1 psphide=1
 

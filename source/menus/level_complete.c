@@ -233,7 +233,7 @@ static void run_rewards_animation(float delta){
                 C2D_Color32(USER_COIN_UNRATED_R, USER_COIN_UNRATED_G, USER_COIN_UNRATED_B,
                             (u8)(opacity_value * 255.f)));
         else
-            ui_image_set_tint(coin, C2D_Color32f(1, 1, 1, opacity_value));
+            if (level_has_unverified_coins()) ui_image_set_tint(coin, USER_COIN_UNRATED_TINT); else if (state.mappack_level) ui_image_set_tint(coin, C2D_Color32(192,192,192,(u8)(opacity_value*255.f))); else ui_image_set_tint(coin, C2D_Color32f(1, 1, 1, opacity_value));
     } else{
         if(showStars) {
             UIImage* star = (UIImage *) ui_get_element_by_tag(&screen_top, "star");

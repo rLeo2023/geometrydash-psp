@@ -22,6 +22,7 @@
 
 #include "level/main_levels.h"
 #include "save/saving.h"
+#include "utils/json_config.h"
 
 #include "menus/gameplay.h"
 #ifdef __PSP__
@@ -106,18 +107,113 @@ One more page after the last level (and so before the first), like the
 phone game: "Coming Soon!" alone, nothing to open. Each card shows a label of
 its own for it (tag "soon" in level_select_psp.txt) instead of the level
 */
-#define LEVEL_PAGES (MAIN_LEVELS_NUM + 1)
-#define IS_SOON(l) ((l) == MAIN_LEVELS_NUM)
+#define MAIN_PAGES (MAIN_LEVELS_NUM + 1)
+
+/*
+The Creator menu's Extras button shows the Meltdown levels on this same
+selector, with their own pages (no "Coming Soon!"): the ones kept in
+mstick\psp\gdpsp\extra_levels (not in Custom's list), their songs (23, 24,
+25) in saved_songs. Their progress and coins are their own, saved like the
+external levels' (ext_<name>_<creator>)
+*/
+#define EXTRAS_LEVELS_NUM 3
+
+static const MainLevelDefinition extras_levels[EXTRAS_LEVELS_NUM] = {
+    {
+        .level_name = "The Seven Seas",
+        .gmd_path = EXTRA_LEVELS_DIR "/The Seven Seas.gmd",
+        .song_path = "",
+        .difficulty = MAIN_DIFF_EASY,
+        .stars = 1
+    },
+    {
+        .level_name = "Viking Arena",
+        .gmd_path = EXTRA_LEVELS_DIR "/Viking Arena.gmd",
+        .song_path = "",
+        .difficulty = MAIN_DIFF_NORMAL,
+        .stars = 2
+    },
+    {
+        .level_name = "Airborne Robots",
+        .gmd_path = EXTRA_LEVELS_DIR "/Airborne Robots.gmd",
+        .song_path = "",
+        .difficulty = MAIN_DIFF_HARD,
+        .stars = 3
+    },
+};
+
+// the external levels' save files are named after these (its k5)
+static const char *extras_creators[EXTRAS_LEVELS_NUM] = {
+    "RobTop", "RobTop", "RobTop"
+};
+
+// each one's save, read when the selector opens
+static LevelData extras_level_data[EXTRAS_LEVELS_NUM];
+
+// the save file's name, and the stars GD gives them (their official value,
+// the one the level complete and the profile show)
+void extras_level_save_key(int i, char *out, size_t size) {
+    snprintf(out, size, "ext_%s_%s",
+             extras_levels[i].level_name, extras_creators[i]);
+}
+
+int extras_levels_count(void) {
+    return EXTRAS_LEVELS_NUM;
+}
+
+int extras_levels_stars(int i) {
+    return extras_levels[i].stars;
+}
+
 static int card_page[2];
 static bool card2_shown;
 #else
-#define LEVEL_PAGES MAIN_LEVELS_NUM
-#define IS_SOON(l) false
+#define MAIN_PAGES MAIN_LEVELS_NUM
 #endif
 
+// set by the Creator menu's Extras button, and cleared by the main menu and
+// the external levels' list
+bool level_select_extras = false;
+
+#ifdef __PSP__
+static bool extras_mode = false;
+#endif
+
+static int level_pages() {
+#ifdef __PSP__
+    return extras_mode ? EXTRAS_LEVELS_NUM : MAIN_PAGES;
+#else
+    return MAIN_PAGES;
+#endif
+}
+
+static const MainLevelDefinition *level_def(int level) {
+#ifdef __PSP__
+    return extras_mode ? &extras_levels[level] : &main_levels[level];
+#else
+    return &main_levels[level];
+#endif
+}
+
+static LevelData *level_stats(int level) {
+#ifdef __PSP__
+    return extras_mode ? &extras_level_data[level] : &main_level_data[level];
+#else
+    return &main_level_data[level];
+#endif
+}
+
+static bool level_is_soon(int level) {
+#ifdef __PSP__
+    return !extras_mode && level == MAIN_LEVELS_NUM;
+#else
+    return false;
+#endif
+}
+
 static int wrap_page(int level) {
-    if (level < 0) return LEVEL_PAGES - 1;
-    if (level >= LEVEL_PAGES) return 0;
+    if (level < 0) return level_pages() - 1;
+    if (level >= level_pages()) return 0;
     return level;
 }
 
@@ -146,9 +242,9 @@ static void draw_dots(int level_id) {
 
     C2D_PlainImageTint(&tint, C2D_Color32(125, 125, 125, 255), 1.f);
 
-    int left_side = DOTS_X - ((DOTS_WIDTH * LEVEL_PAGES) + (DOTS_MARGIN * (LEVEL_PAGES - 1))) * DOTS_SCALE / 2;
+    int left_side = DOTS_X - ((DOTS_WIDTH * level_pages()) + (DOTS_MARGIN * (level_pages() - 1))) * DOTS_SCALE / 2;
 
-    for (int i = 0; i < LEVEL_PAGES; i++) {
+    for (int i = 0; i < level_pages(); i++) {
         C2D_SpriteSetPos(&spr, left_side + i * (DOTS_WIDTH + DOTS_MARGIN) * DOTS_SCALE, DOTS_Y);
         
         // Do not tint if current level
@@ -197,16 +293,16 @@ static void enable_soon_btn(UIElement *e) { e->enabled = true; }
 
 static void soon_refresh(void) {
     soon_card_on = true;
-    soon_card_soon = IS_SOON(card_page[0]);
+    soon_card_soon = level_is_soon(card_page[0]);
     ui_run_func_on_tag(&default_screen, "level_card", soon_apply);
 
     soon_card_on = card2_shown;
-    soon_card_soon = IS_SOON(card_page[1]);
+    soon_card_soon = level_is_soon(card_page[1]);
     ui_run_func_on_tag(&default_screen, "level_card_2", soon_apply);
 
     // nothing to open there: no button over the card for the cursor to frame
     ui_run_func_on_tag(&default_screen, "open_level_btn",
-        IS_SOON(curr_level_id) ? disable_soon_btn : enable_soon_btn);
+        level_is_soon(curr_level_id) ? disable_soon_btn : enable_soon_btn);
 }
 #endif
 
@@ -220,9 +316,9 @@ void level_card_move_left(UIElement *e) {
 
 void update_level_progress(int level, int card) {
     level = wrap_page(level);
-    if (IS_SOON(level)) return;
+    if (level_is_soon(level)) return;
 
-    LevelData *data = &main_level_data[level]; 
+    LevelData *data = level_stats(level);
 
     char normal[256];
     snprintf(normal, sizeof(normal), "<#ff00ff>Normal</>: %d%%", data->normal_progress);
@@ -258,42 +354,42 @@ void update_level_name(int level, int card) {
 #ifdef __PSP__
     card_page[card ? 1 : 0] = level;
 #endif
-    if (IS_SOON(level)) return;
+    if (level_is_soon(level)) return;
 
     UILabel *e = (card) ? level_card_2_title : level_card_title;
     level_card_title_top = (UILabel *) ui_get_element_by_tag(&default_screen_top, "levelname");
 
     ui_element_set_scale((UIElement *) e, 1.f);
 
-    ui_label_set_text(e, main_levels[level].level_name);
+    ui_label_set_text(e, level_def(level)->level_name);
 
 #ifdef __PSP__
     // one screen: the difficulty face goes in the card, by the name, like the
     // phone game (the 3DS has it on the other screen)
     UIImage *face = (UIImage *) ui_get_element_by_tag(&default_screen, card ? "card_face_2" : "card_face");
-    if (face) ui_image_set_image(face, 239 + main_levels[level].difficulty, 0);
+    if (face) ui_image_set_image(face, 239 + level_def(level)->difficulty, 0);
 #endif
 }
 
 void update_level_stars(int level, int card) {
     level = wrap_page(level);
-    if (IS_SOON(level)) return;
+    if (level_is_soon(level)) return;
 
     UILabel *e = (card) ? level_card_2_stars : level_card_stars;
     char stars[10] = { 0 };
-    snprintf(stars, 9, "%d", main_levels[level].stars);
+    snprintf(stars, 9, "%d", level_def(level)->stars);
     ui_label_set_text(e, stars);
 }
 
 void update_level_face(int level) {
     level = wrap_page(level);
-    if (IS_SOON(level)) return;
+    if (level_is_soon(level)) return;
 
-    ui_image_set_image(level_card_face, 239 + main_levels[level].difficulty, 0);
+    ui_image_set_image(level_card_face, 239 + level_def(level)->difficulty, 0);
 }
 void update_level_top(int level){
-    if (IS_SOON(level)) return;
-    LevelData *data = &main_level_data[level];
+    if (level_is_soon(level)) return;
+    LevelData *data = level_stats(level);
 
     char attempts[256];
     snprintf(attempts, sizeof(attempts), "%s %d",
@@ -311,7 +407,7 @@ void update_level_top(int level){
     snprintf(practice, sizeof(practice), "%s %d%%",
         tr("<#ffa54b>Practice</>:"), data->practice_progress);
 
-    ui_label_set_text(level_card_title_top, main_levels[level].level_name);
+    ui_label_set_text(level_card_title_top, level_def(level)->level_name);
     ui_label_set_text((UILabel *) ui_get_element_by_tag(&default_screen_top, "totalattempts"), attempts);
     ui_label_set_text((UILabel *) ui_get_element_by_tag(&default_screen_top, "totaljumps"), jumps);
     ui_label_set_text((UILabel *) ui_get_element_by_tag(&default_screen_top, "normalprogress"), normal);
@@ -319,8 +415,27 @@ void update_level_top(int level){
 }
 
 void action_open_level(UIElement* e) {
-    if (IS_SOON(curr_level_id)) return; // nothing there yet
+    if (level_is_soon(curr_level_id)) return; // nothing there yet
     play_sfx(&play_sound, 1);
+#ifdef __PSP__
+    if (extras_mode) {
+        // an external level after all: its file, and the save file the
+        // external list's popup gives it (ext_<name>_<creator>)
+        state.custom_level = true;
+        state.extras_level = true;
+        snprintf(state.custom_level_path, sizeof(state.custom_level_path), "%s",
+                 extras_levels[curr_level_id].gmd_path);
+
+        char file[516];
+        snprintf(file, sizeof(file), "ext_%s_%s",
+                 extras_levels[curr_level_id].level_name,
+                 extras_creators[curr_level_id]);
+        load_level_progress(file);
+
+        // its official stars: the level complete's and the profile's
+        level_data.stars = extras_levels[curr_level_id].stars;
+    }
+#endif
     set_fade_status(FADE_STATUS_OUT);
     start_level = true; 
 }
@@ -366,7 +481,7 @@ void action_move_right(UIElement* e) {
     anim_time = 0;
     anim_duration = 1.f;
     
-    if (curr_level_id >= LEVEL_PAGES) curr_level_id = 0;
+    if (curr_level_id >= level_pages()) curr_level_id = 0;
 
     ui_set_pos_on_tag(&default_screen, 160, LEVEL_CARD_Y_POS, "level_card");
     ui_run_func_on_tag(&default_screen, "level_card_2", enable_card_2);
@@ -392,7 +507,7 @@ void action_move_left(UIElement* e) {
     anim_time = 0;
     anim_duration = 1.f;
 
-    if (curr_level_id < 0) curr_level_id = LEVEL_PAGES-1;
+    if (curr_level_id < 0) curr_level_id = level_pages()-1;
 
     ui_set_pos_on_tag(&default_screen, 160, LEVEL_CARD_Y_POS, "level_card");
     ui_run_func_on_tag(&default_screen, "level_card_2", enable_card_2);
@@ -460,8 +575,8 @@ void tint_ground(UIElement *e) {
 #ifdef __PSP__
 // the "i" button: the level's stats (as GD's Level Stats)
 static void action_level_info(UIElement *e) {
-    if (IS_SOON(curr_level_id) || in_info_card) return;
-    const LevelData *d = &main_level_data[curr_level_id];
+    if (level_is_soon(curr_level_id) || in_info_card) return;
+    const LevelData *d = level_stats(curr_level_id);
     char tmp[512];
     snprintf(tmp, sizeof(tmp),
         "<#FFFF00>%s</>"
@@ -469,7 +584,7 @@ static void action_level_info(UIElement *e) {
         "<p>%s %d"
         "<p>%s %d%%"
         "<p>%s %d%%",
-        main_levels[curr_level_id].level_name,
+        level_def(curr_level_id)->level_name,
         tr("<#40e348>Total Attempts</>:"), d->attempts,
         tr("<#60abef>Total Jumps</>:"), d->jumps,
         tr("<#ff00ff>Normal</>:"), d->normal_progress,
@@ -500,6 +615,20 @@ void level_select_loop() {
     start_level = false;
     exit_flag = false;
     state.custom_level = false;
+    state.extras_level = false;
+    state.mappack_level = false;
+#ifdef __PSP__
+    extras_mode = level_select_extras;
+    if (extras_mode) {
+        // each level's own save (the file the external list's popup would use)
+        for (int i = 0; i < EXTRAS_LEVELS_NUM; i++) {
+            char file[516];
+            snprintf(file, sizeof(file), "ext_%s_%s",
+                     extras_levels[i].level_name, extras_creators[i]);
+            peek_level_progress(file, &extras_level_data[i]);
+        }
+    }
+#endif
     dragDistance = 0;
     ui_load_screen(&default_screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_select.txt");
     ui_load_screen(&default_screen_top, actions_top, sizeof(actions_top) / sizeof(actions_top[0]), "romfs:/menus/level_select_top.txt");
@@ -741,7 +870,12 @@ void level_select_loop() {
         }
 
         if (exit_flag) {
+#ifdef __PSP__
+            // the Meltdown levels are opened from the Extras screen: back there
+            game_state = extras_mode ? STATE_EXTRAS_MENU : STATE_MAIN_MENU;
+#else
             game_state = STATE_MAIN_MENU;
+#endif
             break;
         }
     }

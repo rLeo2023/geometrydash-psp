@@ -13,6 +13,7 @@
 #include "menus/components/ui_list.h"
 #include "main_menu.h"
 #include "settings.h"
+#include "../psp/src/psp_port.h"
 
 #include "mp3_player.h"
 #include "save/config.h"
@@ -127,6 +128,16 @@ Setting settings[] = {
         .var = &settingsState.showFps,
         .key = CONFIG_GRAPHICS_PATH "showFps"
     },
+    {
+        .id = "lowDetailMode",
+        .label = "Performance mode",
+        .additionalInfo = "Disables more graphical features<p>in order to prioritize performance.",
+        .page = PAGE_GRAPHICS,
+
+        .defaultValue = false,
+        .var = &settingsState.lowDetailMode,
+        .key = CONFIG_GRAPHICS_PATH "lowDetailMode"
+    },
 #endif
     {
         .id = "particlesDisabled",
@@ -165,16 +176,6 @@ Setting settings[] = {
         .key = CONFIG_INPUT_PATH "yButton"
     },
     {
-        .id = "touchEffectEverywhere",
-        .label = "Global tap effect",
-        .additionalInfo = "Plays the tap effect across all menus.",
-        .page = PAGE_INPUT, 
-
-        .defaultValue = false,
-        .var = &settingsState.touchEffectEverywhere,
-        .key = CONFIG_INPUT_PATH "touchEffectEverywhere"
-    },
-    {
         .id = "enableDebugBindings",
         .label = "Enable debug keys",
 #ifdef __PSP__
@@ -188,6 +189,25 @@ Setting settings[] = {
         .var = &settingsState.enableDebugBindings,
         .key = CONFIG_INPUT_PATH "enableDebugBindings"
     },
+    // NOTE: "Global tap effect" (touchEffectEverywhere) was removed from the
+    // settings list: adding it made the Language page show only 3 of 4
+    // languages (Portuguese disappeared). Likely a UIList capacity/scroll bug
+    // on PSP. Re-enable once the UIList issue is fixed.
+    {
+        .id = "enableDebugLogging",
+        .label = "Write log",
+        .label = "Write log",
+#ifdef __PSP__
+        .additionalInfo = "Writes psp_log.txt to the Memory Stick.<p>Disable to reduce I/O stutter.",
+#else
+        .additionalInfo = "Writes psp_log.txt.<p>Disable to reduce I/O stutter.",
+#endif
+        .page = PAGE_INPUT,
+
+        .defaultValue = true,
+        .var = &settingsState.enableDebugLogging,
+        .key = CONFIG_INPUT_PATH "enableDebugLogging"
+    },
     {
         .id = "preciseInput",
         .label = "240Hz input (CBF)",
@@ -197,6 +217,16 @@ Setting settings[] = {
         .defaultValue = false,
         .var = &pi_enabled,
         .key = CONFIG_INPUT_PATH "preciseInput"
+    },
+    {
+        .id = "noclipAccuracy",
+        .label = "Noclip accuracy",
+        .additionalInfo = "Shows your noclip accuracy when completing a level with noclip.",
+        .page = PAGE_MISC,
+
+        .defaultValue = true,
+        .var = &settingsState.noclipAccuracy,
+        .key = CONFIG_MISC_PATH "noclipAccuracy"
     },
     {
         .id = "hitboxesEnabled",
@@ -421,16 +451,6 @@ Setting settings[] = {
         .key = CONFIG_VALUES "languagePortuguese",
 
         .onChanged = language_portuguese_setting
-    },
-    {
-        .id = "noclipAccuracy",
-        .label = "Noclip accuracy",
-        .additionalInfo = "Shows your noclip accuracy when completing a level with noclip.",
-        .page = PAGE_MISC,
-
-        .defaultValue = true,
-        .var = &settingsState.noclipAccuracy,
-        .key = CONFIG_MISC_PATH "noclipAccuracy"
     },
 };
 
@@ -675,6 +695,7 @@ void settings_init() {
     current_page = 0;
 
     load_category(current_page);
+    psp_debug_logging = settingsState.enableDebugLogging;
 }
 
 int settings_loop() {

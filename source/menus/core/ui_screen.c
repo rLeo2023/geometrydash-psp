@@ -47,6 +47,9 @@ C2D_SpriteSheet chatFont_sheet;
 C2D_SpriteSheet goldFont_sheet;
 C2D_SpriteSheet bg_gradient_sheet;
 C2D_SpriteSheet bar_sheet;
+// the Extras screen's own art: its palette is the page's, so the logo keeps
+// its gradient instead of borrowing ui_2's
+C2D_SpriteSheet extras_sheet;
 
 UIScreen default_screen = {
     .isBottom = true
@@ -245,6 +248,9 @@ void required_loading_screen_assets_init() {
     bar_sheet = C2D_SpriteSheetLoad("romfs:/gfx/bars.t3x");
     if (!bar_sheet) svcBreak(USERBREAK_PANIC);
 
+    extras_sheet = C2D_SpriteSheetLoad("romfs:/gfx/extras.t3x");
+    if (!extras_sheet) svcBreak(USERBREAK_PANIC);
+
 #ifndef __PSP__
     // (PSP: one background at a time, graphics.c)
     bgSheet = C2D_SpriteSheetLoad("romfs:/gfx/bg_sheet_01.t3x");
@@ -296,6 +302,8 @@ C2D_SpriteSheet *get_sheet(int sheet) {
             return &bg2Sheet;
         case 9:
             return &bar_sheet;
+        case 10:
+            return &extras_sheet;
     }
     return NULL;
 }
@@ -703,6 +711,32 @@ void ui_run_func_on_tag(UIScreen *screen, const char *tag, void (*func)(UIElemen
 
     for (int i = 0; i < screen->count; i++) {
         ui_visit_tree(screen->elements[i], visit_tag, &data);
+    }
+}
+
+typedef struct {
+    const char **tags;
+    int ntags;
+    void (*func)(UIElement *e);
+} UITagsVisitorData;
+
+static void visit_tags(UIElement *element, void *data) {
+    UITagsVisitorData *d = (UITagsVisitorData *)data;
+    for (int t = 0; t < d->ntags; t++) {
+        for (int i = 0; i < TAGS_PER_ELEMENT; i++) {
+            if (strcmp(element->tag[i], d->tags[t]) == 0) {
+                d->func(element);
+                return;
+            }
+        }
+    }
+}
+
+void ui_run_func_on_tags(UIScreen *screen, const char **tags, int ntags, void (*func)(UIElement *e)) {
+    if (ntags <= 0) return;
+    UITagsVisitorData data = { .tags = tags, .ntags = ntags, .func = func };
+    for (int i = 0; i < screen->count; i++) {
+        ui_visit_tree(screen->elements[i], visit_tags, &data);
     }
 }
 

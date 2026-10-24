@@ -452,6 +452,23 @@ void free_string_array(char **arr, int count) {
     free(arr);
 }
 
+#ifdef __PSP__
+HSV parse_hsv_string(const char *string) {
+    int count = 0;
+    char **hsv_string = split_string(string, 'a', &count, false);
+    HSV obtained = { 0 };
+    if (count >= 5) {
+        obtained.h = (float)atoi(hsv_string[0]);
+        obtained.s = atof(hsv_string[1]);
+        obtained.v = atof(hsv_string[2]);
+        obtained.sChecked = parse_bool(hsv_string[3]);
+        obtained.vChecked = parse_bool(hsv_string[4]);
+    }
+    free_string_array(hsv_string, count);
+    return obtained;
+}
+#endif
+
 void parse_color_channel(GDColorChannel *channels, int i, char *channel_string) {
     GDColorChannel channel = {0};  // Zero-initialize
     int kvCount = 0;
@@ -738,6 +755,12 @@ GDValueType get_value_type_for_key(int key) {
         case 23: return GD_VAL_INT;    // (Color trigger) Target color ID
         case 24: return GD_VAL_INT;    // Zlayer
         case 25: return GD_VAL_INT;    // Zorder
+#ifdef __PSP__
+        case 41: return GD_VAL_BOOL;   // main_col_HSV_enabled
+        case 42: return GD_VAL_BOOL;   // detail_col_HSV_enabled
+        case 43: return GD_VAL_HSV;    // main_col_HSV
+        case 44: return GD_VAL_HSV;    // detail_col_HSV
+#endif
         default:
             return GD_VAL_INT; // Default fallback
     }
@@ -870,6 +893,24 @@ int convert_object(int id) {
     return id;
 }
 
+#ifdef __PSP__
+static void ensure_hsv_arrays(void) {
+    if (objects.main_col_HSV) return;
+    int n = objects.count > 0 ? objects.count : 1;
+    objects.main_col_HSV_enabled = calloc(n, sizeof(bool));
+    objects.detail_col_HSV_enabled = calloc(n, sizeof(bool));
+    objects.main_col_HSV = calloc(n, sizeof(HSV));
+    objects.detail_col_HSV = calloc(n, sizeof(HSV));
+    if (!objects.main_col_HSV_enabled || !objects.detail_col_HSV_enabled ||
+        !objects.main_col_HSV || !objects.detail_col_HSV) {
+        free(objects.main_col_HSV_enabled);   objects.main_col_HSV_enabled = NULL;
+        free(objects.detail_col_HSV_enabled); objects.detail_col_HSV_enabled = NULL;
+        free(objects.main_col_HSV);           objects.main_col_HSV = NULL;
+        free(objects.detail_col_HSV);         objects.detail_col_HSV = NULL;
+    }
+}
+#endif
+
 void fill_object_data(int object, int key, GDValueType type, GDValue val) {
     // Default members
     switch (key) {
@@ -951,6 +992,20 @@ void fill_object_data(int object, int key, GDValueType type, GDValue val) {
         case 25: // Z order
             if (type == GD_VAL_INT) objects.zorder[object] = val.i;
             break;
+#ifdef __PSP__
+        case 41: // main_col_HSV_enabled
+            if (type == GD_VAL_BOOL) { ensure_hsv_arrays(); if (objects.main_col_HSV_enabled) objects.main_col_HSV_enabled[object] = val.b; }
+            break;
+        case 42: // detail_col_HSV_enabled
+            if (type == GD_VAL_BOOL) { ensure_hsv_arrays(); if (objects.detail_col_HSV_enabled) objects.detail_col_HSV_enabled[object] = val.b; }
+            break;
+        case 43: // main_col_HSV
+            if (type == GD_VAL_HSV) { ensure_hsv_arrays(); if (objects.main_col_HSV) objects.main_col_HSV[object] = val.hsv; }
+            break;
+        case 44: // detail_col_HSV
+            if (type == GD_VAL_HSV) { ensure_hsv_arrays(); if (objects.detail_col_HSV) objects.detail_col_HSV[object] = val.hsv; }
+            break;
+#endif
     }
 }
 
@@ -1035,6 +1090,10 @@ int parse_gd_object(const char *objStr, int obj) {
             case GD_VAL_BOOL:
                 val.b = parse_bool(valStr);
                 fill_object_data(obj, key, GD_VAL_BOOL, val);
+                break;
+            case GD_VAL_HSV:
+                val.hsv = parse_hsv_string(valStr);
+                fill_object_data(obj, key, GD_VAL_HSV, val);
                 break;
             default:
                 break;
@@ -1155,6 +1214,12 @@ void free_arrays() {
     if (objects.col_channel)        { free(objects.col_channel);        objects.col_channel = NULL; }
     if (objects.detail_col_channel) { free(objects.detail_col_channel); objects.detail_col_channel = NULL; }
     if (objects.target_color_id)    { free(objects.target_color_id);    objects.target_color_id = NULL; }
+#ifdef __PSP__
+    if (objects.main_col_HSV_enabled)   { free(objects.main_col_HSV_enabled);   objects.main_col_HSV_enabled = NULL; }
+    if (objects.detail_col_HSV_enabled) { free(objects.detail_col_HSV_enabled); objects.detail_col_HSV_enabled = NULL; }
+    if (objects.main_col_HSV)           { free(objects.main_col_HSV);           objects.main_col_HSV = NULL; }
+    if (objects.detail_col_HSV)         { free(objects.detail_col_HSV);         objects.detail_col_HSV = NULL; }
+#endif
     if (objects.hitbox_counter)     { free(objects.hitbox_counter);     objects.hitbox_counter = NULL; }
     if (objects.transition_applied) { free(objects.transition_applied); objects.transition_applied = NULL; }
     if (objects.trig_colorR)        { free(objects.trig_colorR);        objects.trig_colorR = NULL; }
@@ -1519,6 +1584,16 @@ void load_level_info(char *data, char *level_string) {
         free(ground_data);
     } else {
         level_info.ground_id = 0;
+    }
+
+    // the ground line's style: 0 is 1.9's, 1 and 2 are the ones 2.0 added
+    // (missing on older levels, which are 0)
+    char *line_data = get_metadata_value(level_string, "kA17");
+    if (line_data) {
+        level_info.ground_line_id = CLAMP(atoi(line_data), 0, GROUND_LINES - 1);
+        free(line_data);
+    } else {
+        level_info.ground_line_id = 0;
     }
     
     char *gamemode_data = get_metadata_value(level_string, "kA2");

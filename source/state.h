@@ -168,6 +168,14 @@ typedef struct {
     bool custom_level;
     char custom_level_path[256];
 
+    // played from the level selector's Extras (the Meltdown levels): GD's own,
+    // so their coins are the gold ones and they go back to that selector
+    bool extras_level;
+
+    // played from the Extras screen's map packs: verified levels too, so their
+    // coins are the silver ones
+    bool mappack_level;
+
     BGFlashData flash_data;
     RespawnEffectData respawn_effect_data;
 

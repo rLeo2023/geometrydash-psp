@@ -87,7 +87,8 @@ static void draw_key_layer(int tex, float px, float py, int channel, float opaci
 #endif
 
     ColorChannel *c = &channels[get_col_channel_index(channel)];
-    u8 alpha = (u8)(opacity * c->alpha * 255.0f);
+    // the collected key stays a solid color (no channel alpha / no fade)
+    u8 alpha = (u8)(opacity * 255.0f);
     u32 tint = C2D_Color32(c->color.r, c->color.g, c->color.b, alpha);
 
     C2D_ImageTint itint = { 0 };

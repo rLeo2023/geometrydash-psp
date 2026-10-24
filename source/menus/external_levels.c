@@ -45,7 +45,10 @@ const char *error_strings[] = {
 
 static bool exit_flag = false;
 bool external_start_level = false;
-
+bool external_from_extras = false;
+// the Extras screen's map packs: the same folder browser, on their own folder
+bool external_mappacks_mode = false;
+static bool last_mappacks_mode = false;
 static bool first_time_loaded = true;
 
 static bool in_external_popup = false;
@@ -72,9 +75,28 @@ typedef struct {
 
 static void open_folder(UIElement *e);
 
+// a map pack's face, from the pack's name: GD's own packs are Easy demon,
+// Easy and Harder (the ids the level info uses)
+static int mappack_face(const char *name) {
+    char lower[64];
+    size_t i = 0;
+
+    for (; i + 1 < sizeof(lower) && name[i]; i++) {
+        char c = name[i];
+        lower[i] = (c >= 'A' && c <= 'Z') ? (char)(c - 'A' + 'a') : c;
+    }
+    lower[i] = '\0';
+
+    if (strstr(lower, "demon")) return 258;                               // easy demon
+    if (strstr(lower, "beginner") || strstr(lower, "alpha")) return 252;  // easy
+    if (strstr(lower, "challenge")) return 255;                           // harder
+    return -1;
+}
+
 static void action_exit(UIElement *e) {
     exit_flag = true;
     current_path[0] = '\0'; // Reset it
+    set_folder_base(NULL); // back to the custom levels
     set_fade_status(FADE_STATUS_OUT);
 }
 
@@ -89,9 +111,10 @@ void load_level_folder(char *folder) {
     if (strncmp(last_path, current_path, sizeof(last_path)) == 0) return;
     path_label = (UILabel *) ui_get_element_by_tag(&screen, "path");
     ui_run_func_on_tag(&screen, "no_levels", ui_disable_element);
+    ui_run_func_on_tag(&screen, "no_mappacks", ui_disable_element);
 
     char path[320+5];
-    sprintf(path, "Root/%s", current_path);
+    sprintf(path, external_mappacks_mode ? "Map packs/%s" : "Root/%s", current_path);
     truncate_filename_start(path, 27, sizeof(path));
     
     ui_label_set_text(path_label,path);
@@ -150,7 +173,13 @@ void load_level_folder(char *folder) {
 
                 UIImage *icon = ui_create_image(&screen.ctx);
                 if (icon) {
-                    ui_image_set_image(icon, (entry->is_dir ? 320 : 420), 0);
+                    int icon_id = (entry->is_dir ? 320 : 420);
+                    // the map packs' folders wear their pack's difficulty
+                    if (external_mappacks_mode && entry->is_dir) {
+                        int face = mappack_face(name);
+                        if (face >= 0) icon_id = face;
+                    }
+                    ui_image_set_image(icon, icon_id, 0);
                     ui_element_set_position((UIElement *) icon, -list_width + 15, 0);
                     ui_element_set_scale((UIElement *) icon, 0.58f);
 
@@ -172,10 +201,10 @@ void load_level_folder(char *folder) {
         }
         
         if (count == 0) {
-            ui_run_func_on_tag(&screen, "no_levels", ui_enable_element);
+            ui_run_func_on_tag(&screen, external_mappacks_mode ? "no_mappacks" : "no_levels", ui_enable_element);
         }
     } else {
-        ui_run_func_on_tag(&screen, "no_levels", ui_enable_element);
+        ui_run_func_on_tag(&screen, external_mappacks_mode ? "no_mappacks" : "no_levels", ui_enable_element);
     }
 
     strncpy(last_path, current_path, sizeof(last_path));
@@ -237,6 +266,7 @@ static void show_error_message() {
 }
 
 void external_levels_loop() {
+    level_select_extras = false; // the level selector goes back to the main levels
 #ifdef __PSP__
     psp_loading_screen = true;
 #endif
@@ -270,8 +300,22 @@ void external_levels_loop() {
         first_time_loaded = false;
     }
 
+    // the title says which folder is being browsed
+    ui_run_func_on_tag(&screen_top, "title", external_mappacks_mode ? ui_disable_element : ui_enable_element);
+    ui_run_func_on_tag(&screen_top, "mappacks_title", external_mappacks_mode ? ui_enable_element : ui_disable_element);
+
     ui_image_set_tint(bg_gradient, C2D_Color32(50, 110, 255, 255));
     ui_image_set_tint(bg_gradient_top, C2D_Color32(50, 110, 255, 255));
+
+    // the map packs are read from their own folder, the custom levels from the
+    // usual one; switching between them starts at the root again
+    set_folder_base(external_mappacks_mode ? MAPPACKS_DIR : USER_LEVELS_DIR);
+    if (last_mappacks_mode != external_mappacks_mode) {
+        current_path[0] = '\0';
+        last_path[0] = '\1'; // not "" : forces the folder to be read again
+        last_path[1] = '\0';
+        last_mappacks_mode = external_mappacks_mode;
+    }
 
     load_level_folder(current_path);
 
@@ -373,7 +417,8 @@ void external_levels_loop() {
         }
 
         if (exit_flag) {
-            game_state = STATE_CREATOR_MENU;
+            game_state = external_from_extras ? STATE_EXTRAS_MENU : STATE_CREATOR_MENU;
+            external_from_extras = false;
             break;
         }
     }

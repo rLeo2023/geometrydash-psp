@@ -36,6 +36,8 @@ void trig2_pulse_channels(void);
 
 // graphics.c: an object's color and opacity with its groups' alpha and pulses
 void trig2_object_color(int obj, int col_type, Color *color, float *opacity);
+// graphics.c: whether its groups' alpha is 0, so it draws nothing
+bool trig2_object_hidden(int obj);
 
 // each object's size (key 32), NULL with no level
 extern float *trig2_obj_scale;

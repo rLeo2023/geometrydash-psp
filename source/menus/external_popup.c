@@ -87,6 +87,8 @@ static void open_level(UIElement *e) {
     play_sfx(&play_sound, 1);
 
     state.custom_level = true;
+    state.extras_level = false;
+    state.mappack_level = external_mappacks_mode;
 
     set_fade_status(FADE_STATUS_OUT);
     

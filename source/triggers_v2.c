@@ -692,6 +692,18 @@ void trig2_object_color(int obj, int col_type, Color *color, float *opacity) {
     }
 }
 
+/* graphics.c: every group the object is in is at alpha 0 (an alpha trigger
+faded it out), so it draws nothing this frame: the scan of the objects skips
+it instead of making its sprites for the sort and the draw to throw away */
+bool trig2_object_hidden(int obj) {
+    if (!og_count || obj < 0 || obj >= nobjs || !og_count[obj]) return false;
+
+    for (int k = 0; k < og_count[obj]; k++)
+        if (st.groups[og_data[og_start[obj] + k]].alpha > 0.f) return false;
+
+    return true;
+}
+
 /* ---- practice checkpoints ------------------------------------------- */
 
 // only the groups the level uses (up to its highest), not all MAX_GROUP:

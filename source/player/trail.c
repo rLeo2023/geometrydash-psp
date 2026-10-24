@@ -411,10 +411,9 @@ void MotionTrail_AddWavePoint(MotionTrail* trail) {
 
     trail->nuPoints++;
 
-    if (trail->nuPoints > 1) {
-        ccVertexLineToPolygonWave(trail->pointVertexes, trail->stroke, trail->vertices, 0, trail->actualNuPoints);
-        ccVertexLineToPolygonWave(trail->pointVertexes, trail->stroke * 0.4f, trail->centerVertices, 0, trail->actualNuPoints);
-    }
+    // the polygon is rebuilt once per frame in MotionTrail_UpdateWaveTrail,
+    // not here: AddWavePoint can fire several times per frame (collisions)
+    // and rebuilding it each time was the cost of the wave section
 
     trail->previousNuPoints = trail->nuPoints;
 }

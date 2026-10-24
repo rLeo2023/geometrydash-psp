@@ -9,9 +9,9 @@ bggradient tag="gradient" psphide=1
 image x=36 y=35 id=178 sy=-1.0 psphide=1
 image x=36 y=205 id=178 psphide=1
 
-button x=-16 y=26 id=8 action="exit" keyBinds="B"
+button x=-12 y=32 id=8 scale=0.65 action="exit" keyBinds="B"
 
 button x=202 y=128 id=5 sheet=1 scale=0.72 action="external"
 button x=117 y=128 id=24 sheet=1 scale=0.72 action="saved"
-button x=287 y=128 id=25 sheet=1 scale=0.72 action="search"
+button x=287 y=128 id=25 sheet=1 scale=0.72 action="extras"
 button x=32 y=128 id=8 sheet=1 scale=0.72 action="create" tag="create_button"

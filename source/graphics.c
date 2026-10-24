@@ -66,6 +66,13 @@ static SortItem buf_b[MAX_SPRITES];
 static SpriteObject viewable_objects[MAX_SPRITES];
 static SpriteObject *viewable_objects_ptr[MAX_SPRITES];
 
+#ifdef __PSP__
+// every object's widest half-extent, in world units, from the sprites it
+// draws (cache_all_sprites): the scan culls with it, not with a flat 60
+static float object_cull_radius[GAME_OBJECT_COUNT];
+#define CULL_MARGIN 60.f
+#endif
+
 bool p1_trail = false;
 int current_fading_effect = FADE_NONE;
 int current_pulserod_ball_image = 0;
@@ -278,6 +285,32 @@ void set_player_colors(Color p1, Color p2, Color glow) {
 }
 
 // This might make sprite making faster, im not sure thought
+#ifdef __PSP__
+// how far a sprite reaches from the object's point, in world units: its own
+// offset plus half its size, as a diagonal so any rotation fits
+static float sprite_reach(const C2D_Sprite *spr, float ox, float oy, float sx, float sy) {
+    float w = spr->image.subtex->width * fabsf(sx);
+    float h = spr->image.subtex->height * fabsf(sy);
+    float rx = fabsf(ox) + w * 0.5f;
+    float ry = fabsf(oy) + h * 0.5f;
+    return sqrtf(rx * rx + ry * ry);
+}
+#endif
+
+#ifdef __PSP__
+// one of a 2.0 animation's frames as a sprite (frame_sprite's lookup)
+static bool anim_tex_sprite(int tex, C2D_Sprite *out) {
+    if (tex < 0) return false;
+    int rel;
+    C2D_SpriteSheet *sheet = get_sprite_sheet(tex, &rel);
+    C2D_Sprite none = { 0 };
+    *out = none;
+    C2D_SpriteFromSheet(out, *sheet, rel);
+    C2D_SpriteSetCenter(out, 0.5f, 0.5f);
+    return out->image.subtex != NULL;
+}
+#endif
+
 void cache_all_sprites() {
     for (int id = 0; id < GAME_OBJECT_COUNT; id++) {
         const GameObject* obj = &game_objects[id];
@@ -324,6 +357,90 @@ void cache_all_sprites() {
             sprite_templates[id].child_templates = NULL;
         }
     }
+
+#ifdef __PSP__
+    // Every object's reach, for the scan of the visible objects: the half
+    // diagonal of its widest sprite (with its own offset from the object's
+    // point), so a turned one still fits. It was a flat 60 units each way,
+    // a window nearly twice the screen: about 40% of the sprites made were
+    // off it, to be clipped at the end
+    for (int id = 0; id < GAME_OBJECT_COUNT; id++) {
+        const GameObject *obj = &game_objects[id];
+        SpriteTemplate *t = &sprite_templates[id];
+        float r = 0.f;
+
+        if (obj->texture >= 0 && t->parent_template.image.subtex) {
+            r = sprite_reach(&t->parent_template, obj->x, obj->y, 1.f, 1.f);
+        }
+        if (obj->glow_frame >= 0 && t->glow_template.image.subtex) {
+            float g = sprite_reach(&t->glow_template, 0.f, 0.f, 1.f, 1.f);
+            if (g > r) r = g;
+        }
+        for (int i = 0; i < obj->child_count; i++) {
+            const ChildSprite *c = &obj->children[i];
+            if (c->texture < 0 || !t->child_templates || !t->child_templates[i].image.subtex) continue;
+            float g = sprite_reach(&t->child_templates[i], c->x, c->y, c->scale_x, c->scale_y);
+            if (g > r) r = g;
+        }
+
+        object_cull_radius[id] = r;
+    }
+
+    /*
+    The animated ones change sprite, and their parts' pose, every frame: the
+    reach has to cover the widest of all their frames or they pop in late.
+    Worked out here they no longer need the flat 60 units each way they were
+    given before, which made a window almost twice the screen wide for every
+    2.0 object there is (in a heavy part of Deadlocked that is a tenth of the
+    sprites made, all of them clipped at the end)
+    */
+    for (int id = 0; id < GAME_OBJECT_COUNT; id++) {
+        const GameObject *obj = &game_objects[id];
+        const FrameAnim *fa = frame_anim_of(id);
+        const SkelAnim *sa = fa ? NULL : skel_anim_of(id);
+        if (!fa && !sa) continue;
+
+        float r = object_cull_radius[id];
+        int slots = fa ? fa->slots : sa->slots;
+
+        for (int s = 0; s < slots; s++) {
+            // slot 0 is the object's own sprite, the rest its children's
+            const ChildSprite *c = NULL;
+            if (s > 0) {
+                if (s - 1 >= obj->child_count) break;
+                c = &obj->children[s - 1];
+                if (c->texture < 0) continue; // not drawn
+            }
+            float ox = c ? c->x : obj->x;
+            float oy = c ? c->y : obj->y;
+            float bsx = c ? c->scale_x : 1.f;
+            float bsy = c ? c->scale_y : 1.f;
+
+            if (fa) {
+                float sc = fa->scale[s];
+                for (int f = 0; f < fa->frames; f++) {
+                    C2D_Sprite spr;
+                    if (!anim_tex_sprite(fa->tex[f * fa->slots + s], &spr)) continue;
+                    float g = sprite_reach(&spr, ox, oy, bsx * sc, bsy * sc);
+                    if (g > r) r = g;
+                }
+            } else {
+                const C2D_Sprite *base;
+                if (s == 0) base = &sprite_templates[id].parent_template;
+                else if (sprite_templates[id].child_templates) base = &sprite_templates[id].child_templates[s - 1];
+                else break;
+                if (!base->image.subtex) continue;
+
+                for (int f = 0; f < sa->frames; f++) {
+                    const AnimPose *p = &sa->poses[f * sa->parts + sa->part_of[s]];
+                    float g = sprite_reach(base, p->x, p->y, bsx * p->sx, bsy * p->sy);
+                    if (g > r) r = g;
+                }
+            }
+        }
+        object_cull_radius[id] = r;
+    }
+#endif
 }
 
 void free_cached_sprites() {
@@ -393,9 +510,21 @@ inline int get_color_channel(int col_type, int obj, const GameObject *game_obj) 
 
             if (objects.detail_col_channel[obj]) {
                 if (col_type == COLOR_TYPE_DETAIL) {
+#ifdef __PSP__
+                    // a 2.0 block whose only colored part is its detail one
+                    // (block007_color: Geometrical Dominator's blocks that
+                    // flash colors at the end) has no main for the check to
+                    // find, and the detail channel is exactly what the level
+                    // animates. Only the channel the level set counts, not the
+                    // default one the loader leaves in.
+                    int def = game_obj->detail_color ? game_obj->detail_color : 1;
+                    if (obj_has_main(game_obj) || objects.detail_col_channel[obj] != def)
+                        col_channel = objects.detail_col_channel[obj];
+#else
                     if (obj_has_main(game_obj)) {
                         col_channel = objects.detail_col_channel[obj];
                     }
+#endif
                 }
             }
         }
@@ -566,8 +695,11 @@ int get_obj_random_layer(int obj, int id) {
             return tex + (objects.random[obj] & 0b11);
         
         case SECRET_COIN:
-            // a custom level's coins are user coins: the secretCoin_2 frames
-            return get_coin_texture(tex + (state.custom_level ? (is_coin_collected(obj) ? 8 : 4) : (is_coin_collected(obj) ? 12 : 0)), 26);
+            // a custom level's coins are user coins: the secretCoin_2 frames,
+            // white when the level is rated and orange when it isn't (the tint
+            // in draw_objects). The Extras levels are GD's own, so they get
+            // the gold secret coin, the same as the main levels'
+            return get_coin_texture(tex + ((state.custom_level && !state.extras_level) ? (is_coin_collected(obj) ? 8 : 4) : (is_coin_collected(obj) ? 12 : 0)), 26);
     }
     return -1;
 }
@@ -575,11 +707,18 @@ int get_obj_random_layer(int obj, int id) {
 // Deco saws rotate slower than normal saws. If not a saw, rotation speed is just 0
 float get_rotation_speed(int id) {
 #ifdef __PSP__
-    // GD 2.0's (wiidash's speeds)
-    if (id >= 746) {
-        for (size_t i = 0; i < sizeof(v2_spin) / sizeof(v2_spin[0]); i++)
-            if (v2_spin[i].id == id) return v2_spin[i].speed;
-        return 0.f;
+    // GD 2.0's (wiidash's speeds): it was a walk of the table for every 2.0
+    // object on screen, every frame; now one read (0: it doesn't turn)
+    {
+        static short lut[1400];
+        static bool ready;
+        if (!ready) {
+            ready = true;
+            for (size_t i = 0; i < sizeof(v2_spin) / sizeof(v2_spin[0]); i++)
+                lut[v2_spin[i].id] = v2_spin[i].speed;
+        }
+        if (id >= 746 && id < 1400) return lut[id];
+        if (id >= 1400) return 0.f;
     }
 #endif
     switch (id) {
@@ -643,6 +782,7 @@ float get_object_pulse(float amplitude, int id, int layer) {
         case 36:
         case 84:
         case 141:
+        case 1022: // the green (gravity) orb pulses like the others
             return map_range(amplitude, 0.f, 1.f, 0.3f, 1.2f);
         case 15:
         case 16:
@@ -674,6 +814,154 @@ float get_object_pulse(float amplitude, int id, int layer) {
             return map_range(amplitude, 0.f, 1.f, 0.6f, 1.2f);
     }
     return 1.0f;
+}
+
+int get_obj_opacity(int obj, float x);
+static uint32_t compute_sort_key(SpriteObject *s);
+
+/*
+One sprite's tint and draw-order key: its color channel, the 2.0 channels'
+own opacity, its groups' alpha and pulses, the fades and the levels' edge.
+The tint was a pass of its own over all the sprites after the sort, and the
+key was worked out inside the sort: both re-read the object and its
+definition there, long after the cache had let them go. Done here, right
+where the sprite is made, that data is still in it.
+*/
+static void set_sprite_tint(SpriteObject *vo) {
+    int col_channel = vo->col_channel;
+
+    ColorChannel col;
+
+    if (col_channel < 0) {
+        col.color.r = 255;
+        col.color.g = 255;
+        col.color.b = 255;
+        col.blending = false;
+    } else if (col_channel == CHANNEL_INVISIBLE_GLOW) { // Handle invisible blocks color lerping
+        int chan = get_col_channel_index(CHANNEL_LBG_NOLERP);
+
+        Color lbg = channels[chan].color;
+        Color p1 = get_white_if_black(p1_color);
+        float opacity = objects.opacity[vo->obj];
+
+        if (opacity < 0.8f || state.dead) {
+            col = channels[chan];
+        } else {
+            float blendFactor = 1.9f - 1.5f * opacity;
+            float oneMinusFactor = 1.0f - blendFactor;
+
+            int r = (float)p1.r * oneMinusFactor + (float)lbg.r * blendFactor;
+            int g = (float)p1.g * oneMinusFactor + (float)lbg.g * blendFactor;
+            int b = (float)p1.b * oneMinusFactor + (float)lbg.b * blendFactor;
+
+            col.color.r = CLAMP(r, 0, 255);
+            col.color.g = CLAMP(g, 0, 255);
+            col.color.b = CLAMP(b, 0, 255);
+            col.blending = true;
+        }
+#ifdef __PSP__
+    } else if (col_channel == CHANNEL_V2_LIGHTER) {
+        // 2.0's "lighter": the object's main color, halfway to white
+        int obj_id = objects.id[vo->obj];
+        int base = get_color_channel(COLOR_TYPE_BASE, vo->obj, &game_objects[obj_id]);
+        Color c = { 255, 255, 255 };
+        if (base == 0) c = (Color){ 0, 0, 0 };
+        else if (base > 0 && base != CHANNEL_V2_LIGHTER) c = channels[get_col_channel_index(base)].color;
+        if (objects.main_col_HSV_enabled && objects.main_col_HSV_enabled[vo->obj]) {
+            HSV hsv = objects.main_col_HSV[vo->obj];
+            c = col_apply_hsv(c, hsv.h, hsv.s, hsv.v, hsv.sChecked, hsv.vChecked);
+        }
+        col.color.r = (c.r + 255) / 2;
+        col.color.g = (c.g + 255) / 2;
+        col.color.b = (c.b + 255) / 2;
+        col.blending = false;
+#endif
+    } else {
+        col = channels[get_col_channel_index(col_channel)];
+    }
+
+#ifdef __PSP__
+    // per-object HSV (GD 2.0): the rainbow / varied colors some objects
+    // carry on top of their channel color
+    if (objects.main_col_HSV_enabled && objects.detail_col_HSV_enabled) {
+        int game_object = vo->obj;
+        bool is_detail = (vo->col_type == COLOR_TYPE_DETAIL);
+        // main HSV goes with the main (fill) color, detail HSV with the
+        // border/detail color: applying both to every sprite put the rainbow
+        // fill's hue on the border too, shifting it out of phase
+        if (!is_detail && objects.main_col_HSV_enabled[game_object]) {
+            HSV hsv = objects.main_col_HSV[game_object];
+            col.color = col_apply_hsv(col.color, hsv.h, hsv.s, hsv.v, hsv.sChecked, hsv.vChecked);
+        } else if (is_detail && objects.detail_col_HSV_enabled[game_object]) {
+            HSV hsv = objects.detail_col_HSV[game_object];
+            col.color = col_apply_hsv(col.color, hsv.h, hsv.s, hsv.v, hsv.sChecked, hsv.vChecked);
+        }
+        // stars and similar base objects whose level data set the detail HSV
+        if (!is_detail && !objects.main_col_HSV_enabled[game_object] &&
+            objects.detail_col_HSV_enabled[game_object]) {
+            HSV hsv = objects.detail_col_HSV[game_object];
+            col.color = col_apply_hsv(col.color, hsv.h, hsv.s, hsv.v, hsv.sChecked, hsv.vChecked);
+        }
+    }
+
+    // a user coin whose level isn't rated (or whose coins aren't
+    // verified) is drawn orange, not white
+    if (level_has_unverified_coins() && objects.id[vo->obj] == SECRET_COIN) {
+        col.color.r = USER_COIN_UNRATED_R;
+        col.color.g = USER_COIN_UNRATED_G;
+        col.color.b = USER_COIN_UNRATED_B;
+    }
+#endif
+
+    int game_object = vo->obj;
+    float x = ((objects.x[game_object] - state.camera_x));
+
+    float opacity = vo->opacity;
+#ifdef __PSP__
+    // the channel's own opacity (2.0)
+    if (col_channel > 0 && col_channel != CHANNEL_INVISIBLE_GLOW && col_channel != CHANNEL_V2_LIGHTER)
+        opacity *= channels[get_col_channel_index(col_channel)].alpha * (1.f / 255.f);
+    // a 2.0 object's glow follows its main color channel's alpha too: the fill
+    // can be faded (or semi-transparent) by a trigger and the glow must match
+    if (vo->layer == 1) {
+        int main_ch = get_color_channel(COLOR_TYPE_BASE, vo->obj, &game_objects[objects.id[vo->obj]]);
+        if (main_ch > 0 && main_ch != col_channel && main_ch != CHANNEL_INVISIBLE_GLOW && main_ch != CHANNEL_V2_LIGHTER) {
+            opacity *= channels[get_col_channel_index(main_ch)].alpha * (1.f / 255.f);
+        }
+    }
+    // its groups' alpha and pulses (2.0 triggers)
+    trig2_object_color(game_object, vo->col_type, &col.color, &opacity);
+    // a collected key stays a solid color (no fade / no group alpha)
+    if (objects.id[game_object] == KEY_OBJ && GET_ACTIVATED(game_object)) {
+        opacity = 1.0f;
+    }
+#endif
+
+    // Handle invisible object opacity
+    if (object_fades(game_object)) {
+        float glow_out;
+        float fading_opacity = get_fading_obj_fade(game_object, SCREEN_WIDTH / SCALE, &glow_out);
+
+        // Check if layer is glow
+        if (vo->layer == 1) opacity *= glow_out;
+        else opacity *= fading_opacity;
+    }
+
+    int real_opacity = get_obj_opacity(game_object, x) * opacity;
+#ifdef __PSP__
+    // the objects' glow, added over the screen, was much stronger than GD's
+    if (vo->layer == 1) real_opacity = real_opacity * 3 / 5;
+#endif
+
+    // Set opacity here
+    if (vo->layer == 0) objects.opacity[game_object] = real_opacity / 255.f;
+
+    C2D_PlainImageTint(&vo->tint, C2D_Color32(col.color.r, col.color.g, col.color.b, real_opacity), 1.f);
+
+#ifdef __PSP__
+    vo->skey = compute_sort_key(vo);
+    vo->blend = col.blending;
+#endif
 }
 
 void spawn_object_at(
@@ -795,10 +1083,11 @@ void spawn_object_at(
         vo->col_channel = get_color_channel(obj->color_type, obj_game, obj);
         viewable_objects_ptr[sprite_count] = vo;
         sprite_count++;
+        set_sprite_tint(vo);
     }
 
     // Skip if no glow frame
-    if (settingsState.glowEnabled && obj->glow_frame >= 0) {
+    if (settingsState.glowEnabled && !settingsState.lowDetailMode && obj->glow_frame >= 0) {
         if (sprite_count >= MAX_SPRITES - 1) return;
 
         SpriteObject *vo = &viewable_objects[sprite_count];
@@ -818,6 +1107,7 @@ void spawn_object_at(
         vo->col_channel = get_glow_channel(obj_game);
         viewable_objects_ptr[sprite_count] = vo;
         sprite_count++;
+        set_sprite_tint(vo);
     }
 
     // Spawn children
@@ -834,7 +1124,7 @@ void spawn_object_at(
             float c_local_y = c->y * flip_y_mult;
 #ifdef __PSP__
             float cex = 1.f, cey = 1.f, crot = c->rot;
-            if (c->color_type == COLOR_TYPE_GLOW && !settingsState.glowEnabled) continue;
+            if (c->color_type == COLOR_TYPE_GLOW && (!settingsState.glowEnabled || settingsState.lowDetailMode)) continue;
             if (sa) {
                 AnimPose p;
                 skel_pose(sa, i + 1, at, &p);
@@ -896,17 +1186,25 @@ void spawn_object_at(
 #endif
             viewable_objects_ptr[sprite_count] = vo;
             sprite_count++;
+            set_sprite_tint(vo);
         }
     }
 }
 
-static inline uint32_t make_sort_key(SpriteObject *s)
+// the slot the player's marker takes in the draw order (compute_sort_key)
+#define PLAYER_Z_LAYER 4
+
+static uint32_t compute_sort_key(SpriteObject *s)
 {
     const int obj = s->obj;
 
-    // Player sprite is -1 so handle it there
+    // Player sprite is -1 so handle it there. GD draws it between the layers
+    // of z 3 and 5 (its main and blending batch nodes sit at -1/-2 and 2/3
+    // around the player): here a blending object goes one layer down, so the
+    // player's own slot is 4. At 5 it drew the additive water and gradients of
+    // Geometrical Dominator behind it instead of over it.
     if (obj == -1) {
-        return ((5 + 8) << 18) | (0 << 16) | (0 << 8) | 0;
+        return ((PLAYER_Z_LAYER + 8) << 18) | (0 << 16) | (0 << 8) | 0;
     }
 
     const int id = objects.id[obj];
@@ -962,12 +1260,40 @@ static inline uint32_t make_sort_key(SpriteObject *s)
     return (zl << 18) | (zb << 17) | (zs << 16) | (zo << 8) | cz;
 }
 
+// the key the sprite got when it was made (set_sprite_tint: the object's
+// definition is in the cache there, it is not by the time the sort runs)
+static inline uint32_t make_sort_key(SpriteObject *s)
+{
+#ifndef __PSP__
+    return compute_sort_key(s);
+#else
+    if (s->obj == -1) return (PLAYER_Z_LAYER + 8) << 18;
+    return s->skey;
+#endif
+}
+
 #define VIEW_OBJECTS (12 * 6)
 #define INSERTION_SORT_THRESHOLD 16
 
 // Insertion sort moment
 void sort_viewable_objects(SpriteObject **objects, int count) {
     if (count <= 1) return;
+
+    // a handful of sprites (the menus, a level's start): the buckets' 768
+    // counters cost more than the compares
+    if (count <= INSERTION_SORT_THRESHOLD) {
+        for (int i = 1; i < count; i++) {
+            SpriteObject *cur = objects[i];
+            uint32_t key = make_sort_key(cur);
+            int j = i - 1;
+            while (j >= 0 && make_sort_key(objects[j]) > key) {
+                objects[j + 1] = objects[j];
+                j--;
+            }
+            objects[j + 1] = cur;
+        }
+        return;
+    }
 
     for (int i = 0; i < count; i++) {
         buf_a[i].obj = objects[i];
@@ -1064,6 +1390,9 @@ int get_obj_opacity(int obj, float x) {
         case 687:
         case 688:
             if (objects.transition_applied[obj] == FADE_NONE) opacity = 255;
+            break;
+        case KEY_OBJ:
+            if (GET_ACTIVATED(obj)) opacity = 255;
             break;
             
         case 211:
@@ -1386,10 +1715,19 @@ void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_
     C2D_PlainImageTint(&tint, C2D_Color32(col.r, col.g, col.b, 255), 1.f);
 
     float line_offset = -((GROUND_SIZE / 2) - (LINE_HEIGHT / 2)) * mult;
+    // the level's line (kA17): 1.9's is 0, the two 2.0 added are 1 and 2
+    static const int line_indexes[GROUND_LINES] = { 16, 0, 17 };
+    int line_id = level_info.ground_line_id;
+    if (line_id < 0 || line_id >= GROUND_LINES) line_id = 0;
+
     C2D_Sprite line = { 0 };
-    C2D_SpriteFromSheet(&line, groundSheet, 0);
+    C2D_SpriteFromSheet(&line, groundSheet, line_indexes[line_id]);
     C3D_TexSetFilter(line.image.tex, GPU_LINEAR, GPU_LINEAR);
     C2D_SpriteSetCenter(&line, 0.5f, 0.5f);
+    // GD draws it as wide as its screen: stretched to this one's width, or
+    // its faded ends would show in the middle of it
+    float line_w = (screen_width / SCALE) / (float) line.image.subtex->width;
+    C2D_SpriteSetScale(&line, line_w, 1.f);
     C2D_SpriteSetPos(&line, screen_width / SCALE / 2, (GROUND_SIZE / 2) + calc_y + line_offset);
     C2D_DrawSpriteTinted(&line, &tint);
 
@@ -1486,13 +1824,32 @@ void create_objects() {
                 
                 float calc_x = (objects.x[obj] - state.camera_x);
                 float calc_y = SCREEN_HEIGHT - ((objects.y[obj] - state.camera_y));  
-                if (calc_x < -60 || calc_x >= (SCREEN_WIDTH / SCALE) + 60) continue;
-                if (calc_y < -60 || calc_y >= (SCREEN_HEIGHT / SCALE) + 60) continue;
+#ifdef __PSP__
+                // as far off the screen as the object's own sprites reach
+                // (the animated 2.0 ones are worked out over all their frames
+                // at load, so they need no flat margin either; a fade moving
+                // the objects around still does)
+                float reach = object_cull_radius[objects.id[obj]] * OBJ_SCALE(obj) * 1.3f + 8.f;
+                if (reach < CULL_MARGIN && object_cull_radius[objects.id[obj]] <= 0.f)
+                    reach = CULL_MARGIN;
+                if (current_fading_effect != FADE_NONE) reach = CULL_MARGIN;
+#else
+                const float reach = 60.f;
+#endif
+                if (calc_x < -reach || calc_x >= (SCREEN_WIDTH / SCALE) + reach) continue;
+                if (calc_y < -reach || calc_y >= (SCREEN_HEIGHT / SCALE) + reach) continue;
 
                 // Skip invalid objects
                 if (!is_valid_object(objects.id[obj]) || objects.toggled[obj]) {
                     continue;
                 }
+
+#ifdef __PSP__
+                // an alpha trigger has faded every group it is in to nothing:
+                // it draws nothing, and each sprite costs its picking, its
+                // sort and its vertices (the trigger brings it back)
+                if (trig2_object_hidden(obj)) continue;
+#endif
 
                 int fade_val = obj_edge_fade(calc_x, SCREEN_WIDTH / SCALE);
                 bool fade_edge = (fade_val == 255 || fade_val == 0);
@@ -1505,8 +1862,10 @@ void create_objects() {
 
                 get_fade_vars(obj, calc_x, &fade_x, &fade_y, &fade_scale);
 
-                // Handle saw rotation
-                objects.rotation[obj] += (((objects.random[obj] & 1) ? -get_rotation_speed(objects.id[obj]) : get_rotation_speed(objects.id[obj]))) * delta;
+                // Handle saw rotation (one speed for the two sides)
+                float spin_speed = get_rotation_speed(objects.id[obj]);
+                if (spin_speed != 0.f)
+                    objects.rotation[obj] += ((objects.random[obj] & 1) ? -spin_speed : spin_speed) * delta;
                 
                 // Handle special fade types
                 get_special_fading_vars(obj, fade_val, &calc_x);
@@ -1551,125 +1910,54 @@ void create_objects() {
     end = svcGetSystemTick();
     ticks = end - start;
     object_sorting_time = ticks / CPU_TICKS_PER_MSEC;
-
-    for (size_t s = 0; s < sprite_count; s++) {
-        SpriteObject *obj = viewable_objects_ptr[s];
-        if (obj->obj != -1) {
-            int col_channel = obj->col_channel;
-
-            ColorChannel col;
-
-            if (col_channel < 0) {
-                col.color.r = 255;
-                col.color.g = 255;
-                col.color.b = 255;
-                col.blending = false;
-            } else if (col_channel == CHANNEL_INVISIBLE_GLOW) { // Handle invisible blocks color lerping
-                int chan = get_col_channel_index(CHANNEL_LBG_NOLERP);
-
-                Color lbg = channels[chan].color;
-                Color p1 = get_white_if_black(p1_color);
-                float opacity = objects.opacity[obj->obj];
-
-                if (opacity < 0.8f || state.dead) {
-                    col = channels[chan];
-                } else {
-                    float blendFactor = 1.9f - 1.5f * opacity;
-                    float oneMinusFactor = 1.0f - blendFactor;
-
-                    int r = (float)p1.r * oneMinusFactor + (float)lbg.r * blendFactor;
-                    int g = (float)p1.g * oneMinusFactor + (float)lbg.g * blendFactor;
-                    int b = (float)p1.b * oneMinusFactor + (float)lbg.b * blendFactor;
-                    
-                    col.color.r = CLAMP(r, 0, 255);
-                    col.color.g = CLAMP(g, 0, 255);
-                    col.color.b = CLAMP(b, 0, 255);
-                    col.blending = true;
-                }
-#ifdef __PSP__
-            } else if (col_channel == CHANNEL_V2_LIGHTER) {
-                // 2.0's "lighter": the object's main color, halfway to white
-                int obj_id = objects.id[obj->obj];
-                int base = get_color_channel(COLOR_TYPE_BASE, obj->obj, &game_objects[obj_id]);
-                Color c = { 255, 255, 255 };
-                if (base == 0) c = (Color){ 0, 0, 0 };
-                else if (base > 0 && base != CHANNEL_V2_LIGHTER) c = channels[get_col_channel_index(base)].color;
-                col.color.r = (c.r + 255) / 2;
-                col.color.g = (c.g + 255) / 2;
-                col.color.b = (c.b + 255) / 2;
-                col.blending = false;
-#endif
-            } else {
-                col = channels[get_col_channel_index(col_channel)];
-            }
-
-#ifdef __PSP__
-            // a user coin whose level isn't rated (or whose coins aren't
-            // verified) is drawn orange, not white
-            if (level_has_unverified_coins() && objects.id[obj->obj] == SECRET_COIN) {
-                col.color.r = USER_COIN_UNRATED_R;
-                col.color.g = USER_COIN_UNRATED_G;
-                col.color.b = USER_COIN_UNRATED_B;
-            }
-#endif
-
-            int game_object = obj->obj;
-            float x = ((objects.x[game_object] - state.camera_x));
-
-            float opacity = obj->opacity;
-#ifdef __PSP__
-            // the channel's own opacity (2.0)
-            if (col_channel > 0 && col_channel != CHANNEL_INVISIBLE_GLOW && col_channel != CHANNEL_V2_LIGHTER)
-                opacity *= channels[get_col_channel_index(col_channel)].alpha * (1.f / 255.f);
-            // its groups' alpha and pulses (2.0 triggers)
-            trig2_object_color(game_object, obj->col_type, &col.color, &opacity);
-#endif
-
-            // Handle invisible object opacity
-            if (object_fades(game_object)) {
-                float glow_out;
-                float fading_opacity = get_fading_obj_fade(game_object, SCREEN_WIDTH / SCALE, &glow_out);
-                
-                // Check if layer is glow
-                if (obj->layer == 1) opacity *= glow_out;
-                else opacity *= fading_opacity;
-            }
-
-            int real_opacity = get_obj_opacity(game_object, x) * opacity;
-#ifdef __PSP__
-            // the objects' glow, added over the screen, was much stronger than GD's
-            if (obj->layer == 1) real_opacity = real_opacity * 3 / 5;
-#endif
-
-            // Set opacity here
-            if (obj->layer == 0) objects.opacity[game_object] = real_opacity / 255.f;
-            
-            C2D_PlainImageTint(&obj->tint, C2D_Color32(col.color.r, col.color.g, col.color.b, real_opacity), 1.f);
-        }
-    }
 }
 
 #ifdef __PSP__
 // the flame under the robot's feet while it rises: GD's fireBoost_001.png,
-// which the 3DS build never had (there the burst's squares stand in for it)
+// which the 3DS build never had (there the burst's squares stand in for it).
+// GD draws that one frame with a flicker, so the fire is two tongues a breath
+// apart, each one breathing and wobbling while the other holds
 static void draw_robot_boost_fire(Player *player) {
     if (!boostSheet || !player->robot) return;
     if (!(player->robot_boost > 0 && state.input.holdJump && !player->on_ground)) return;
 
-    C2D_Sprite spr = { 0 };
-    C2D_SpriteFromSheet(&spr, boostSheet, 0);
-    C3D_TexSetFilter(spr.image.tex, GPU_LINEAR, GPU_LINEAR);
-    // hanging from the feet (4 to the left, like the particles' emitter),
-    // flipped with the gravity
-    C2D_SpriteSetCenter(&spr, 0.5f, 0.f);
-    C2D_SpriteSetPos(&spr,
-        get_mirror_x(player->x - 4.f - state.camera_x, state.mirror_factor),
-        SCREEN_HEIGHT - (gravBottom(player) - state.camera_y));
+    bool up = player->upside_down;
     float s = player->mini ? 0.6f : 1.f;
-    C2D_SpriteSetScale(&spr, s, s * (player->upside_down ? -1.f : 1.f));
-    // slanted back, like GD's (mirrored with the level)
-    C2D_SpriteSetRotation(&spr, C3D_AngleFromDegrees(30.f * state.mirror_mult));
-    C2D_DrawSprite(&spr);
+
+    // out of the feet (4 to the left, like the particles' emitter) and a hair
+    // past them, so the flame reads as coming out of them and not of the body
+    float feet = (up ? getTop(player) : getBottom(player)) + (up ? 2.f : -2.f);
+    float x = get_mirror_x(player->x - 4.f - state.camera_x, state.mirror_factor);
+    float y = SCREEN_HEIGHT - (feet - state.camera_y);
+
+    // slanted back, like GD's (mirrored with the level); upside down the
+    // sprite is flipped too, and that alone would swing the slant forward
+    float lean = 26.f * state.mirror_mult * (up ? -1.f : 1.f);
+    float t = level_frame * 0.8f;
+
+    for (int i = 1; i >= 0; i--) {
+        C2D_Sprite spr = { 0 };
+        C2D_SpriteFromSheet(&spr, boostSheet, 0);
+        C3D_TexSetFilter(spr.image.tex, GPU_LINEAR, GPU_LINEAR);
+        C2D_SpriteSetCenter(&spr, 0.5f, 0.f);
+        C2D_SpriteSetPos(&spr, x, y);
+        float ph = t + i * 1.9f;
+        // the outer tongue is the short one, the inner one the long
+        float breathe = (i ? 0.82f : 1.f);
+        float sw = breathe * (1.f + 0.14f * sinf(ph * 2.3f));
+        float sh = breathe * (1.f + 0.20f * sinf(ph * 3.1f + 0.9f));
+        C2D_SpriteSetScale(&spr, s * sw, s * sh * (up ? -1.f : 1.f));
+        C2D_SpriteSetRotation(&spr, C3D_AngleFromDegrees(
+            lean + 6.f * sinf(ph * 1.7f + i * 2.1f) * state.mirror_mult));
+        if (i) {
+            // the one behind, dimmer: the fire's depth
+            C2D_ImageTint tint;
+            C2D_PlainImageTint(&tint, C2D_Color32f(1.f, 1.f, 1.f, 0.55f), 1.f);
+            C2D_DrawSpriteTinted(&spr, &tint);
+        } else {
+            C2D_DrawSprite(&spr);
+        }
+    }
 }
 #endif
 
@@ -1692,9 +1980,17 @@ void draw_player_effects() {
     drawParticleSystem(&brick_destroy_particles, 0, 0, 1.f);
     drawParticleSystem(&coin_pickup_particles, 0, 0, 1.f);
     drawParticleSystem(&glitter_particles, 0, 0, 1.f);
-    draw_p1_trail(&state.player, 0);
-    if (!settingsState.noPlayerTrail) MotionTrail_Draw(&trail_p1);
+    if (!settingsState.lowDetailMode) draw_p1_trail(&state.player, 0);
+    if (!settingsState.noPlayerTrail && !settingsState.lowDetailMode) MotionTrail_Draw(&trail_p1);
+#ifdef __PSP__
+    {
+        u64 t0 = svcGetSystemTick();
+        MotionTrail_DrawWaveTrail(&wave_trail_p1);
+        psp_wave_draw_us += (u32)((svcGetSystemTick() - t0) / CPU_TICKS_PER_MSEC * 1000);
+    }
+#else
     MotionTrail_DrawWaveTrail(&wave_trail_p1);
+#endif
 }
 
 void draw_post_player_effects() {
@@ -1721,10 +2017,18 @@ void draw_player_graphics() {
     draw_object_particles();
     draw_player_effects();
 
-    draw_p1_trail(&state.player2, 1);
+    if (!settingsState.lowDetailMode) draw_p1_trail(&state.player2, 1);
     
-    if (!settingsState.noPlayerTrail) MotionTrail_Draw(&trail_p2);
+    if (!settingsState.noPlayerTrail && !settingsState.lowDetailMode) MotionTrail_Draw(&trail_p2);
+#ifdef __PSP__
+    {
+        u64 t0 = svcGetSystemTick();
+        MotionTrail_DrawWaveTrail(&wave_trail_p2);
+        psp_wave_draw_us += (u32)((svcGetSystemTick() - t0) / CPU_TICKS_PER_MSEC * 1000);
+    }
+#else
     MotionTrail_DrawWaveTrail(&wave_trail_p2);
+#endif
     change_blending(false);
     state.current_player = 0;
     draw_checkpoints();
@@ -1746,6 +2050,24 @@ void draw_objects() {
         SpriteObject *obj = viewable_objects_ptr[s];
 
         if (obj->obj != -1) {
+#ifdef __PSP__
+            // the tint already has the channel's color and blending in it: a
+            // fully hidden one (black, or faded out) costs nothing more
+            u32 tint = obj->tint.corners[0].color;
+            if ((tint >> 24) == 0) continue;
+            if ((tint & 0xffffff) == 0 && obj->blend) continue;
+
+            // off the screen: the GE would clip it, after its four vertices
+            // had been built (a sprite turned any way fits in this circle)
+            {
+                const C2D_DrawParams *p = &obj->spr.params;
+                float rr = (fabsf(p->pos.w) + fabsf(p->pos.h)) * 0.5f;
+                if (p->pos.x + rr <= 0.f || p->pos.x - rr >= (SCREEN_WIDTH / SCALE) ||
+                    p->pos.y + rr <= 0.f || p->pos.y - rr >= (SCREEN_HEIGHT / SCALE)) continue;
+            }
+
+            change_blending(obj->blend);
+#else
             int col_channel = obj->col_channel;
             
             ColorChannel col;
@@ -1759,14 +2081,11 @@ void draw_objects() {
                 col = channels[get_col_channel_index(col_channel)];
             }
 
-            change_blending(col.blending);
-
-            // Cull invisible objects
+            // Cull invisible objects (before the blending: a state change
+            // flushes what is drawn, and one for nothing costs a stall)
             if ((col.color.r | col.color.g | col.color.b) == 0 && col.blending) continue;
-#ifdef __PSP__
-            // and fully faded ones (alpha triggers, the fade-in at the edges):
-            // nothing to see, but each one costs its vertices
-            if ((obj->tint.corners[0].color >> 24) == 0) continue;
+
+            change_blending(col.blending);
 #endif
 
             if (objects.id[obj->obj] == KEY_OBJ) {

@@ -1,0 +1,18 @@
+# PSP: the Extras screen, laid out like the creator menu's: its buttons in a
+# row of squares (Meltdown on the left, the map packs in the middle), back in
+# the corner. Touch screen's half, centered over the top screen (40 + x, y);
+# the top screen's gradient and corners are the background
+@merge 40 0 1
+
+bggradient tag="gradient" psphide=1
+
+image x=36 y=35 id=178 sy=-1.0 psphide=1
+image x=36 y=205 id=178 psphide=1
+
+button x=-12 y=32 id=8 scale=0.65 action="exit" keyBinds="B"
+
+# sheet 10: extras.psheet, this screen's own art (0 logo, 1 meltdown, 2 mappacks)
+# the map packs art fills its canvas (115x114 visible) and Meltdown's does not
+# (101x100), so its scale is smaller to land on the same square
+button x=101 y=145 id=1 sheet=10 scale=0.85 action="meltdown"
+button x=219 y=145 id=2 sheet=10 scale=0.74 action="mappacks"

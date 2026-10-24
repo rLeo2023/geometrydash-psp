@@ -58,6 +58,14 @@ typedef struct
     float opacity;
     int col_channel;
     int zlayer;
+#ifdef __PSP__
+    // its place in the draw order, worked out with the tint (while the
+    // object's definition is still in the cache) instead of in the sort
+    uint32_t skey;
+    // the channel's blending, also from the tint: the draw loop doesn't need
+    // to look the channel up again
+    unsigned char blend;
+#endif
 } SpriteObject;
 
 typedef struct {

@@ -1,4 +1,7 @@
-# PSP: the profile on one screen, like the main menu
+# PSP: the profile laid out like GD's own. The name on top, the stats the port
+# has (stars, gold coins, user coins and demons) the way GD draws them, an icon
+# and its number, the six game modes on one of its brown panels, and the rest
+# as text in the other one, where the comments' box would go.
 @merge 40 0 1
 
 darken x=0 y=0 opacity=0.4 darkenTime=0.5 tag="darken"
@@ -6,26 +9,43 @@ darken x=0 y=0 opacity=0.4 darkenTime=0.5 tag="darken"
 image x=160 y=120 id=21 sheet=1 scale=0.9
 
 # the table's middle is transparent: fill it with the stats' brown, right up
-# to the frame (the panel's inner area is 49..271 x 49..186 at scale 0.9)
-rectangle x=160 y=117 w=222 h=137 color="#a15830"
+# to the frame (the panel's inner area is 53..266 x 56..186 at scale 0.9, so
+# the fill goes a few pixels under the frame on every side)
+rectangle x=160 y=121 w=222 h=137 color="#995433"
 
 button x=24 y=28 id=8 action="exit" keyBinds="B"
 
 # inside the panel's top bar (the compiled table's header)
 label x=160 y=30 text="Profile" scale=0.55 align=CENTER
-image x=160 y=47 id=1 sheet=1 scale=0.4 tag="profile_pic"
-label x=160 y=65 text="" scale=0.33 align=CENTER parseTags=false tag="profile_name"
+label x=160 y=64 text="" scale=0.5 align=CENTER parseTags=false tag="profile_name"
 
-# the six game modes, small enough to fit between the panel's pillars
-icon x=74 y=85 gamemode=0 id=1 scale=0.55 tag="picon0"
-icon x=108 y=85 gamemode=1 id=1 scale=0.55 tag="picon1"
-icon x=142 y=85 gamemode=2 id=1 scale=0.55 tag="picon2"
-icon x=176 y=85 gamemode=3 id=1 scale=0.55 tag="picon3"
-icon x=210 y=85 gamemode=4 id=1 scale=0.55 tag="picon4"
-icon x=244 y=85 gamemode=6 id=1 scale=0.55 tag="picon5"
+# GD's stats row: the number and its icon (GJ_starsIcon, secretCoinUI,
+# secretCoinUI2 and GJ_demonIcon), the four the save file tracks
+label x=72 y=83 text="0" font=2 scale=0.45 align=RIGHT tag="v_stars"
+image x=84 y=83 id=184 scale=0.83
+label x=128 y=83 text="0" font=2 scale=0.45 align=RIGHT tag="v_gold"
+image x=140 y=83 id=402 scale=0.45
+label x=184 y=83 text="0" font=2 scale=0.45 align=RIGHT tag="v_user"
+image x=196 y=83 id=401 scale=0.45
+label x=240 y=83 text="0" font=2 scale=0.45 align=RIGHT tag="v_demons"
+image x=252 y=83 id=53 scale=0.75
 
-# the stats fill the panel's inner area (55..265 x 57..185), not the frame;
-# the rows stop above the transparent strip that holds the hint
-list x=160 y=136 w=202 h=78 tag="list"
+# the six game modes on GD's brown panel (the code gives it its sprite)
+image x=160 y=116 id=0 sheet=1 scale=1 tag="panel_icons"
+icon x=74 y=116 gamemode=0 id=1 scale=0.62 tag="picon0"
+icon x=108 y=116 gamemode=1 id=1 scale=0.62 tag="picon1"
+icon x=142 y=116 gamemode=2 id=1 scale=0.62 tag="picon2"
+icon x=176 y=116 gamemode=3 id=1 scale=0.62 tag="picon3"
+icon x=210 y=116 gamemode=4 id=1 scale=0.62 tag="picon4"
+icon x=244 y=116 gamemode=6 id=1 scale=0.62 tag="picon5"
 
-label x=160 y=181 text="Triangle: change name" scale=0.3 align=CENTER
+# the stats with no icon of their own, in the comments' box
+image x=160 y=158 id=0 sheet=1 scale=1 tag="panel_texts"
+label x=64 y=146 text="Levels" font=2 scale=0.36 tag="l_levels"
+label x=256 y=146 text="0" font=2 scale=0.36 align=RIGHT tag="v_levels"
+label x=64 y=158 text="Attempts" font=2 scale=0.36 tag="l_attempts"
+label x=256 y=158 text="0" font=2 scale=0.36 align=RIGHT tag="v_attempts"
+label x=64 y=170 text="Jumps" font=2 scale=0.36 tag="l_jumps"
+label x=256 y=170 text="0" font=2 scale=0.36 align=RIGHT tag="v_jumps"
+
+label x=160 y=182 text="Triangle: change name" scale=0.3 align=CENTER

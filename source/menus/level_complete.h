@@ -4,6 +4,7 @@
 #define COMPLETE_COIN_UNFILLED_ID 23
 
 void level_complete_init();
+void level_complete_preload();
 int level_complete_loop(float delta);
 void level_complete_destroy();
 void draw_level_complete_top();

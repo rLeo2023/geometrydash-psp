@@ -51,6 +51,7 @@
 #include "particles/circles.h"
 #include "menus/settings.h"
 #include "menus/creator_menu.h"
+#include "menus/extras_menu.h"
 #include "menus/external_levels.h"
 #include "menus/search_menu.h"
 #include "menus/saved_levels.h"
@@ -261,6 +262,8 @@ float sprite_drawing_time = 0;
 float physics_calc_time = 0;
 float particle_calc_time = 0;
 float triggers_time = 0;
+// particles and trails, updated after the frame was handed to the GE
+static float post_frame_time = 0;
 
 float delta = 0;
 #ifdef __PSP__
@@ -617,15 +620,39 @@ void game_loop() {
     if (returned) {
         printf("\x1b[9;1HFailed %d", returned);
 
-        game_state = (state.custom_level ? STATE_EXTERNAL_LEVELS : STATE_LEVEL_SELECT);
+        game_state = (state.custom_level ? (state.extras_level ? STATE_LEVEL_SELECT : STATE_EXTERNAL_LEVELS) : STATE_LEVEL_SELECT);
         return;
     }
+
+    // preload the level-complete screens here so the first completion doesn't
+    // pay the ~35 ms parse (the previous stutter).
+    level_complete_preload();
 
     if (!state.custom_level) {
         snprintf(level_info.level_name, sizeof(level_info.level_name), "%s", main_levels[curr_level_id].level_name);
     }
 
     play_level_song(level_info.song_offset);
+
+#ifdef __PSP__
+    // warn the user when the song couldn't be loaded (PSP-1000 RAM limit)
+    if (!song_loaded && level_info.custom_song_id > 0) {
+        // keep the loading screen up a moment longer to show the warning
+        psp_loading_screen = true;
+        C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+        C2D_Fade(0);
+        for (int eye = 0; begin_top_eye(eye); eye++) {
+            begin_eye_layer(DEPTH_UI);
+            draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 14, SCREEN_HEIGHT - 22, 0.5f, 0.5f, 1.0f, true, "%s", tr("Loading..."));
+            draw_text(&bigFont_fontCharset, &bigFont_sheet, SCREEN_WIDTH - 14, SCREEN_HEIGHT - 40, 0.5f, 0.5f, 1.0f, true, "%s", tr("Song too large (>4MB)"));
+            end_eye_layer();
+        }
+        C3D_FrameEnd(0);
+        // hold the message briefly
+        sceKernelDelayThread(2000000);
+        psp_loading_screen = false;
+    }
+#endif
 
     if (song_loaded) pause_playback_mp3();
 
@@ -637,10 +664,12 @@ void game_loop() {
 
     init_op_system();
 
+    
     gameplay_screen_init();
     
     // Particle
     allocate_particles();
+    
     init_particles(p1_color, p2_color);
     clear_practice_mode();
 
@@ -651,8 +680,6 @@ void game_loop() {
     memset(pi_substep_presses, 0, sizeof(pi_substep_presses));
 #ifdef __PSP__
     // which level, for a log that ends in a crash
-    psp_log("level: %s\n", level_info.level_name);
-    psp_log_memory("level loaded");
 #endif
 
     u64 lastTime = svcGetSystemTick();
@@ -662,7 +689,18 @@ void game_loop() {
 
     // Main loop
     while (aptMainLoop()) {
+#ifdef __PSP__
+        // The frame that came out of last loop is shown as the vblank comes,
+        // and only then the pad is read and the frame simulated: the picture
+        // on screen carries the input of that very vblank (a frame's worth of
+        // input lag less than presenting at C3D_FrameBegin, after the update).
+        PSP_PresentFrame();
+#endif
         start = svcGetSystemTick();
+#ifdef __PSP__
+        psp_wave_update_us = 0;
+        psp_wave_draw_us = 0;
+#endif
         hidScanInput();
 
         pi_poll();
@@ -981,74 +1019,6 @@ void game_loop() {
             u64 ticks_obj = end_obj - start_obj;
             sprite_drawing_time = ticks_obj / CPU_TICKS_PER_MSEC;
 
-            u64 start_part = svcGetSystemTick();
-            update_player_effects(delta);
-
-            // End wall particles
-            if (level_info.wall_y > 0) {
-                updateParticleSystem(&end_wall_particles, delta);
-                updateParticleSystem(&end_wall_firework, delta);
-                updateParticleSystem(&level_complete_effect_p1, delta);
-                updateParticleSystem(&level_complete_effect_p2, delta);
-
-                handle_level_complete_popup(delta);
-            }
-
-            handle_new_best_popup(delta);
-
-            update_collect_effect(delta);
-            update_key_effect(delta);
-
-            float calc_x_speed_particles = SCREEN_WIDTH_AREA;
-            float calc_y_speed_particles = (SCREEN_HEIGHT_AREA / 2);
-
-            slow_speed_particles.emitterX = calc_x_speed_particles;
-            slow_speed_particles.emitterY = calc_y_speed_particles;
-            slow_speed_particles.emitting = slow_speed_particles_timer > 0;
-            if (slow_speed_particles_timer > 0) {
-                slow_speed_particles_timer -= delta;
-            }
-
-            normal_speed_particles.emitterX = calc_x_speed_particles;
-            normal_speed_particles.emitterY = calc_y_speed_particles;
-            normal_speed_particles.emitting = normal_speed_particles_timer > 0;
-            if (normal_speed_particles_timer > 0) {
-                normal_speed_particles_timer -= delta;
-            }
-
-            fast_speed_particles.emitterX = calc_x_speed_particles;
-            fast_speed_particles.emitterY = calc_y_speed_particles;
-            fast_speed_particles.emitting = fast_speed_particles_timer > 0;
-            if (fast_speed_particles_timer > 0) {
-                fast_speed_particles_timer -= delta;
-            }
-
-            faster_speed_particles.emitterX = calc_x_speed_particles;
-            faster_speed_particles.emitterY = calc_y_speed_particles;
-            faster_speed_particles.emitting = faster_speed_particles_timer > 0;
-            if (faster_speed_particles_timer > 0) {
-                faster_speed_particles_timer -= delta;
-            }
-            
-            end_wall_particles.emitterX = level_info.wall_x - 15;
-            end_wall_particles.emitterY = level_info.wall_y;
-            end_wall_particles.emitting = level_info.wall_y > 0;
-
-            update_use_effects(delta, get_use_effect_array_ptr(GFX_TOP));
-            update_use_effects(delta, get_use_effect_array_ptr(GFX_TOP_BUT_ABOVE_LEVEL));
-            update_object_particles(delta);
-            u64 end_part = svcGetSystemTick();
-            u64 ticks_part = end_part - start_part;
-            particle_calc_time = ticks_part / CPU_TICKS_PER_MSEC;
-
-            // Update trails
-            MotionTrail_Update(&trail_p1, delta);
-            MotionTrail_UpdateWaveTrail(&wave_trail_p1, delta);
-            update_p1_trail(&state.player, 0);
-
-            MotionTrail_Update(&trail_p2, delta);
-            MotionTrail_UpdateWaveTrail(&wave_trail_p2, delta);
-            update_p1_trail(&state.player2, 1);
 #ifdef __PSP__
             {
                 // autoload test: what's on screen and its colors, now and then
@@ -1077,34 +1047,6 @@ void game_loop() {
             }
 #endif
 
-            // If not dual, fade the p2 wave trial
-            if (!state.dual) {
-                if (wave_trail_p2.opacity > 0) wave_trail_p2.opacity -= (0.02f * STEPS_HZ) * delta;
-                
-                if (wave_trail_p2.opacity <= 0) {
-                    wave_trail_p2.opacity = 0;
-                    wave_trail_p2.nuPoints = 0;
-                }
-            }
-
-            if (state.mirroring) {
-                state.mirror_timer += delta;
-                if (state.mirror_timer > MIRROR_DURATION) {
-                    state.mirroring = false;
-                    state.mirror_factor = state.intended_mirror_factor;
-                    state.mirror_speed_factor = 1 - 2*state.mirror_factor;
-
-                    // When mirror transition ends, put a wave trail point
-                    if (state.player.gamemode == GAMEMODE_DART) {
-                        wave_trail_p1.positionR = (Vec2D){ state.player.x, state.player.y };
-                        MotionTrail_AddWavePoint(&wave_trail_p1);
-                    }
-                    if (state.dual && state.player2.gamemode == GAMEMODE_DART) {
-                        wave_trail_p2.positionR = (Vec2D){ state.player2.x, state.player2.y };
-                        MotionTrail_AddWavePoint(&wave_trail_p2);
-                    }
-                }
-            }
         } else{
             kHeldPaused = kHeld;
         }
@@ -1144,8 +1086,6 @@ void game_loop() {
 
         // Render the scene
         do {
-            update_bottom_particles(delta);
-            update_touch_effect(delta);
 
 #ifdef __PSP__
             perf_t1 = sceKernelGetSystemTimeLow();
@@ -1307,10 +1247,168 @@ void game_loop() {
             C3D_FrameEnd(0);
         } while (handle_fading());
 
+        /*
+        The particles and the trails only get seen on the next frame, so
+        they are updated once this frame was handed to the GE (FrameEnd,
+        above): that takes their time out of the window the GE has to draw
+        this frame, which is what the heavy parts run out of
+        */
+        if (!game_paused) {
+            u64 start_post = svcGetSystemTick();
+            update_bottom_particles(delta);
+            update_touch_effect(delta);
+            u64 start_part = svcGetSystemTick();
+            update_player_effects(delta);
+
+            // End wall particles
+            if (level_info.wall_y > 0) {
+                updateParticleSystem(&end_wall_particles, delta);
+                updateParticleSystem(&end_wall_firework, delta);
+                updateParticleSystem(&level_complete_effect_p1, delta);
+                updateParticleSystem(&level_complete_effect_p2, delta);
+
+                handle_level_complete_popup(delta);
+            }
+
+            handle_new_best_popup(delta);
+
+            update_collect_effect(delta);
+            update_key_effect(delta);
+
+            float calc_x_speed_particles = SCREEN_WIDTH_AREA;
+            float calc_y_speed_particles = (SCREEN_HEIGHT_AREA / 2);
+
+            slow_speed_particles.emitterX = calc_x_speed_particles;
+            slow_speed_particles.emitterY = calc_y_speed_particles;
+            slow_speed_particles.emitting = slow_speed_particles_timer > 0;
+            if (slow_speed_particles_timer > 0) {
+                slow_speed_particles_timer -= delta;
+            }
+
+            normal_speed_particles.emitterX = calc_x_speed_particles;
+            normal_speed_particles.emitterY = calc_y_speed_particles;
+            normal_speed_particles.emitting = normal_speed_particles_timer > 0;
+            if (normal_speed_particles_timer > 0) {
+                normal_speed_particles_timer -= delta;
+            }
+
+            fast_speed_particles.emitterX = calc_x_speed_particles;
+            fast_speed_particles.emitterY = calc_y_speed_particles;
+            fast_speed_particles.emitting = fast_speed_particles_timer > 0;
+            if (fast_speed_particles_timer > 0) {
+                fast_speed_particles_timer -= delta;
+            }
+
+            faster_speed_particles.emitterX = calc_x_speed_particles;
+            faster_speed_particles.emitterY = calc_y_speed_particles;
+            faster_speed_particles.emitting = faster_speed_particles_timer > 0;
+            if (faster_speed_particles_timer > 0) {
+                faster_speed_particles_timer -= delta;
+            }
+            
+            end_wall_particles.emitterX = level_info.wall_x - 15;
+            end_wall_particles.emitterY = level_info.wall_y;
+            end_wall_particles.emitting = level_info.wall_y > 0;
+
+            update_use_effects(delta, get_use_effect_array_ptr(GFX_TOP));
+            update_use_effects(delta, get_use_effect_array_ptr(GFX_TOP_BUT_ABOVE_LEVEL));
+            update_object_particles(delta);
+            u64 end_part = svcGetSystemTick();
+            u64 ticks_part = end_part - start_part;
+            particle_calc_time = ticks_part / CPU_TICKS_PER_MSEC;
+
+            // Update trails
+#ifdef __PSP__
+            u64 start_wave = svcGetSystemTick();
+#endif
+            MotionTrail_UpdateWaveTrail(&wave_trail_p1, delta);
+            MotionTrail_UpdateWaveTrail(&wave_trail_p2, delta);
+#ifdef __PSP__
+            psp_wave_update_us = (u32)((svcGetSystemTick() - start_wave) / CPU_TICKS_PER_MSEC * 1000);
+#endif
+            if (!settingsState.lowDetailMode) {
+                MotionTrail_Update(&trail_p1, delta);
+                update_p1_trail(&state.player, 0);
+
+                MotionTrail_Update(&trail_p2, delta);
+                update_p1_trail(&state.player2, 1);
+            }
+            // If not dual, fade the p2 wave trial
+            if (!state.dual) {
+                if (wave_trail_p2.opacity > 0) wave_trail_p2.opacity -= (0.02f * STEPS_HZ) * delta;
+                
+                if (wave_trail_p2.opacity <= 0) {
+                    wave_trail_p2.opacity = 0;
+                    wave_trail_p2.nuPoints = 0;
+                }
+            }
+
+            if (state.mirroring) {
+                state.mirror_timer += delta;
+                if (state.mirror_timer > MIRROR_DURATION) {
+                    state.mirroring = false;
+                    state.mirror_factor = state.intended_mirror_factor;
+                    state.mirror_speed_factor = 1 - 2*state.mirror_factor;
+
+                    // When mirror transition ends, put a wave trail point
+                    if (state.player.gamemode == GAMEMODE_DART) {
+                        wave_trail_p1.positionR = (Vec2D){ state.player.x, state.player.y };
+                        MotionTrail_AddWavePoint(&wave_trail_p1);
+                    }
+                    if (state.dual && state.player2.gamemode == GAMEMODE_DART) {
+                        wave_trail_p2.positionR = (Vec2D){ state.player2.x, state.player2.y };
+                        MotionTrail_AddWavePoint(&wave_trail_p2);
+                    }
+                }
+            }
+            post_frame_time = (svcGetSystemTick() - start_post) / CPU_TICKS_PER_MSEC;
+        }
+
+#ifdef __PSP__
+        /*
+        A frame that came out late (it lost its vblank: 33 ms instead of 17)
+        in full, to the log: which phase took it, where the player was, and
+        whether it was a resume, a death, a pause... One line each, there are
+        few, and the 2 s averages hide them.
+        Always on, like the 2 s line below: the log should say the same thing
+        whatever settings the player has. Each line is a Memory Stick write,
+        so at most one a second, with how many frames were late since the
+        last one: a couple of lines per second of trouble, and nothing while
+        the level runs fine. What counts as late follows the frame's pacing:
+        a 30 fps frame (two vblanks) is on time at 33 ms, not late.
+        */
+        {
+            static u32 last_end, last_slow;
+            static u32 slow_run;
+            u32 now_us = sceKernelGetSystemTimeLow();
+            u32 period = last_end ? now_us - last_end : 0;
+            u32 expected = (u32)PSP_FrameVblanks() * 16683; // us a frame is paced to
+            last_end = now_us;
+            if (period > expected + expected / 2) {
+                slow_run++;
+                if (now_us - last_slow >= 1000000) {
+                    float up = ticks / CPU_TICKS_PER_MSEC;
+                    float rest = up - physics_calc_time - sprite_drawing_time - triggers_time - particle_calc_time;
+                    psp_log("slow frame: %u us (%u late since the last line), update %.1f (physics %.1f objects %.1f make %.1f, triggers %.1f, other %.1f) draw %.1f post %.1f, wait %u ge %u wave upd %u draw %u, x %.0f y %.0f, %d sprites, %d draws %d tex %d blend, dead %d paused %d\n",
+                            period, slow_run, up, physics_calc_time, sprite_drawing_time, object_creating_time,
+                            triggers_time, rest, object_drawing_time, post_frame_time,
+                            psp_frame_wait_us, psp_ge_sync_us, psp_wave_update_us, psp_wave_draw_us,
+                            state.player.x, state.player.y, sprite_count,
+                            psp_draw_calls, psp_tex_changes, psp_blend_changes,
+                            (int)state.dead, (int)game_paused);
+                    slow_run = 0;
+                    last_slow = now_us;
+                }
+            }
+        }
+#endif
+
 #ifdef __PSP__
         // where a frame's time goes, averaged every 2 s of play, to the log
-        if (settingsState.enableDebugBindings && !game_paused && !state.dead) {
-            static u32 n, sum[7], peak[7];
+        if (!game_paused && !state.dead) {
+            static u32 n, sum[7], peak[7], sum_cr, sum_so, sum_ge, peak_ge, sum_post, peak_post;
+            static u32 win_start, win_frames, spr_sum, spr_peak;
+            static u32 sum_dc, peak_dc, sum_tc, peak_tc, sum_bc, peak_bc;
             u32 now = sceKernelGetSystemTimeLow();
             u32 v[7] = {
                 (u32)(ticks / CPU_TICKS_PER_MSEC * 1000),  // the update, all of it
@@ -1318,23 +1416,53 @@ void game_loop() {
                 (u32)(sprite_drawing_time * 1000),         //  the objects' sprites: pick, sort, color
                 (u32)(particle_calc_time * 1000),          //  particles and effects
                 (u32)(triggers_time * 1000),               //  triggers and colors
-                perf_t2 - perf_t1,                         // waiting for the GE / the vblank
+                perf_t2 - perf_t1 + psp_frame_wait_us, // waiting for the GE / the vblank
                 now - perf_t2,                             // drawing (the CPU's side)
             };
             for (int i = 0; i < 7; i++) {
                 sum[i] += v[i];
                 if (v[i] > peak[i]) peak[i] = v[i];
             }
+            sum_cr += (u32)(object_creating_time * 1000);
+            sum_so += (u32)(object_sorting_time * 1000);
+            sum_ge += psp_ge_sync_us;
+            if (psp_ge_sync_us > peak_ge) peak_ge = psp_ge_sync_us;
+            sum_post += (u32)(post_frame_time * 1000);
+            if ((u32)(post_frame_time * 1000) > peak_post) peak_post = (u32)(post_frame_time * 1000);
+            if (sprite_count > (int)spr_peak) spr_peak = sprite_count;
+            spr_sum += sprite_count;
+            sum_dc += psp_draw_calls;
+            sum_tc += psp_tex_changes;
+            sum_bc += psp_blend_changes;
+            if (psp_draw_calls > peak_dc) peak_dc = psp_draw_calls;
+            if (psp_tex_changes > peak_tc) peak_tc = psp_tex_changes;
+            if (psp_blend_changes > peak_bc) peak_bc = psp_blend_changes;
             (void)perf_t0;
+            if (!win_start) win_start = now;
+            win_frames++;
             if (++n == 120) {
-                psp_log("perf ms (avg/max): update %.1f/%.1f [physics %.1f/%.1f objects %.1f/%.1f particles %.1f/%.1f triggers %.1f/%.1f] wait %.1f/%.1f draw %.1f/%.1f, %d sprites\n",
+                u32 span_us = now - win_start;
+                float fps = span_us ? win_frames * 1000000.f / span_us : 0.f;
+                psp_log("perf ms (avg/max) over %.1f s: update %.1f/%.1f [physics %.1f/%.1f objects %.1f/%.1f (make %.1f, sort %.1f) particles %.1f/%.1f triggers %.1f/%.1f] wait %.1f/%.1f [ge %.2f/%.2f] draw %.1f/%.1f post %.1f/%.1f, %d sprites (max %d), %d draws (max %d) %d tex (max %d) %d blend (max %d), %.1f fps, x %.0f\n",
+                    span_us / 1000000.f,
                     sum[0] / 120000.f, peak[0] / 1000.f, sum[1] / 120000.f, peak[1] / 1000.f,
-                    sum[2] / 120000.f, peak[2] / 1000.f, sum[3] / 120000.f, peak[3] / 1000.f,
+                    sum[2] / 120000.f, peak[2] / 1000.f, sum_cr / 120000.f, sum_so / 120000.f,
+                    sum[3] / 120000.f, peak[3] / 1000.f,
                     sum[4] / 120000.f, peak[4] / 1000.f, sum[5] / 120000.f, peak[5] / 1000.f,
-                    sum[6] / 120000.f, peak[6] / 1000.f, sprite_count);
+                    sum_ge / 120000.f, peak_ge / 1000.f,
+                    sum[6] / 120000.f, peak[6] / 1000.f,
+                    sum_post / 120000.f, peak_post / 1000.f,
+                    spr_sum / 120, spr_peak,
+                    sum_dc / 120, peak_dc, sum_tc / 120, peak_tc, sum_bc / 120, peak_bc,
+                    fps, state.player.x);
                 n = 0;
+                win_frames = 0;
+                win_start = 0;
+                spr_sum = spr_peak = 0;
+                sum_dc = peak_dc = sum_tc = peak_tc = sum_bc = peak_bc = 0;
                 memset(sum, 0, sizeof(sum));
                 memset(peak, 0, sizeof(peak));
+                sum_cr = sum_so = sum_ge = peak_ge = sum_post = peak_post = 0;
             }
         }
 #endif
@@ -1406,7 +1534,7 @@ void game_loop() {
     
     if (song_loaded) unpause_playback_mp3();
 
-    game_state = (state.custom_level ? STATE_EXTERNAL_LEVELS : STATE_LEVEL_SELECT);
+    game_state = (state.custom_level ? (state.extras_level ? STATE_LEVEL_SELECT : STATE_EXTERNAL_LEVELS) : STATE_LEVEL_SELECT);
 }
 
 void game_assets_init() {
@@ -1494,20 +1622,36 @@ void psp_frame_overlay(void) {
 #endif
 
 int main(int argc, char* argv[]) {
+#ifdef __PSP__
+    psp_main_thread = 1;
+    psp_debug_logging = 1;
+#endif
+#ifdef __PSP__
+    // The log is the only thing a tester can send: mark each step of the boot,
+    // so "it goes back to the XMB" says which one it didn't get past
+    #define BOOT_STEP( ... ) do { psp_log( "boot: " __VA_ARGS__ ); } while( 0 )
+#else
+    #define BOOT_STEP( ... ) do { } while( 0 )
+#endif
+
     // Init libs
     romfsInit();
     gfxInitDefault();
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * 4);
     C2D_Init(MAX_SPRITES);
     C2D_Prepare();
+    BOOT_STEP( "graphics ok\n" );
     osSetSpeedupEnable(1);
+    BOOT_STEP( "clock ok\n" );
 
     cfg_init();
     cfguInit();
+    BOOT_STEP( "config ok\n" );
 
     // Sort out wide / 3D before making the targets, they need different sizes
     apply_screen_modes();
     reinitialize_screens();
+    BOOT_STEP( "screens ok\n" );
 
     srand(time(NULL));
     alt_title_screen = (rand() & (128 - 1)) == 0;
@@ -1517,26 +1661,36 @@ int main(int argc, char* argv[]) {
     if(ndspInit()) {
         no_dsp_firmware();
     }
-
+    BOOT_STEP( "audio ok\n" );
     required_loading_screen_assets_init();
+    BOOT_STEP( "loading screen assets ok\n" );
 
     loading_screen_init();
 
     u64 start = svcGetSystemTick();
 
     loading_screen_update(0);
+    BOOT_STEP( "first frame ok\n" );
 
     ui_assets_init();
     game_assets_init();
+    BOOT_STEP( "menus and game sheets ok\n" );
     loading_screen_update(10);
 
     load_main_level_progress();
+    BOOT_STEP( "level progress ok\n" );
+
+#ifdef __PSP__
+    // logging is on by default; the settings menu can turn it off
+    psp_debug_logging = 1;
+#endif
     
     loading_screen_update(25);
 
     calculate_stats();
 
     cache_all_sprites();
+    BOOT_STEP( "sprites cached\n" );
 
     loading_screen_update(40);
     
@@ -1632,6 +1786,9 @@ int main(int argc, char* argv[]) {
             case STATE_CREATOR_MENU:
                 creator_menu_loop();
                 break;
+            case STATE_EXTRAS_MENU:
+                extras_menu_loop();
+                break;
             case STATE_SEARCH_MENU:
                 search_menu_loop();
                 break;
@@ -1679,6 +1836,7 @@ int main(int argc, char* argv[]) {
     C2D_SpriteSheetFree(goldFont_sheet);
     C2D_SpriteSheetFree(window_sheet);
     C2D_SpriteSheetFree(bar_sheet);
+    C2D_SpriteSheetFree(extras_sheet);
 
     cfg_fini();
 

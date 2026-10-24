@@ -22,6 +22,7 @@
 #include "save/saving.h"
 #include "main.h"
 #include "profile.h"
+#include "../../psp/src/psp_port.h"
 
 static C2D_SpriteSheet profile_sheet;
 
@@ -29,7 +30,6 @@ static UIScreen screen = {
     .isBottom = true,
 };
 
-static UIList *list;
 static UILabel *name_label;
 static bool yes_exit = false;
 
@@ -46,8 +46,9 @@ static bool keyboard_accept = false;
 static bool keyboard_caps = true;
 
 C2D_SpriteSheet profile_assets(void) {
-    if (!profile_sheet)
+    if (!profile_sheet) {
         profile_sheet = C2D_SpriteSheetLoad("romfs:/gfx/profile.t3x");
+    }
     return profile_sheet;
 }
 
@@ -66,10 +67,11 @@ static void exit_profile(UIElement *e) {
 static void set_profile_name(UILabel *label, const char *name) {
     if (!label) return;
     ui_label_set_text(label, name);
-    // long names shrink to fit the panel (never grow past the layout's size)
-    float width = get_text_length(fonts[0].charset, 1.f, false, name);
-    float name_scale = width > 0.f ? 290.f / width : 0.4f;
-    if (name_scale > 0.4f) name_scale = 0.4f;
+    // GD's name is big: keep the layout's size and only shrink it when it
+    // would run past the panel
+    float name_scale = 0.5f;
+    float width = get_text_length(fonts[0].charset, 1.f, false, name) * name_scale;
+    if (width > 200.f) name_scale *= 200.f / width;
     ui_element_set_scale((UIElement *) label, name_scale);
 }
 
@@ -178,50 +180,34 @@ static UIAction actions[] = {
 };
 
 typedef struct {
-    const char *name;
+    const char *tag;
     int *value;
+    float scale;
+    float max_width;
 } ProfileStat;
 
-// everything here is already tracked by the save file
+// everything here is already tracked by the save file, and the layout has a
+// label for each one (the stats' row on top and the text panel below it)
 static const ProfileStat stats[] = {
-    { "Stars", &total_stars },
-    { "Secret Coins", &total_coins },
-    { "Demons", &total_demons }, // the GD term stays in English
-    { "Levels", &completed_main_levels },
-    { "Attempts", &total_attempts },
-    { "Jumps", &total_jumps },
+    { "v_stars", &total_stars, 0.45f, 36.f },
+    { "v_gold", &total_coins, 0.45f, 36.f },
+    { "v_user", &total_user_coins, 0.45f, 36.f },
+    { "v_demons", &total_demons, 0.45f, 36.f },
+    { "v_levels", &completed_main_levels, 0.36f, 70.f },
+    { "v_attempts", &total_attempts, 0.36f, 70.f },
+    { "v_jumps", &total_jumps, 0.36f, 70.f },
 };
 
-static void add_stat_row(int i, const char *name, int value, float list_width) {
-    UIElement *card = (UIElement *) ui_create_rectangle(&screen.ctx);
+// the four stats share one row, so a long number has to stay in its slot
+static void set_stat_value(UILabel *label, const ProfileStat *stat) {
+    char tmp[16];
+    snprintf(tmp, sizeof(tmp), "%d", *stat->value);
+    ui_label_set_text(label, tmp);
 
-    if (!card) return;
-    ui_rectangle_set_color((UIRectangle *) card,
-        (i & 1 ? C2D_Color32(194, 114, 62, 255) : C2D_Color32(161, 88, 48, 255)));
-    ui_element_set_size(card, 0, 13);
-
-    UILabel *label = ui_create_label(&screen.ctx);
-    if (label) {
-        ui_label_set_text(label, tr(name));
-        ui_element_set_position((UIElement *) label, -list_width + 6, 0);
-        ui_element_set_scale((UIElement *) label, 0.4f);
-        label->font = 2;
-        ui_element_add_child(card, (UIElement *) label);
-    }
-
-    UILabel *value_label = ui_create_label(&screen.ctx);
-    if (value_label) {
-        char tmp[16];
-        snprintf(tmp, sizeof(tmp), "%d", value);
-        ui_label_set_text(value_label, tmp);
-        ui_element_set_position((UIElement *) value_label, list_width - 6, 0);
-        ui_element_set_scale((UIElement *) value_label, 0.4f);
-        value_label->font = 2;
-        value_label->alignment = 1;
-        ui_element_add_child(card, (UIElement *) value_label);
-    }
-
-    ui_list_add(list, card);
+    float scale = stat->scale;
+    float width = get_text_length(fonts[2].charset, 1.f, false, tmp) * scale;
+    if (width > stat->max_width) scale *= stat->max_width / width;
+    ui_element_set_scale((UIElement *) label, scale);
 }
 
 void profile_init(void) {
@@ -235,14 +221,23 @@ void profile_init(void) {
     name_label = (UILabel *) ui_get_element_by_tag(&screen, "profile_name");
     set_profile_name(name_label, settingsState.player_name);
 
-    // the big user picture comes from the profile sheet, not the UI one
+    // GD's brown panels come from the profile sheet, not the UI one (they are
+    // stretches of a comment cell, so they keep the original's rounded corners)
     C2D_SpriteSheet sheet = profile_assets();
-    UIImage *picture = (UIImage *) ui_get_element_by_tag(&screen, "profile_pic");
-    if (picture && sheet) {
-        C2D_SpriteFromSheet(&picture->image.sprite, sheet, 0);
-        C3D_TexSetFilter(picture->image.sprite.image.tex, GPU_LINEAR, GPU_LINEAR);
-        picture->base.w = picture->image.sprite.image.subtex->width;
-        picture->base.h = picture->image.sprite.image.subtex->height;
+    static const char *panel_tags[] = { "panel_icons", "panel_texts" };
+    for (int i = 0; sheet && i < 2; i++) {
+        UIImage *panel = (UIImage *) ui_get_element_by_tag(&screen, panel_tags[i]);
+        if (!panel) continue;
+        C2D_SpriteFromSheet(&panel->image.sprite, sheet, i + 1);
+        C3D_TexSetFilter(panel->image.sprite.image.tex, GPU_LINEAR, GPU_LINEAR);
+        panel->base.w = panel->image.sprite.image.subtex->width;
+        panel->base.h = panel->image.sprite.image.subtex->height;
+    }
+
+    for (size_t i = 0; i < sizeof(stats) / sizeof(stats[0]); i++) {
+        UILabel *value = (UILabel *) ui_get_element_by_tag(&screen, stats[i].tag);
+        if (!value) continue;
+        set_stat_value(value, &stats[i]);
     }
 
     static const int gamemodes[6] = {
@@ -259,13 +254,6 @@ void profile_init(void) {
         ui_icon_set_gamemode_index(icon, gamemodes[i], *current_icons[gamemodes[i]]);
         icon->isSelected = false;
         icon->player_color = true;
-    }
-
-    list = (UIList *) ui_get_element_by_tag(&screen, "list");
-    if (list) {
-        float list_width = list->base.w * 0.5f;
-        for (int i = 0; i < (int) (sizeof(stats) / sizeof(stats[0])); i++)
-            add_stat_row(i, stats[i].name, *stats[i].value, list_width);
     }
 }
 

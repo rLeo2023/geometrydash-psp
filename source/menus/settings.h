@@ -36,6 +36,7 @@ typedef struct {
     bool yJump;
     bool touchEffectEverywhere;
     bool enableDebugBindings;
+    bool enableDebugLogging;
     bool hitboxesEnabled;
     bool hitboxTrail;
     bool hitboxesOnDeath;
@@ -58,6 +59,9 @@ typedef struct {
     bool langItalian;
     bool langPortuguese;
     bool noclipAccuracy;
+    // drops the effects that cost the most to draw (glow, particles, trails):
+    // a PSP option, off everywhere else
+    bool lowDetailMode;
 #ifdef __PSP__
     bool fps60; // off: 30 fps, every other vblank
     bool showFps;
@@ -66,7 +70,7 @@ typedef struct {
 } SettingState;
 
 #ifdef __PSP__
-extern Setting settings[32];
+extern Setting settings[33];
 #else
 extern Setting settings[30];
 #endif

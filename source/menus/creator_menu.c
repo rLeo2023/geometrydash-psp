@@ -47,6 +47,8 @@ static void action_exit(UIElement *e) {
 }
 
 static void action_open_external_menu(UIElement *e) {
+    external_from_extras = false;
+    external_mappacks_mode = false;
     new_state = STATE_EXTERNAL_LEVELS;
     set_fade_status(FADE_STATUS_OUT);
 }
@@ -67,6 +69,15 @@ static void action_open_search_menu(UIElement *e) {
     disclaimer_init();
 }
 
+#ifdef __PSP__
+// Extras: the screen with the Meltdown levels and the map packs, laid out
+// like this menu (the button that was Search, which was dead in release builds)
+static void action_open_extras_menu(UIElement *e) {
+    new_state = STATE_EXTRAS_MENU;
+    set_fade_status(FADE_STATUS_OUT);
+}
+#endif
+
 static void action_open_soggy_menu(UIElement *e) {
     new_state = STATE_SOGGY;
     set_fade_status(FADE_STATUS_OUT);
@@ -78,6 +89,9 @@ static UIAction actions[] = {
     {"external", action_open_external_menu},
     {"saved", action_open_saved_menu},
     {"search", action_open_search_menu},
+#ifdef __PSP__
+    {"extras", action_open_extras_menu},
+#endif
     {"create", action_open_soggy_menu},
 };
 

@@ -8,10 +8,16 @@
 
 #define SECTION_SIZE 128
 
+typedef struct {
+    float h, s, v;
+    bool sChecked, vChecked;
+} HSV;
+
 typedef enum {
     GD_VAL_INT,
     GD_VAL_FLOAT,
     GD_VAL_BOOL,
+    GD_VAL_HSV,
     GD_VAL_UNKNOWN
 } GDValueType;
 
@@ -19,6 +25,7 @@ typedef union {
     int i;
     float f;
     bool b;
+    HSV hsv;
 } GDValue;
 
 typedef struct {
@@ -39,6 +46,13 @@ typedef struct {
     unsigned short *col_channel;
     unsigned short *detail_col_channel;
     unsigned short *target_color_id;
+
+#ifdef __PSP__
+    bool *main_col_HSV_enabled;
+    bool *detail_col_HSV_enabled;
+    HSV *main_col_HSV;
+    HSV *detail_col_HSV;
+#endif
 
     unsigned char *transition_applied;
     unsigned char *trig_colorR, *trig_colorG, *trig_colorB;
@@ -99,6 +113,7 @@ typedef struct {
     bool completing;
     int background_id;
     int ground_id;
+    int ground_line_id;
     int initial_gamemode;
 #ifdef __PSP__
     bool initial_robot;
@@ -121,6 +136,8 @@ extern const char *default_name;
 // grounds 8-11 come in two layers: the top strip (ground_0N) and the fill
 // under it (ground_0N_2), already here, just never used
 #define G_COUNT 11
+// the ground line (kA17): 1.9's and the two 2.0 added
+#define GROUND_LINES 3
 
 extern ObjectsArray objects;
 
