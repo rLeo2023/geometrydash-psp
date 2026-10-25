@@ -352,9 +352,8 @@ void ship_gamemode(Player *player) {
     float m10 = -sin_r;
     float m11 = cos_r;
 
-    // just below the centre: centred, a sliver showed above the sprite
-    const float local_x = 0;
-    const float local_y = -6 * flip_y_mult;
+    const float local_x = -14;
+    const float local_y = -8 * flip_y_mult;
 
     float rot_x = local_x * m00 + local_y * m01;
     float rot_y = local_x * m10 + local_y * m11;
@@ -591,9 +590,8 @@ void wave_gamemode(Player *player) {
     float m10 = -sin_r;
     float m11 = cos_r;
 
-    // just below the centre, as the ship's
-    const float local_x = 0;
-    const float local_y = -6;
+    const float local_x = -8;
+    const float local_y = 0;
 
     float rot_x = local_x * m00 + local_y * m01;
     float rot_y = local_x * m10 + local_y * m11;
