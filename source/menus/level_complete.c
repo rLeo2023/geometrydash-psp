@@ -393,13 +393,16 @@ void level_complete_init() {
 
     // a custom level shows the coin animation when at least one coin was
     // newly collected this run; otherwise (replay, or no coins) the funny
-    // text is shown instead, so the two never overlap
+    // text is shown instead, so the two never overlap. The Meltdown levels
+    // (extras) are the exception: they always show their coin slots, like
+    // GD does, with the coins collected so far over the empty ones
     bool custom_has_new_coin = state.custom_level &&
         ((state.current_data.coin1 && !level_data_sel->coin1) ||
          (state.current_data.coin2 && !level_data_sel->coin2) ||
          (state.current_data.coin3 && !level_data_sel->coin3));
+    bool shows_coins = !state.custom_level || state.extras_level || custom_has_new_coin;
 
-    if ((state.custom_level && !custom_has_new_coin) || state.practice_mode || cheated) {
+    if (!shows_coins || state.practice_mode || cheated) {
         ui_run_func_on_tag(&screen_top, "coin1", ui_disable_element);
         ui_run_func_on_tag(&screen_top, "coin2", ui_disable_element);
         ui_run_func_on_tag(&screen_top, "coin3", ui_disable_element);

@@ -2,7 +2,7 @@
 # level name and both progress bars up top. The coins aren't in the phone
 # game's pause menu, so they stay hidden (the code still fills them)
 progressbar x=200 y=16 max_value=100 style=1 scale=0.75 tag="progressalert"
-label x=200 y=16 text="0%" scale=0.45 align=CENTER tag="percent"
+label x=200 y=16 text="0%" scale=0.38 align=CENTER tag="percent"
 window x=200 y=120 w=388 h=228 style=2 tag="pause_menu,bgwindow"
 label x=200 y=24 text="Levle" scale=0.8 align=CENTER tag="pause_menu,level_title"
 label x=200 y=44 text="Normal mode" scale=0.45 align=CENTER tag="pause_menu"

@@ -32,6 +32,17 @@ utils/c2d_internal.h), so the batching follows that header's context.
 #define PSP_BUF_W   512
 #define FB_SIZE     ( PSP_BUF_W * PSP_SCR_H * 4 )
 
+/*
+The depth buffer is never used (no depth test, never cleared), but a real PSP
+writes Z over it anyway, write mask or not: the objects' sheet used to start
+at its base in VRAM and its first pages came out cut and striped on the
+console (the blocks and spikes; the HUD and the sheets in main RAM were fine;
+PPSSPP writes no Z with the test off, so it looked fine there). PSP_VramAlloc
+leaves its whole footprint empty before the sheet, so whatever the GE writes
+there cannot touch the level's textures
+*/
+#define PSP_ZBUF_W  512
+
 // one frame's commands and vertices; a frame that needs more is cut in two.
 // A heavy official level peaks around 100 KB ("peak: display list")
 #define LIST_SIZE   ( 512 * 1024 )
@@ -1326,16 +1337,17 @@ bool C3D_Init( size_t cmdBufSize )
 	sceGuStart( GU_DIRECT, gu_list );
 	sceGuDrawBuffer( GU_PSM_8888, (void *)0, PSP_BUF_W );
 	sceGuDispBuffer( PSP_SCR_W, PSP_SCR_H, (void *)FB_SIZE, PSP_BUF_W );
-	sceGuDepthBuffer( (void *)( FB_SIZE * 2 ), PSP_BUF_W );
+	// PSP_VramAlloc leaves its whole footprint free, before the objects'
+	// sheet: on a real PSP the GE writes Z here even with the test off
+	sceGuDepthBuffer( (void *)( FB_SIZE * 2 ), PSP_ZBUF_W );
 	sceGuOffset( 2048 - PSP_SCR_W / 2, 2048 - PSP_SCR_H / 2 );
 	sceGuViewport( 2048, 2048, PSP_SCR_W, PSP_SCR_H );
 	PSP_Scissor( 0, 0, PSP_SCR_W, PSP_SCR_H );
 	sceGuEnable( GU_SCISSOR_TEST );
 	sceGuDisable( GU_DEPTH_TEST );
-	// the objects sheet lives where the depth buffer is (PSP_VramAlloc): the
-	// GE still writes Z with the test off unless the mask says no, and on a
-	// real PSP that painted depth over the level's textures (black blocks and
-	// stripes). PPSSPP writes no Z with the test off, so it looked fine there
+	// on a real PSP the GE writes Z with the test off; the mask asks it not to,
+	// but the sheet no longer lives where the depth buffer is (PSP_VramAlloc),
+	// which is what keeps the level's textures whole either way
 	sceGuDepthMask( GU_TRUE );
 	sceGuDisable( GU_CULL_FACE );
 	sceGuShadeModel( GU_SMOOTH );
@@ -1759,13 +1771,18 @@ static int PSP_PsmBytes( int psm, int texels )
 }
 
 /*
-VRAM is 2 MB: the two frame buffers take 1.06 MB and the depth buffer after
-them is never used (no depth test, never cleared), so the rest, 960 KB, holds
-the level objects' sheet for good: 896 KB less of RAM, and the GE reads its
-own memory faster. Handed out once, never given back
+VRAM is 2 MB: the two frame buffers take 1.06 MB, and the depth buffer after
+them is never used (no depth test, never cleared) but still gets written on a
+real PSP (see PSP_ZBUF_W), so its footprint is left empty for good. After it
+the objects' sheet lives: most of its 896 KB out of RAM, and the GE reads its
+own memory faster. One of the 512x512 pages no longer fits and stays in main
+RAM; the loader falls back to it on its own. Handed out once, never given back
 */
 #define VRAM_SIZE  ( 2 * 1024 * 1024 )
-static u32 vram_next = FB_SIZE * 2;
+// the depth buffer's footprint (PSP_BUF_W x PSP_SCR_H, 16 bits a pixel),
+// rounded up to 8 KB: the sheet's pages start after it
+#define ZBUF_RESERVE  ( ( PSP_BUF_W * PSP_SCR_H * 2 + 8191 ) & ~8191 )
+static u32 vram_next = FB_SIZE * 2 + ZBUF_RESERVE;
 
 static void *PSP_VramAlloc( int size )
 {
@@ -1860,6 +1877,28 @@ C2D_SpriteSheet C2D_SpriteSheetLoad( const char *filename )
 			if( fread( t->data, 1, size, f ) != (size_t)size )
 				goto fail;
 		}
+	}
+
+	// how the atlas was split between the GE's memory and main RAM: the pages
+	// that no longer fit in VRAM (see PSP_VramAlloc) are read from RAM
+	if( PSP_SheetInVram( path ))
+	{
+		u32 in_vram = 0, in_ram = 0, base = 0;
+		for( i = 0; i < sheet->num_pages; i++ )
+		{
+			if( sheet->pages[i].in_vram )
+			{
+				if( !base ) base = (u32)sheet->pages[i].data;
+				in_vram++;
+			}
+			else in_ram++;
+		}
+		// the sheet's base has to be the depth buffer's end (same address
+		// space): anything lower is memory the GE writes Z over on a real PSP
+		psp_log( "sheet %s: %u pages in VRAM at %08X (depth %08X..%08X), %u in RAM\n",
+			path, in_vram, base,
+			(unsigned)((u32)sceGeEdramGetAddr() + FB_SIZE * 2 ),
+			(unsigned)((u32)sceGeEdramGetAddr() + FB_SIZE * 2 + ZBUF_RESERVE), in_ram );
 	}
 
 	sheet->subtex = calloc( sheet->num_images, sizeof( Tex3DS_SubTexture ));

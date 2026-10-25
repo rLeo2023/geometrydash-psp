@@ -5,9 +5,11 @@ const ObjectHitbox hitbox_v2_745[] = {
 };
 const ChildSprite children_v2_745[] = {
     { 2000, 0.00, -0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 883, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+    { 884, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
-#define V2_ROW_745 { 2001, -1, 0.00, -0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_v2_745, hitbox_v2_745, 0 } /* portal_14_back_001.png */
+#define V2_ROW_745 { 2001, -1, 0.00, -0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_v2_745, hitbox_v2_745, 0 } /* portal_14_back_001.png */
 
 
 const ObjectHitbox hitbox_v2_747[] = {

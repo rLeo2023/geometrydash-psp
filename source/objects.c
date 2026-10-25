@@ -944,20 +944,32 @@ const ObjectHitbox hitbox_745[] = {
     { HITBOX_SPECIAL, 0.00, 0.00, 34.00, 86.00, COLLISION_BOX }
 };
 
+// the gamemode portals' badge, the way GD 2.2 shows it: the half disc with a
+// white rim behind the front half, and the gamemode's icon over it (the middle
+// two sprites of each portal's four in portals.t3s). Drawn after the front
+// (z 2 and 3), the back stays behind the whole thing
 const ChildSprite children_10[] = {
  { 826, -10.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 827, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 828, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_11[] = {
  { 830, -10.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 831, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 832, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_12[] = {
  { 834, -11.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 835, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 836, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_13[] = {
  { 838, -11.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 839, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 840, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_15[] = {
@@ -986,6 +998,8 @@ const ChildSprite children_46[] = {
 
 const ChildSprite children_47[] = {
  { 846, -11.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 847, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 848, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_62[] = {
@@ -1099,6 +1113,8 @@ const ChildSprite children_101[] = {
 
 const ChildSprite children_111[] = {
  { 854, -11.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 855, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 856, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_119[] = {
@@ -1671,6 +1687,8 @@ const ChildSprite children_652[] = {
 
 const ChildSprite children_660[] = {
  { 862, -11.00, 0.00, 1.00, 1.00, 0, 0, -1, -1, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 863, 12.00, 0.00, 1.00, 1.00, 0, 0, 2, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
+ { 864, 10.00, 0.00, 1.00, 1.00, 0, 0, 3, 0, 0.00, COLOR_TYPE_WHITE, 1.00 },
 };
 
 const ChildSprite children_675[] = {
@@ -1779,10 +1797,10 @@ const GameObject game_objects[GAME_OBJECT_COUNT] = {
     { 658, 126, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_7 },
     { 646, 116, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_8 },
     { 586, -1, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BLACK, 0, 1.00, 0, NULL, hitbox_9 },
-    { 829, -1, 4.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_10, hitbox_10 },
-    { 833, -1, 4.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_11, hitbox_11 },
-    { 837, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_12, hitbox_12 },
-    { 841, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_13, hitbox_13 },
+    { 829, -1, 4.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_10, hitbox_10 },
+    { 833, -1, 4.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_11, hitbox_11 },
+    { 837, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_12, hitbox_12 },
+    { 841, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_13, hitbox_13 },
     { -1, -1, 0.0f, 0.0f, 0, 0, 0, 0, 0, 1.f, 0, NULL, NULL },
     { 632, -1, 0.00, 0.00, 1, -6, 1005, COLOR_TYPE_BLACK, 0, 1.00, 1, children_15, NULL },
     { 633, -1, 0.00, 0.00, 1, -6, 1005, COLOR_TYPE_BLACK, 0, 1.00, 1, children_16, NULL },
@@ -1816,7 +1834,7 @@ const GameObject game_objects[GAME_OBJECT_COUNT] = {
     { -1, -1, 0.0f, 0.0f, 0, 0, 0, 0, 0, 1.f, 0, NULL, NULL },
     { 843, -1, 7.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_45, hitbox_45 },
     { 845, -1, 7.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_46, hitbox_46 },
-    { 849, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_47, hitbox_47 },
+    { 849, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_47, hitbox_47 },
     { 184, -1, 0.00, 0.00, 3, 9, 1006, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
     { 185, -1, 0.00, 0.00, 3, 9, 1006, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
     { 148, -1, 0.00, 0.00, 3, 9, 1006, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
@@ -1880,7 +1898,7 @@ const GameObject game_objects[GAME_OBJECT_COUNT] = {
     { -1, -1, 0.0f, 0.0f, 0, 0, 0, 0, 0, 1.f, 0, NULL, NULL },
     { -1, -1, 0.0f, 0.0f, 0, 0, 0, 0, 0, 1.f, 0, NULL, NULL },
     { 181, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
-    { 857, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_111, hitbox_111 },
+    { 857, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_111, hitbox_111 },
     { -1, -1, 0.0f, 0.0f, 0, 0, 0, 0, 0, 1.f, 0, NULL, NULL },
     { 175, -1, 0.00, 0.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
     { 176, -1, 0.00, 1.00, 3, 9, 1005, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
@@ -2429,7 +2447,7 @@ const GameObject game_objects[GAME_OBJECT_COUNT] = {
     { 166, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL },
     { 167, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL },
     { 168, -1, 0.00, 0.00, 1, -7, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, NULL },
-    { 865, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 1, children_660, hitbox_660 },
+    { 865, -1, 5.00, 0.00, 5, 10, 0, COLOR_TYPE_WHITE, 0, 1.00, 3, children_660, hitbox_660 },
     { 106, 21, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_661 },
     { 107, 22, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_662 },
     { 108, 23, 0.00, 0.00, 5, 3, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_663 },

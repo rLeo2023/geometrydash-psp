@@ -673,6 +673,12 @@ int get_glow_channel(int obj) {
             return CHANNEL_LBG;
 
     }
+    // a colored object's glow takes its own color, as GD tints it: a spike
+    // set to color 3 glows color 3, not the white OBJ channel. Uncolored
+    // objects keep the OBJ channel (1004), which is that same white
+    const GameObject *g = &game_objects[id];
+    if (g->color_type == COLOR_TYPE_BASE)
+        return get_color_channel(COLOR_TYPE_BASE, obj, g);
     return CHANNEL_OBJ_BLENDING;
 }
 
@@ -827,7 +833,7 @@ key was worked out inside the sort: both re-read the object and its
 definition there, long after the cache had let them go. Done here, right
 where the sprite is made, that data is still in it.
 */
-static void set_sprite_tint(SpriteObject *vo) {
+static void set_sprite_tint(SpriteObject *vo, float obj_opacity, int base_channel) {
     int col_channel = vo->col_channel;
 
     ColorChannel col;
@@ -862,8 +868,7 @@ static void set_sprite_tint(SpriteObject *vo) {
 #ifdef __PSP__
     } else if (col_channel == CHANNEL_V2_LIGHTER) {
         // 2.0's "lighter": the object's main color, halfway to white
-        int obj_id = objects.id[vo->obj];
-        int base = get_color_channel(COLOR_TYPE_BASE, vo->obj, &game_objects[obj_id]);
+        int base = base_channel;
         Color c = { 255, 255, 255 };
         if (base == 0) c = (Color){ 0, 0, 0 };
         else if (base > 0 && base != CHANNEL_V2_LIGHTER) c = channels[get_col_channel_index(base)].color;
@@ -878,6 +883,11 @@ static void set_sprite_tint(SpriteObject *vo) {
 #endif
     } else {
         col = channels[get_col_channel_index(col_channel)];
+#ifdef __PSP__
+        // a glow is added over the screen whatever channel it follows (the
+        // object's color channel is not one of the glowing ones)
+        if (vo->layer == 1) col.blending = true;
+#endif
     }
 
 #ifdef __PSP__
@@ -914,7 +924,6 @@ static void set_sprite_tint(SpriteObject *vo) {
 #endif
 
     int game_object = vo->obj;
-    float x = ((objects.x[game_object] - state.camera_x));
 
     float opacity = vo->opacity;
 #ifdef __PSP__
@@ -924,7 +933,7 @@ static void set_sprite_tint(SpriteObject *vo) {
     // a 2.0 object's glow follows its main color channel's alpha too: the fill
     // can be faded (or semi-transparent) by a trigger and the glow must match
     if (vo->layer == 1) {
-        int main_ch = get_color_channel(COLOR_TYPE_BASE, vo->obj, &game_objects[objects.id[vo->obj]]);
+        int main_ch = base_channel;
         if (main_ch > 0 && main_ch != col_channel && main_ch != CHANNEL_INVISIBLE_GLOW && main_ch != CHANNEL_V2_LIGHTER) {
             opacity *= channels[get_col_channel_index(main_ch)].alpha * (1.f / 255.f);
         }
@@ -947,7 +956,7 @@ static void set_sprite_tint(SpriteObject *vo) {
         else opacity *= fading_opacity;
     }
 
-    int real_opacity = get_obj_opacity(game_object, x) * opacity;
+    int real_opacity = obj_opacity * opacity;
 #ifdef __PSP__
     // the objects' glow, added over the screen, was much stronger than GD's
     if (vo->layer == 1) real_opacity = real_opacity * 3 / 5;
@@ -964,6 +973,15 @@ static void set_sprite_tint(SpriteObject *vo) {
 #endif
 }
 
+// the color channel of one object, looked for once per color type (the
+// parent and every child asked for the same one again)
+static int chan_of_cached(int *cache, int col_type, int obj_game, const GameObject *obj) {
+    if (col_type < 0 || col_type > COLOR_TYPE_GLOW)
+        return get_color_channel(col_type, obj_game, obj);
+    if (cache[col_type] == -2) cache[col_type] = get_color_channel(col_type, obj_game, obj);
+    return cache[col_type];
+}
+
 void spawn_object_at(
     int obj_game,
     int id,
@@ -975,6 +993,12 @@ void spawn_object_at(
     float scale
 ) {
     const GameObject* obj = &game_objects[id];
+
+    // one look per object, not one per sprite: same opacity for the parent,
+    // its glow and its children, and the channels by type
+    float obj_opacity = (float)get_obj_opacity(obj_game, objects.x[obj_game] - state.camera_x);
+    int base_channel = get_color_channel(COLOR_TYPE_BASE, obj_game, obj);
+    int chan_of[COLOR_TYPE_GLOW + 1] = { -2, -2, -2, -2, -2 };
 
     float rad = C3D_AngleFromDegrees(adjust_angle(deg, 0, state.mirror_mult < 0));
 #ifdef __PSP__
@@ -1080,10 +1104,10 @@ void spawn_object_at(
         vo->layer = 0;
         vo->col_type = obj->color_type;
         vo->opacity = obj->opacity;
-        vo->col_channel = get_color_channel(obj->color_type, obj_game, obj);
+        vo->col_channel = chan_of_cached(chan_of, obj->color_type, obj_game, obj);
         viewable_objects_ptr[sprite_count] = vo;
         sprite_count++;
-        set_sprite_tint(vo);
+        set_sprite_tint(vo, obj_opacity, base_channel);
     }
 
     // Skip if no glow frame
@@ -1107,7 +1131,7 @@ void spawn_object_at(
         vo->col_channel = get_glow_channel(obj_game);
         viewable_objects_ptr[sprite_count] = vo;
         sprite_count++;
-        set_sprite_tint(vo);
+        set_sprite_tint(vo, obj_opacity, base_channel);
     }
 
     // Spawn children
@@ -1179,14 +1203,14 @@ void spawn_object_at(
             vo->layer = i + 2;
             vo->col_type = c->color_type;
             vo->opacity = c->opacity;
-            vo->col_channel = get_color_channel(c->color_type, obj_game, obj);
+            vo->col_channel = chan_of_cached(chan_of, c->color_type, obj_game, obj);
 #ifdef __PSP__
             // a glow detail (the monsters'): the background's light color, as wiidash
             if (c->color_type == COLOR_TYPE_GLOW) vo->col_channel = CHANNEL_LBG_NOLERP;
 #endif
             viewable_objects_ptr[sprite_count] = vo;
             sprite_count++;
-            set_sprite_tint(vo);
+            set_sprite_tint(vo, obj_opacity, base_channel);
         }
     }
 }

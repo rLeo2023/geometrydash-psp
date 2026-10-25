@@ -1012,7 +1012,8 @@ void spawn_p1_trail(Player *player, int player_id) {
     }
 #endif
     trail_data->rot = player->rotation;
-    trail_data->opacity = 0.7f;
+    // fainter than GD's copies: 0.5 was still too solid on the PSP screen
+    trail_data->opacity = 0.45f;
     trail_data->life = P1_TRAIL_DURATION;
 
     trail_data->active = true;
@@ -1025,26 +1026,32 @@ void spawn_p1_trail(Player *player, int player_id) {
 
 void update_p1_trail(Player *player, int player_id) {
 #ifdef __PSP__
-    // Every 2/60 s rather than every 3 frames: at 30 fps (the PSP's default)
-    // the copies came twice as far apart. Each one where the player was at
-    // that moment, between this frame and the last, so they stay evenly spaced
-    #define P1_TRAIL_EVERY (1.f / 40.f)
+    // Copies every P1_TRAIL_SPACING units of travel, not every 1/40 s: the
+    // spacing is what the eye reads as the trail, and at 3x (or at 30 fps,
+    // whose frames cover twice the ground) a fixed time left holes between
+    // copies. Placed along the frame's segment, so a 30 fps or 3x frame still
+    // gets them evenly spaced
+    #define P1_TRAIL_SPACING 7.5f
     static float since_spawn[2], last_x[2], last_y[2];
-    since_spawn[player_id] += delta;
-    if (since_spawn[player_id] > 3 * P1_TRAIL_EVERY) since_spawn[player_id] = P1_TRAIL_EVERY;
-    while (since_spawn[player_id] >= P1_TRAIL_EVERY) {
-        since_spawn[player_id] -= P1_TRAIL_EVERY;
-        if (state.dead || !p1_trail || !(player_id == 0 || state.dual)) continue;
+    float dx = player->x - last_x[player_id];
+    float dy = player->y - last_y[player_id];
+    float seg = sqrtf(dx * dx + dy * dy);
 
-        Player at = *player;
-        // (not across a respawn or a teleport)
-        if (delta > 0 && fabsf(player->x - last_x[player_id]) < 60 && fabsf(player->y - last_y[player_id]) < 60) {
-            float f = 1.f - since_spawn[player_id] / delta;
-            if (f < 0) f = 0;
-            at.x = last_x[player_id] + (player->x - last_x[player_id]) * f;
-            at.y = last_y[player_id] + (player->y - last_y[player_id]) * f;
+    // (no copies across a respawn or a teleport)
+    if (state.dead || !p1_trail || !(player_id == 0 || state.dual) || seg >= 60.f) {
+        since_spawn[player_id] = 0;
+    } else {
+        float pos = 0;
+        while (since_spawn[player_id] + (seg - pos) >= P1_TRAIL_SPACING) {
+            pos += P1_TRAIL_SPACING - since_spawn[player_id];
+            float f = (seg > 0) ? pos / seg : 1.f;
+            Player at = *player;
+            at.x = last_x[player_id] + dx * f;
+            at.y = last_y[player_id] + dy * f;
+            spawn_p1_trail(&at, player_id);
+            since_spawn[player_id] = 0;
         }
-        spawn_p1_trail(&at, player_id);
+        since_spawn[player_id] += seg - pos;
     }
     last_x[player_id] = player->x;
     last_y[player_id] = player->y;
@@ -1065,7 +1072,7 @@ void update_p1_trail(Player *player, int player_id) {
         if (trail_data->active) {
 #ifdef __PSP__
             // from 0.7 down to 0 over its life (not below: it wraps around)
-            trail_data->opacity -= (0.7f / P1_TRAIL_DURATION) * delta;
+            trail_data->opacity -= (0.45f / P1_TRAIL_DURATION) * delta;
             if (trail_data->opacity < 0) trail_data->opacity = 0;
 #else
             trail_data->opacity -= (0.8f / P1_TRAIL_DURATION) * delta;

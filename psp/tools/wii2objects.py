@@ -47,6 +47,19 @@ FIRST_ID, LAST_ID = 746, 1329
 V2_TEXTURE_START = 2000
 PATCH = (745,)          # in the game's table, with a 2.0 sprite (V2_ROW_745)
 SKIP = {914}            # the text object: wiidash's layer is a placeholder
+
+# the gamemode portals' badge (GD 2.2's half disc with the icon): wiidash draws
+# the robot portal with only its two halves, the badge sprites are in the
+# portals sheet (gfx/portals/portals.t3s), where the rows of GD's own table
+# take theirs. id -> (the half disc, the icon)
+PORTAL_BADGE = {745: ('portal_14_extra_001.png', 'portal_14_extra_2_001.png')}
+PORTAL_SHEET_START = 819
+
+
+def portal_sheet_texture(name):
+    lines = [l.strip() for l in open(os.path.join(ROOT, 'gfx', 'portals', 'portals.t3s'))
+             if l.strip()]
+    return PORTAL_SHEET_START + lines.index(name) - 1  # the first line is the .t3s options
 # wiidash's hitbox over gen2objects' (which had a portal's): the teleports'
 # sits 12 to the front, 90 long. Levels count on it (Deadlocked puts a
 # gravity portal on the way in, to be touched first)
@@ -234,7 +247,11 @@ def main():
             defs.append('')
             kept += 1
         else:
-            row = wii_row(oid, w, blocks, sprite, defs)
+            # the half disc's straight edge sits on the portal's centre and the
+            # icon centres on it (the game's own rows have the same 12 and 10)
+            badge = [(portal_sheet_texture(n), x, 0.0, z, 0)
+                     for z, x, n in zip((2, 3), (12.0, 10.0), PORTAL_BADGE.get(oid, ()))]
+            row = wii_row(oid, w, blocks, sprite, defs, extras=badge)
             from_wii += 1
             old = (None, w['layers'][0]['texture'][:-4] + '.png')
         if oid in PATCH:
@@ -436,8 +453,9 @@ def num(v, default=0.0):
         return default
 
 
-def wii_row(oid, w, blocks, sprite, defs, glow_details=False):
-    """glow_details: glow layers as details (animated ones move them)."""
+def wii_row(oid, w, blocks, sprite, defs, glow_details=False, extras=None):
+    """glow_details: glow layers as details (animated ones move them).
+    extras: (texture, x, y, z, zlayer) sprites over the main one (a badge)."""
     layers = w['layers']
     names = [l['texture'][:-4] + '.png' for l in layers]
     glow = [i for i, n in enumerate(names) if '_glow_' in n or layers[i].get('color_type') == 'COLOR_GLOW']
@@ -479,6 +497,9 @@ def wii_row(oid, w, blocks, sprite, defs, glow_details=False):
         children.append('    { %d, %.2f, %.2f, 1.00, 1.00, 0, 0, %d, %d, 0.00, %s, 1.00 },' % (
             sprite('wii:' + names[i]), num(l.get('x_offset')), -num(l.get('y_offset')),
             z, int(num(l.get('zlayer_offset'))), color(l)))
+    for tex, x, y, z, zl in (extras or []):
+        children.append('    { %d, %.2f, %.2f, 1.00, 1.00, 0, 0, %d, %d, 0.00, COLOR_TYPE_WHITE, 1.00 },' % (
+            tex, x, y, z, zl))
 
     hitbox_ref = 'NULL'
     if ('hitbox', oid) in blocks and oid not in WII_HITBOX:

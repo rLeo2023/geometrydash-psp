@@ -274,37 +274,50 @@ void MotionTrail_Update(MotionTrail* trail, float delta) {
 
     trail->nuPoints -= mov;
 
-    // Append new point
+    // Append new points, subdividing the frame's segment: at 30 fps (or 3x)
+    // a frame covers twice (or three times) the ground, and one point per
+    // frame left the trail's end behind the ship. A point every ~6 units
+    // keeps 60 fps' density at 1x
     bool append = true;
     if (trail->nuPoints >= trail->maxPoints) {
         append = false;
     } else if (trail->nuPoints > 0) {
         bool a1 = square_dist_vec(&trail->pointVertexes[trail->nuPoints - 1], &trail->positionR) < trail->minSeg;
-        bool a2 = (trail->nuPoints == 1) ? false : square_dist_vec(&trail->pointVertexes[trail->nuPoints - 2], &trail->positionR) < (trail->minSeg * 2.0f);
-        if (a1 || a2) append = false;
+        if (a1) append = false;
     }
 
     if (append && trail->appendNewPoints) {
         unsigned int idx = trail->nuPoints;
+        int steps = 1;
+        Vec2D from = trail->positionR;
 
-        trail->pointVertexes[idx] = trail->positionR;
-        trail->pointState[idx] = 1.0f;
-        int offset = idx * 2;
-        trail->opacities[offset] = 255;
-        trail->opacities[offset + 1] = 255;
+        if (idx > 0) {
+            from = trail->pointVertexes[idx - 1];
+            float dist = sqrtf(square_dist_vec(&from, &trail->positionR));
+            steps = (int)(dist / 6.0f + 0.5f);
+            if (steps < 1) steps = 1;
+            if ((unsigned int)(idx + steps) > trail->maxPoints)
+                steps = trail->maxPoints - idx;
+        }
 
-        trail->nuPoints++;
-        
+        float dx = trail->positionR.x - from.x;
+        float dy = trail->positionR.y - from.y;
+        for (int s = 1; s <= steps; s++) {
+            float f = (float)s / (float)steps;
+            idx = trail->nuPoints + (s - 1);
+            trail->pointVertexes[idx] = (Vec2D){ from.x + dx * f, from.y + dy * f };
+            trail->pointState[idx] = 1.0f;
+            trail->opacities[idx * 2] = 255;
+            trail->opacities[idx * 2 + 1] = 255;
+        }
+        trail->nuPoints += steps;
+
         if (trail->nuPoints > 1) {
             ccVertexLineToPolygon(trail->pointVertexes, trail->stroke, trail->vertices, 0, trail->nuPoints);
         }
 
-    }
-
-    if (!append || !trail->appendNewPoints) {
-        if (trail->nuPoints > 1) {
-            ccVertexLineToPolygon(trail->pointVertexes, trail->stroke, trail->vertices, 0, trail->nuPoints);
-        }
+    } else if (trail->nuPoints > 1) {
+        ccVertexLineToPolygon(trail->pointVertexes, trail->stroke, trail->vertices, 0, trail->nuPoints);
     }
 
     // Update tex coords
