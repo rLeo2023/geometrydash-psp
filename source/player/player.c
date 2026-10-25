@@ -352,10 +352,9 @@ void ship_gamemode(Player *player) {
     float m10 = -sin_r;
     float m11 = cos_r;
 
-    // from the centre: the ship's sprite hides the seam where the trail
-    // texture starts, instead of the texture ending behind its tail
+    // just below the centre: centred, a sliver showed above the sprite
     const float local_x = 0;
-    const float local_y = 0;
+    const float local_y = -6 * flip_y_mult;
 
     float rot_x = local_x * m00 + local_y * m01;
     float rot_y = local_x * m10 + local_y * m11;
@@ -592,9 +591,9 @@ void wave_gamemode(Player *player) {
     float m10 = -sin_r;
     float m11 = cos_r;
 
-    // from the centre, as the ship's: the sprite hides the trail's seam
+    // just below the centre, as the ship's
     const float local_x = 0;
-    const float local_y = 0;
+    const float local_y = -6;
 
     float rot_x = local_x * m00 + local_y * m01;
     float rot_y = local_x * m10 + local_y * m11;
