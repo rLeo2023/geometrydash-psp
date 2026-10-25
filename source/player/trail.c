@@ -325,7 +325,9 @@ void MotionTrail_Update(MotionTrail* trail, float delta) {
         if (trail->stationary) {
             MotionTrail_UpdateStationaryUVs(trail, 0);
         } else {
-            float texDelta = 1.0f / trail->nuPoints;
+            // the newest point has to sample the texture's end (v = 1):
+            // with 1/nuPoints the flame stopped short of the ship
+            float texDelta = (trail->nuPoints > 1) ? 1.0f / (trail->nuPoints - 1) : 0.f;
             for (i = 0; i < trail->nuPoints; i++) {
                 trail->texCoords[i * 2].u = 0;
                 trail->texCoords[i * 2].v = texDelta * i;
