@@ -14,6 +14,8 @@
 <p align="center">
   <img src="docs/images/main_menu.png" alt="Main menu" width="400">
   <img src="docs/images/gameplay.png" alt="Gameplay" width="400">
+  <img src="docs/images/gameplay_1.png" alt="Gameplay" width="400">
+  <img src="docs/images/gameplay_2.png" alt="Gameplay" width="400">
 </p>
 <p align="center">
   <img src="docs/images/level_select.png" alt="Level select" width="400">
