@@ -93,8 +93,7 @@ make -f Makefile.psp deploy DEPLOY=/path/to/folder  # copy it to a folder (a Mem
 [README-PSP.md](README-PSP.md) explains how the port is organized. The original 3DS README is in [README-3DS.md](README-3DS.md).
 
 ### FUTURE UPDATES
-From now on, there won't be any update releases for a long while. I intend to keep the map packs updated, but the game itself is finally stable, pushing the limits of the PSP.
-Version 2.1 will be integrated once AleFunky and his team manage to import it, so for the time being, the PSP version will remain at 2.0.5.
+From now on, there won't be any update releases for a long while. I intend to keep the map packs updated in this version, but the game itself is finally stable, pushing the limits of the PSP. Version 2.1 will be integrated once AleFunky and his team manage to import it, so for the time being, the PSP version will remain at 2.0.6 (improvement from 2.0.5).
 
 ### Credits
 
@@ -174,9 +173,7 @@ make -f Makefile.psp deploy DEPLOY=/ruta/a/carpeta   # lo copia a una carpeta (M
 [README-PSP.md](README-PSP.md) explica cómo está organizado el port. El README original de la versión de 3DS está en [README-3DS.md](README-3DS.md).
 
 ### PROXIMAS ACTUALIZACIONES
-A partir de ahora, no pienso actualizar el juego por un largo tiempo, ¿Por qué?, por que ya el juego consiguio muy buena estabilidad, empujando los limites de la PSP manejando los niveles de la 2.0 y a 60 FPS.
-Por lo que, la PSP se mantendra en la 2.0.5 por ahora, lo unico que haré, será ir actualizando los Map Packs de a poco (agregando mas niveles).
-La actualizacion 2.1 se integrará una vez que AleFunky y su equipo lo consigan en la version de 3DS.
+A partir de ahora, no pienso actualizar el juego por un largo tiempo, ¿Por qué?, por que ya el juego consiguio muy buena estabilidad, empujando los limites de la PSP manejando los niveles de la 2.0 y a 60 FPS. Por lo que, la PSP se mantendra en la 2.0.6 (una mejora de la 2.0.5, que es estable) por ahora, lo unico que haré, será ir actualizando los Map Packs de a poco en esta version. La actualizacion 2.1 se integrará una vez que AleFunky y su equipo lo consigan en la version de 3DS.
 
 ### Créditos
 
