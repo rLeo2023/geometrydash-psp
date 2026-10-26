@@ -14,6 +14,8 @@
 <p align="center">
   <img src="docs/images/main_menu.png" alt="Main menu" width="400">
   <img src="docs/images/gameplay.png" alt="Gameplay" width="400">
+  <img src="docs/images/gameplay_1.png" alt="Gameplay" width="400">
+  <img src="docs/images/gameplay_2.png" alt="Gameplay" width="400">
 </p>
 <p align="center">
   <img src="docs/images/level_select.png" alt="Level select" width="400">
@@ -103,7 +105,6 @@ From now on, there won't be any update releases for a long while. I intend to ke
 - **rLeo**: PSP port.
 - **Claude** (Anthropic): collaborator on the PSP port.
 - **pspdev**: the PSP toolchain and SDK.
-- **Zerium**: for being the tester on PSP HW, Grazie Mille!.
 
 ---
 
@@ -183,4 +184,3 @@ A partir de ahora, no pienso actualizar el juego por un largo tiempo, ¿Por qué
 - **rLeo**: port a PSP.
 - **Claude** (Anthropic): colaborador en el port a PSP.
 - **pspdev**: el toolchain y el SDK de PSP.
-- **Zerium**: por testear en Hardware Real!, Grazie Mille!
