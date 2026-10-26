@@ -90,6 +90,7 @@ static int mappack_face(const char *name) {
     if (strstr(lower, "demon")) return 258;                               // easy demon
     if (strstr(lower, "beginner") || strstr(lower, "alpha")) return 252;  // easy
     if (strstr(lower, "challenge")) return 255;                           // harder
+    if (strstr(lower, "insane") || strstr(lower, "2.0") || strstr(lower, "dorabae")) return 256;  // insane
     return -1;
 }
 

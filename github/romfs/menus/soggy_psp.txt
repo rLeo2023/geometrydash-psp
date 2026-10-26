@@ -1,0 +1,8 @@
+# PSP: soggy on one screen: the top screen's (wider) picture is the
+# background, the touch screen's copy of it is left out. Back in the corner,
+# the nose still honks. Touch screen's half, over the top screen (40 + x, y)
+@merge 40 0 1
+
+image x=160 y=120 id=19 sheet=1 psphide=1
+button x=-12 y=32 id=6 scale=0.65 action="exit" keyBinds="B"
+button x=121 y=107 w=70 h=26 invisible=1 action="boop"

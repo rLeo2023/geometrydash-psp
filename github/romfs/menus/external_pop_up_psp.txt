@@ -1,0 +1,24 @@
+# PSP: a custom level's window on one screen, the touch screen's half: play,
+# the progress bars and the song inside the top half's window, close and info
+# on its corners. Touch screen x = top screen x - 40
+@merge 40 0 1
+
+darken opacity=0.4 darkenTime=0.15 psphide=1
+
+window x=160 y=120 w=280 h=200 style=0 psphide=1
+
+button x=-8 y=26 id=31 scale=0.6 action="exit" keyBinds="B"
+
+button x=160 y=114 id=139 sheet=0 scale=0.62 action="play" keyBinds="A,START"
+
+button x=328 y=26 id=90 sheet=0 scale=0.6 action="info"
+
+label x=160 y=148 text="Normal mode" scale=0.36 align=CENTER tag="level_card"
+progressbar x=160 y=158 max_value=100 style=0 scale=0.5 tag="level_card,normalprogress"
+label x=160 y=159 text="0%" scale=0.32 align=CENTER tag="level_card,normalprogressvalue"
+
+label x=160 y=174 text="Practice mode" scale=0.36 align=CENTER tag=""
+progressbar x=160 y=184 max_value=100 style=0 scale=0.5 tag="practiceprogress"
+label x=160 y=185 text="0%" scale=0.32 align=CENTER tag="level_card,practiceprogressvalue"
+
+label x=160 y=203 text="Using song: N/A" scale=0.5 align=CENTER tag="songid" font=1 opacity=0.6

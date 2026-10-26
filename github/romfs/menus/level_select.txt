@@ -1,0 +1,75 @@
+bggradient tag="gradient"
+image x=160 y=13 id=198 sx=0.75 sy=0.75
+
+
+# level thingy
+
+# current menu
+
+windowbutton x=160 y=80 w=220 h=80 style=2 hoverFactor=0.5 action="open_level" tag="level_card,card_window"
+{
+    label x=0 y=0 text="" align=CENTER tag="level_title" w=178
+    image x=100 y=-30 id=408
+    label x=90 y=-29 text="" align=RIGHT scale=0.40 tag="level_stars"
+
+    image x=58 y=28 id=34 tag="coin_1" scale=0.75
+    image x=78 y=28 id=34 tag="coin_2" scale=0.75
+    image x=98 y=28 id=34 tag="coin_3" scale=0.75
+}
+
+# current progress bar
+
+label x=160 y=134 text="Normal mode" scale=0.45 align=CENTER tag="level_card"
+progressbar x=160 y=147 max_value=100 style=0 scale=0.65 tag="level_card,normalprogress"
+
+label x=160 y=148 text="0%" scale=0.4 align=CENTER tag="level_card,normalprogressvalue"
+
+# current practice bar 
+
+label x=160 y=169 text="Practice mode" scale=0.45 align=CENTER tag="level_card"
+progressbar x=160 y=182 max_value=100 style=0 scale=0.65 tag="level_card,practiceprogress"
+
+label x=160 y=183 text="0%" scale=0.4 align=CENTER tag="level_card,practiceprogressvalue"
+
+# duplicate menu
+
+windowbutton x=160 y=80 w=220 h=80 style=2 hoverFactor=0.5 tag="level_card_2,card_window_2"
+{
+    label x=0 y=0 text="" align=CENTER tag="level_title_2" w=178
+    image x=100 y=-30 id=408
+    label x=90 y=-29 text="" align=RIGHT scale=0.40 tag="level_stars_2"
+
+    image x=58 y=28 id=34 tag="coin_1_2" scale=0.75
+    image x=78 y=28 id=34 tag="coin_2_2" scale=0.75
+    image x=98 y=28 id=34 tag="coin_3_2" scale=0.75
+}
+
+# duplicate progress bar
+ 
+label x=160 y=134 text="Normal mode" scale=0.45 align=CENTER tag="level_card_2"
+progressbar x=160 y=147 max_value=100 style=0 scale=0.65 tag="level_card_2,normalprogress_2"
+
+label x=160 y=148 text="0%" scale=0.4 align=CENTER tag="level_card_2,normalprogressvalue_2"
+
+# duplicate practice bar
+
+label x=160 y=169 text="Practice mode" scale=0.45 align=CENTER tag="level_card_2"
+progressbar x=160 y=182 max_value=100 style=0 scale=0.65 tag="level_card_2,practiceprogress_2"
+
+label x=160 y=183 text="0%" scale=0.4 align=CENTER tag="level_card_2,practiceprogressvalue_2"
+
+button x=160 y=80 w=220 h=80 invisible=1 action="open_level"
+
+button x=20 y=120 id=376 action="move_left" tag="left" sx=-1.0 keyBinds="L,ZL,LEFT,CSLEFT,CPLEFT"
+button x=300 y=120 id=376 action="move_right" tag="right" keyBinds="R,ZR,RIGHT,CSRIGHT,CPRIGHT"
+
+image x=66 y=258 id=1 sy=0.727272 sheet=6 tag="ground" sx=0.727272 
+image x=160 y=258 id=1 sy=0.727272 sheet=6 tag="ground" sx=0.727272
+image x=254 y=258 id=1 sy=0.727272 sheet=6 tag="ground" sx=0.727272
+
+image x=160 y=211 id=0 sheet=6 sx=0.727272 sy=0.727272 
+
+image x=36 y=205 id=178
+image x=284 y=205 id=178 sx=-1.0
+
+button x=24 y=28 id=6 action="exit" keyBinds="B"

@@ -1,0 +1,13 @@
+# PSP: the level complete window's buttons on one screen, along its bottom
+# edge (the phone game's place for them), smaller. The window itself is the
+# top screen's (level_complete_top.txt). The code scales the buttons to 1
+# when they pop in, so the whole screen is scaled instead (@scale, around
+# 160,120): x = 160 + (want - 160) / 0.6, y = 120 + (want - 120) / 0.6.
+# They end up at (118, 212) and (202, 212): top screen x 158 and 242
+@merge 40 0 1
+@scale 0.6
+
+darken opacity=0.0 x=160 y=120 w=320 h=240 tag="endDarken" darkenTime=0.0 psphide=1
+
+button x=90 y=273 id=155 scale=1 action="restart" tag="bottomWindow" keyBinds="X"
+button x=230 y=273 id=111 scale=1 action="exit" tag="bottomWindow" keyBinds="B"
